@@ -1,0 +1,47 @@
+---
+title: "descriptives"
+author: "Håvard Crantz Lorentzen"
+date: '2023-02-03'
+output: html_document
+---
+
+```{r my_table, results="asis"}
+library(tidyverse)
+library(knitr)
+library(flextable)
+library(ggplot2)
+library(readxl)
+
+data <- read_excel("Revidert_resultatskjema.xlsx", na = "NA")
+
+D_tabell <- data %>%
+select(id,time,group,sex,age, bmi, sys, dia, wc, handgrip, height, weight) %>%
+group_by(sex,group) %>%
+  filter(time == "pre") %>%
+mutate(n = n()) %>%
+  pivot_longer(names_to = "variable", 
+               values_to = "value", 
+               cols = age:n) %>%
+   group_by(group,sex, variable) %>%
+summarise(m = mean(value),
+          s = sd(value)) %>%
+  mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 3),  " (", signif(s, 3), ")")),
+  group_sex = paste(group, sex, sep = "_")) %>%
+  ungroup() %>%
+  select(-m, -s, -group, -sex) %>%
+  pivot_wider(names_from = group_sex, 
+              values_from = ms) %>%
+   mutate(variable = factor(variable, levels = c("n", "age", "weight", "height","bmi", "wc", "handgrip", "sys", "dia"), 
+                           labels = c("Antall", "Alder (år)", "Vekt (kg)", 
+                                      "Høyde (cm)","KMI", "Livvidde (cm)","Grepsstyrke","Systolisk blodtrykk","Diastolisk blodtrykk" ))) %>%
+  select(variable, fls_1, fls_2, kon_1, kon_2)%>%
+  arrange(variable) %>%
+    print()
+  
+  kable(format = "html",col.names = c(" ", "Frisklivssentral", "Excluded", "Included", "Excluded")) %>%
+  add_header_above(c(" "= 1, "Female" = 2, "Male" = 2) %>%
+  print()
+  
+
+
+```
