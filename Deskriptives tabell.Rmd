@@ -11,6 +11,7 @@ library(knitr)
 library(flextable)
 library(ggplot2)
 library(readxl)
+library(kableExtra)
 
 data <- read_excel("Revidert_resultatskjema.xlsx", na = "NA")
 
@@ -34,13 +35,14 @@ summarise(m = mean(value),
    mutate(variable = factor(variable, levels = c("n", "age", "weight", "height","bmi", "wc", "handgrip", "sys", "dia"), 
                            labels = c("Antall", "Alder (år)", "Vekt (kg)", 
                                       "Høyde (cm)","KMI", "Livvidde (cm)","Grepsstyrke","Systolisk blodtrykk","Diastolisk blodtrykk" ))) %>%
-  select(variable, fls_1, fls_2, kon_1, kon_2)%>%
+  select(variable, fls_1, kon_1, fls_2, kon_2) %>%
   arrange(variable) %>%
-    print()
-  
-  kable(format = "html",col.names = c(" ", "Frisklivssentral", "Excluded", "Included", "Excluded")) %>%
-  add_header_above(c(" "= 1, "Female" = 2, "Male" = 2) %>%
-  print()
+  kable(format = "html",col.names = c(" ", "Frisklivssentral", "Kontroll", "Frisklivssentral", "Kontroll")) %>%
+  add_header_above(c(" "= 1, "kvinner" = 2, "Menn" = 2)) %>%
+  add_footnote(label = "Data er gitt som gjennomsnitt og standardavvik.",
+               notation = "none") %>%
+print()
+ 
   
 
 
