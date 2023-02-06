@@ -3,6 +3,8 @@ title: "descriptives"
 author: "Håvard Crantz Lorentzen"
 date: '2023-02-03'
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r my_table_1, results="asis"}
