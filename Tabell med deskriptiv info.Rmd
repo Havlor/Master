@@ -12,28 +12,28 @@ library(ggplot2)
 library(readxl)
 library(kableExtra)
 
-data <- read_excel("Revidert_resultatskjema.xlsx", na = "NA")
+data <- read_excel("Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
-D_tabell_2 <- data %>%
-select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight) %>%
-group_by(sex,group) %>%
-  filter(time == "pre") %>%
-mutate(n = n()) %>%
+tabell_1 <- data %>%
+select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2max_ml_min_kg_6x5, lean_mass, fat_mass, one_rm_newton) %>% #Velger variabler
+group_by(sex,group) %>% # grupperer etter kjønn og FLS/kontroll
+  filter(time == "pre") %>% #filterer ut post for å bare få pre-tester
+mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
   pivot_longer(names_to = "variable", 
                values_to = "value", 
-               cols = age:n) %>%
-   group_by(group,sex, variable) %>%
+               cols = age:n) %>% # omorgansiserer tallene for å få verdier nedover
+   group_by(group,sex, variable) %>% # legger til variabel i gruppe
 summarise(m = mean(value),
-          s = sd(value), .groups = "drop_last") %>%
-  mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 3),  " (", signif(s, 3), ")")),
-  group_sex = paste(group, sex, sep = "_")) %>%
-  ungroup() %>%
-  select(-m, -s, -group, -sex) %>%
+          s = sd(value), .groups = "drop_last") %>% #summerer og får gjennomsnitt og standartdavik på de ulike variablene 
+  mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 3),  " (", signif(s, 3), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
+  group_sex = paste(group, sex, sep = "_")) %>% #setter "group" og "sex" sammen
+  ungroup() %>% #fjerner gruppering
+  select(-m, -s, -group, -sex) %>% #fjerner variablene jeg ikke trenger lenger
   pivot_wider(names_from = group_sex, 
-              values_from = ms) %>%
-   mutate(variable = factor(variable, levels = c("n", "age", "weight", "height","bmi", "wc", "handgrip", "sys", "dia"), 
-                           labels = c("Antall", "Alder (år)", "Vekt (kg)", 
-                                      "Høyde (cm)","KMI", "Livvidde (cm)","Grepsstyrke","Systolisk blodtrykk","Diastolisk blodtrykk" ))) %>%
+              values_from = ms) %>% # 
+   mutate(variable = factor(variable, levels = c("n", "age", "weight", "height","bmi", "wc", "handgrip", "sys", "dia","vo2max_ml_min_kg_6x5", "lean_mass", "fat_mass", "one_rm_newton"), 
+              labels = c("Antall", "Alder (år)", "Vekt (kg)", "Høyde (cm)","KMI",                            "Livvidde (cm)","Grepsstyrke (kg)",                                                 "Systolisk  blodtrykk (mmHg)",                                                      "Diastolisk blodtrykk (mmHg)", "Vo2maks(ml/kg/min)",                                "Mager masse (gram)", "Fettmasse (gram)",
+                         "1RM i benpress (N)" ))) %>%
   select(variable, fls_1, kon_1, fls_2, kon_2) %>%
   arrange(variable) %>%
   flextable()  %>%
