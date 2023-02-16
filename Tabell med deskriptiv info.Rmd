@@ -16,6 +16,7 @@ data <- read_excel("Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
 tabell_1 <- data %>%
 select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2max_ml_min_kg_6x5, lean_mass, fat_mass, one_rm_newton) %>% #Velger variabler
+drop_na() %>% # fjerner NA
 group_by(sex,group) %>% # grupperer etter kjønn og FLS/kontroll
   filter(time == "pre") %>% #filterer ut post for å bare få pre-tester
 mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
