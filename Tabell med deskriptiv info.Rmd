@@ -1,0 +1,55 @@
+---
+title: "Deskriptive data"
+author: "Håvard Crantz Lorentzen"
+date: '2023-02-16'
+output: html_document
+---
+```{r my_table_2, results="asis"}
+library(tidyverse)
+library(knitr)
+library(flextable)
+library(ggplot2)
+library(readxl)
+library(kableExtra)
+
+data <- read_excel("Revidert_resultatskjema.xlsx", na = "NA")
+
+D_tabell_2 <- data %>%
+select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight) %>%
+group_by(sex,group) %>%
+  filter(time == "pre") %>%
+mutate(n = n()) %>%
+  pivot_longer(names_to = "variable", 
+               values_to = "value", 
+               cols = age:n) %>%
+   group_by(group,sex, variable) %>%
+summarise(m = mean(value),
+          s = sd(value), .groups = "drop_last") %>%
+  mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 3),  " (", signif(s, 3), ")")),
+  group_sex = paste(group, sex, sep = "_")) %>%
+  ungroup() %>%
+  select(-m, -s, -group, -sex) %>%
+  pivot_wider(names_from = group_sex, 
+              values_from = ms) %>%
+   mutate(variable = factor(variable, levels = c("n", "age", "weight", "height","bmi", "wc", "handgrip", "sys", "dia"), 
+                           labels = c("Antall", "Alder (år)", "Vekt (kg)", 
+                                      "Høyde (cm)","KMI", "Livvidde (cm)","Grepsstyrke","Systolisk blodtrykk","Diastolisk blodtrykk" ))) %>%
+  select(variable, fls_1, kon_1, fls_2, kon_2) %>%
+  arrange(variable) %>%
+  flextable()  %>%
+   set_header_labels(variable = "",
+                     fls_1= "Frisklivssentral", 
+                     kon_1 = "Kontroll",
+                     fls_2 = "Frisklivssentral", 
+                     kon_2 = "Kontroll") %>%
+    # Adds a header specified for all columns of the table
+    add_header_row(values = c("", "Kvinner", "Kvinner", "Menn", "Menn")) %>%
+  merge_at(part = "header", i = 1, j = 2:3) %>%
+    merge_at(part = "header", i = 1, j = 4:5) %>%
+    # Add footnote
+    add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>%
+    # Make the columns widths match the content
+    autofit() %>%
+  print()
+
+```

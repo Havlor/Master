@@ -62,7 +62,7 @@ library(kableExtra)
 data <- read_excel("Revidert_resultatskjema.xlsx", na = "NA")
 
 D_tabell_2 <- data %>%
-select(id,time,group,sex,age, bmi, sys, dia, wc, handgrip, height, weight) %>%
+select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight) %>%
 group_by(sex,group) %>%
   filter(time == "pre") %>%
 mutate(n = n()) %>%
