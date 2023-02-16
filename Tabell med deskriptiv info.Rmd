@@ -30,26 +30,23 @@ summarise(m = mean(value),
   ungroup() %>% #fjerner gruppering
   select(-m, -s, -group, -sex) %>% #fjerner variablene jeg ikke trenger lenger
   pivot_wider(names_from = group_sex, 
-              values_from = ms) %>% # 
+              values_from = ms) %>% # gjør tabellen bredere for å få navn på variabel ved siden av tall
    mutate(variable = factor(variable, levels = c("n", "age", "weight", "height","bmi", "wc", "handgrip", "sys", "dia","vo2max_ml_min_kg_6x5", "lean_mass", "fat_mass", "one_rm_newton"), 
               labels = c("Antall", "Alder (år)", "Vekt (kg)", "Høyde (cm)","KMI",                            "Livvidde (cm)","Grepsstyrke (kg)",                                                 "Systolisk  blodtrykk (mmHg)",                                                      "Diastolisk blodtrykk (mmHg)", "Vo2maks(ml/kg/min)",                                "Mager masse (gram)", "Fettmasse (gram)",
-                         "1RM i benpress (N)" ))) %>%
-  select(variable, fls_1, kon_1, fls_2, kon_2) %>%
-  arrange(variable) %>%
+                         "1RM i benpress (N)" ))) %>% # ordner rekkefølge og norske navn
+  select(variable, fls_1, kon_1, fls_2, kon_2) %>% #endrer rekkefølge på gruppene
+  arrange(variable) %>% #ordner rekkefølge på variabelene 
   flextable()  %>%
    set_header_labels(variable = "",
                      fls_1= "Frisklivssentral", 
                      kon_1 = "Kontroll",
                      fls_2 = "Frisklivssentral", 
-                     kon_2 = "Kontroll") %>%
-    # Adds a header specified for all columns of the table
+                     kon_2 = "Kontroll") %>% # lager overskrifter spesifisert for hver kollonne 
     add_header_row(values = c("", "Kvinner", "Kvinner", "Menn", "Menn")) %>%
   merge_at(part = "header", i = 1, j = 2:3) %>%
-    merge_at(part = "header", i = 1, j = 4:5) %>%
-    # Add footnote
-    add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>%
-    # Make the columns widths match the content
-    autofit() %>%
+    merge_at(part = "header", i = 1, j = 4:5) %>% #justerer skrifttype
+    add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>% #legger til fornote
+    autofit() %>% # gjør av stander like
   print()
 
 ```
