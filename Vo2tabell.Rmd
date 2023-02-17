@@ -3,6 +3,8 @@ title: "Tabell Vo2maks"
 author: "Håvard Crantz Lorentzen"
 date: '2023-02-17'
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r Vo2makstabell,results="asis"}
@@ -18,7 +20,13 @@ data <- read_excel("Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 O2tabell <- data %>%
 select(id, time, group, weight, bmi, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,`o2_puls (ml)`,hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac, `arbec_%_maksHF`,`arbec_%_o2max`,arbec_mean_o2,arbec_vo2_ml_min, arbec_RER, arbec_HF, one_rm_newton,one_rm_watt,pmax_left,pmax_right,fmax_left,fmax_right)%>%
 #Velger variabler
-filter( !id == c("tr031 10541", "tr031 13404", "tr031 11421", "tr031 004", "tr031 008", "tr031 001", "tr031 016")) %>%
+filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>% #filtrer ut droppouts
 group_by(time,group) %>% # grupperer etter tid og FLS/kontroll
 mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
   pivot_longer(names_to = "variable", 
@@ -28,7 +36,7 @@ mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
 summarise(m = mean(value),
           s = sd(value), .groups = "drop_last") %>% #summerer og får gjennomsnitt og standartdavik på de ulike variablene 
   mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 3),  " (", signif(s, 3), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
-  group_time = paste(group, time, sep = "_")) %>%#setter "group" og "sex" sammen
+  group_time = paste(group, time, sep = "_")) %>%#setter "group" og "tid" sammen
   ungroup() %>% #fjerner gruppering
   select(-m, -s, -group, -time) %>% #fjerner variablene jeg ikke trenger lenger
   pivot_wider(names_from = group_time, 
@@ -49,6 +57,8 @@ summarise(m = mean(value),
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>% #legger til fornote
     autofit() %>% # gjør av stander like
   print()
+
+
 ```
 
 
