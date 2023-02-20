@@ -32,6 +32,7 @@ mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
   pivot_longer(names_to = "variable", 
                values_to = "value", 
                cols = weight:n) %>% # omorgansiserer tallene for å få verdier nedover
+filter(!is.na(value))%>% #fjerner NA-verider
    group_by(group, time, variable) %>% # legger til variabel i gruppe
 summarise(m = mean(value),
           s = sd(value), .groups = "drop_last") %>% #summerer og får gjennomsnitt og standartdavik på de ulike variablene 
