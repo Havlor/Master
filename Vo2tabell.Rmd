@@ -58,6 +58,59 @@ summarise(m = mean(value),
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>% #legger til fornote
     autofit() %>% # gjør av stander like
   print()
+```
+
+```{r Vo2makstabellendring,results="asis"}
+library(tidyverse)
+library(knitr)
+library(flextable)
+library(ggplot2)
+library(readxl)
+library(kableExtra)
+
+data <- read_excel("Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+
+endringforsøk <- data %>%
+select(id, time, group, weight, bmi, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,`o2_puls (ml)`,hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac, `arbec_%_maksHF`,`arbec_%_o2max`,arbec_mean_o2,arbec_vo2_ml_min, arbec_RER, arbec_HF, one_rm_newton,one_rm_watt,pmax_left,pmax_right,fmax_left,fmax_right)%>%
+#Velger variabler
+filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>% #filtrer ut droppouts
+group_by(time,group) %>% # grupperer etter tid og FLS/kontroll 
+  pivot_longer(names_to = "variable", 
+               values_to = "value", 
+               cols = weight:fmax_right) %>%
+  pivot_wider(names_from = "time",
+              values_from = "value") %>% # omorgansiserer tallene for å få verdier nedover
+filter(!is.na(post)) %>%
+  filter(!is.na(pre)) %>%#fjerner NA-verider
+  mutate(diff = post - pre) %>%
+   group_by(group, variable) %>% # legger til variabel i gruppe
+summarise(m = mean(diff),
+          s = sd(diff), .groups = "drop_last") %>% #summerer og får gjennomsnitt ogstandartdavik på de ulike variablene 
+  mutate(ms = as.character(m), paste0(signif(m, 3),  " (", signif(s, 3), ")")) %>%
+select(-"m", -"s", -"ms") %>%
+  pivot_wider(names_from = group,
+              values_from = paste0(signif(m, 3), " (", signif(s, 3), ")")) %>%
+    print()
+   mutate(variable = factor(variable, levels = c("weight", "bmi","lean_mass", "vo2max_ml_min_kg_6x5", "vo2max_ml_min_6x5", "rer_max_30sek", "bfmax_30sek", "Ve_L/min_max_30sek", "hf_max", "o2_puls (ml)", "time_to_exhaustion", "borg_end", "lac", "arbec_mean_o2", "arbec_vo2_ml_min", "arbec_%_o2max", "arbec_RER", "arbec_HF", "arbec_%_maksHF", "one_rm_newton", "one_rm_watt", "pmax_left", "pmax_right", "fmax_left", "fmax_right"), 
+              labels = c("Vekt (kg)", "KMI", "Mager masse (gram)", "Vo2maks (ml/min/kg)","Vo2maks (ml/min)", "RERmaks", "PFmaks", "VEmaks (L/min)", "HFmaks", "Vo2puls (ml)", "tid til utmatterese (s)", "BORGmaks", "LAKTATmaks (mmol/L)", "Arbeidsøkonomisk Vo2(ml/min/kg)", "Arbeidsøkonomisk Vo2(ml/min)", "Arbeidsøkonomisk prosent av Vo2maks", "Arbeidsøkonomisk RER", "Arbeidsøkonomisk HF", "Arbeidsøkonomisk prosent av maksHF", "1RM i beinpress (Nm)", "1RM i beinpress (watt)", "Maks effekt venstre bein (watt)", "Maks effekt høyre bein (watt)", "Maks kraft venstre bein (N)", "Maks kraft høgre bein (N)" ))) %>% # ordner rekkefølge og norske navn
+  arrange(variable) %>% #ordner rekkefølge på variabelene 
+  flextable()  %>%
+   set_header_labels(variable = "",
+                     fls= "Frisklivssentral", 
+                     kon = "Kontroll") %>% 
+  # lager overskrifter spesifisert for hver kollonne 
+    add_header_row(values = c("", "Pre", "Pre", "Post", "Post")) %>%
+  merge_at(part = "header", i = 1, j = 2:3) %>%
+    merge_at(part = "header", i = 1, j = 4:5) %>% #justerer skrifttype
+    add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>% #legger til fornote
+    autofit() %>% # gjør av stander like
+  print()
 
 
 ```

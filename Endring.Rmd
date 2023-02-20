@@ -1,0 +1,90 @@
+---
+title: "Untitled"
+author: "Håvard Crantz Lorentzen"
+date: '2023-02-20'
+output: html_document
+---
+```{r setup, include=FALSE, results='hide'}
+library(tidyverse)
+library(knitr)
+library(readxl)
+library(ggtext)
+library(flextable)
+library(ggplot2)
+
+data <- read_excel("Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+
+Vo2endring <- select(data, id, time, group, vo2max_ml_min_kg_6x5) %>%
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  filter(id != "tr031 014") %>%
+  pivot_wider(names_from = time,
+               values_from = vo2max_ml_min_kg_6x5) %>%
+  mutate(diff = post-pre) %>%
+  print()
+
+
+vo2 <- Vo2endring %>%
+  summarise(combined.load = mean) %>%
+  print()
+
+
+
+
+
+styrke1 <- styrke %>%
+filter(!is.na(combined.load), time == factor(time, levels = c("pre", "week5", "post"))) %>%
+  mutate(time = factor(time, levels = c("pre", "week5", "post")),
+         group = factor(sets, levels = c("single", "multiple"))) %>% 
+ group_by(participant) %>%
+  mutate(n = n()) %>%
+  filter(n == "6") #bare de med målinger ved alle tester er tatt med.
+diff <- styrke1 %>%
+  dplyr::select(participant, sets, group, time, combined.load) %>%
+  pivot_wider(names_from = time,
+              values_from = combined.load) %>%
+  mutate(diff1 = (week5 - pre)/pre * 100, diff2 = (post - pre)/pre * 100)  %>%
+  group_by(sets) %>%
+  summarise(sd1 = sd(diff1),
+            m1 = mean(diff1),
+            sd2 = sd(diff2),
+            m2 = mean(diff2))%>%
+   mutate(week5 = paste0(signif(m1, 3), "(", signif(sd1, 3), ")"),post = paste0(signif(m2, 3), "(", signif(sd2, 3), ")")) %>%
+   dplyr::select(sets,week5, post) 
+tabellstyrke<- diff %>%
+mutate(sets = factor(sets, levels = c("multiple", "single"), 
+                        labels = c("3 sett", "1 sett"))) %>%
+   dplyr::select(sets, week5, post) %>%
+  arrange(sets) %>%
+   flextable()  %>%
+  set_header_labels(sets = " ",
+                    week5 = "Uke 5", 
+                     post = " Post")%>%
+    # Add footnote
+    add_footer_row(values = "Verdiene er gitt som gjennsomsnitt og standardavvik (SD). p < 0.01 ved pre til uke fem og uke fem til post for begge ben, p < 0.01 ved begge tidspunt for at tre sett økte mer enn fem sett", colwidths = 3) %>%
+    # Make the columns widths match the content
+    autofit()
+figurendring <- styrke1 %>%
+   dplyr::select(participant, sets, time, combined.load) %>%
+  pivot_wider(names_from = time,
+              values_from = combined.load) %>%
+  mutate(uke_5 = (week5 - pre)/pre * 100, uke_12 = (post - pre)/pre * 100)  %>%
+  group_by(sets) %>%
+  dplyr::select(participant, sets, uke_5, uke_12, pre) %>%
+  mutate(uke_1 = pre-pre) %>%
+  pivot_longer(names_to = "tid", values_to = "prosentvis_endring", cols = c(uke_1, uke_5, uke_12)) %>%
+  mutate(tid = factor(tid, levels = c("uke_1", "uke_5", "uke_12"), 
+                        labels = c("Uke 1", "Uke 5", "Uke 12"))) %>%
+   mutate(sets = factor(sets, levels = c("multiple", "single"), labels = c("3 sett", "1 sett"))) %>%
+  
+  ggplot(aes(tid, prosentvis_endring, group = paste(participant, sets), color = sets)) + geom_line() + theme_minimal() +
+labs(x = "Tidspunkt",
+       y = "Prosentvis økning i styrke",
+        color = "Treningsmetode")
+ 
+```
