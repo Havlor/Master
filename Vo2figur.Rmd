@@ -1,0 +1,42 @@
+---
+title: "vo2figur"
+author: "Håvard Crantz Lorentzen"
+date: '2023-02-20'
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggtext) 
+data <- read_excel("Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+
+Vo2figur <- select(data, id, time, group, vo2max_ml_min_kg_6x5) %>%
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016")%>%
+  filter(id != "tr031 014")
+
+Vo2figur$time <- factor(Vo2figur$time, levels = c("pre", "post"), labels = c("Pre", "Post"))
+
+ggplot(Vo2figur, aes(time, vo2max_ml_min_kg_6x5, color = group, group = id)) + geom_line() + geom_point(size = 2, fill = "lightblue", shape = 21) +
+  labs(x = "Tidspunkt", 
+       y = "VO<sub>2max</sub> (ml min<sup> -1</sup>)", 
+       title = "Endring av maksimalt oksygenopptak fra Pre- posttest") + theme_bw() +
+   theme(axis.text.x = element_text(color = "black", size = 12, face = "bold"))
+
+
+
+
+
+
+```
+
+
+
+
