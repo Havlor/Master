@@ -3,6 +3,8 @@ title: "Untitled"
 author: "Håvard Crantz Lorentzen"
 date: '2023-02-20'
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 ```{r setup, include=FALSE, results='hide'}
 library(tidyverse)
@@ -25,12 +27,16 @@ Vo2endring <- select(data, id, time, group, vo2max_ml_min_kg_6x5) %>%
   filter(id != "tr031 014") %>%
   pivot_wider(names_from = time,
                values_from = vo2max_ml_min_kg_6x5) %>%
-  mutate(diff = post-pre) %>%
+  mutate(diff = post-pre, diff1 = (post - pre)/pre * 100) %>%
   print()
 
 
 vo2 <- Vo2endring %>%
-  summarise(combined.load = mean) %>%
+  group_by(group)%>%
+  summarise(mean = mean(diff),
+            sd = sd(diff),
+            mean_pro = mean(diff1),
+            sd_pro = sd(diff1)) %>%
   print()
 
 

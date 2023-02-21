@@ -6,7 +6,7 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
-filter(!is.na(value))%>% #fjerner NA-verider
+
 ```{r Vo2makstabell,results="asis"}
 library(tidyverse)
 library(knitr)
