@@ -40,10 +40,5 @@ vo2_total <- Vo2endring %>%
   print()
 
 
-ggplot(aes(, prosentvis_endring, group = paste(participant, sets), color = sets)) + geom_line() + theme_minimal() +
-labs(x = "Tidspunkt",
-       y = "Prosentvis økning i styrke",
-        color = "Treningsmetode")
-
  
 ```

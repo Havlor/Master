@@ -1,0 +1,32 @@
+---
+title: "Kaloritabell"
+author: "Håvard Crantz Lorentzen"
+date: '2023-02-22'
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+```{r kaloritabell,results="asis"}
+library(tidyverse)
+library(knitr)
+library(flextable)
+library(ggplot2)
+library(readxl)
+library(kableExtra)
+
+kaloritabell <- read_excel("Regning av kaloriforbruk.xlsx")%>%
+  select(id, group, time, arbec_mean_vo2_ml_min, arbec_mean_RER, kacl_min, kj_min) %>%
+   filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  filter(id != "tr031 014") %>%
+  print()
+
+
+
+
+```
