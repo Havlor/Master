@@ -15,6 +15,8 @@ library(flextable)
 library(ggplot2)
 library(readxl)
 library(kableExtra)
+library(ggpubr)
+library(dplyr)
 
 data1 <- read_excel("Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
@@ -32,7 +34,7 @@ group_by(time,group) %>% # grupperer etter tid og FLS/kontroll
   mutate(n = n()) %>%
   pivot_longer(names_to = "variable", 
                values_to = "value", 
-               cols = weight:n)%>%
+               cols = weight:n) %>%
    pivot_wider(names_from = "time",
               values_from = "value")%>%
     filter(!is.na(pre)) %>%
