@@ -65,7 +65,7 @@ difKON <- with(endringKON, vo2max_ml_min_kg_6x5[time == "pre"] - vo2max_ml_min_k
 shapiro.test(difKON)
 
 #parret T-test
-t_testFLS <- t.test(vo2max_ml_min_kg_6x5 ~ time, data = endringFLS , paired = TRUE)
+t_testFLS <- t.test(vo2max_ml_min_kg_6x5 ~ time, data = endringFLS, paired = TRUE)
 
 t_testKON <- t.test(vo2max_ml_min_kg_6x5 ~ time, data = endringKON , paired = TRUE)
 
