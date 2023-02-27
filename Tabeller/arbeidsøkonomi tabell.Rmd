@@ -14,7 +14,7 @@ library(ggplot2)
 library(readxl)
 library(kableExtra)
 
-kaloritabell <- read_excel("Regning av kaloriforbruk.xlsx")%>%
+kaloritabell <- read_excel("data/Regning av kaloriforbruk.xlsx")%>%
   select(id, group, time, arbec_mean_vo2_ml_min, arbec_mean_RER, kacl_min, kj_min) %>%
    filter(id != "tr031 10541") %>%
   filter(id != "tr031 11421") %>%
@@ -24,8 +24,52 @@ kaloritabell <- read_excel("Regning av kaloriforbruk.xlsx")%>%
   filter(id != "tr031 001") %>%
   filter(id != "tr031 016") %>%
   filter(id != "tr031 014") %>%
+mutate(arbec_mean_vo2_ml_min = as.numeric(arbec_mean_vo2_ml_min))%>%
+  mutate(arbec_mean_RER = as.numeric(arbec_mean_RER)) %>%
+mutate(kacl_min = as.numeric(kacl_min)) %>%
+mutate(kj_min = as.numeric(kj_min))%>%
+  group_by(time,group) %>%# grupperer etter tid og FLS/kontroll
+mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
+  pivot_longer(names_to = "variable", 
+               values_to = "value",
+               cols = arbec_mean_vo2_ml_min:n) %>%# omorgansiserer tallene for å få verdier nedover
+ pivot_wider(names_from = "time",
+              values_from = "value")%>%
+   filter(!is.na(pre)) %>%
+  filter(!is.na(post)) %>%
+   pivot_longer(names_to = "time", 
+               values_to = "value",
+               cols = pre:post) %>%
+   group_by(group, time, variable) %>% 
+  # legger til variabel i gruppe
+summarise(m = mean(value),
+          s = sd(value), .groups = "drop_last") %>%
+   mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 5),  " (", signif(s, 2), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
+  group_time = paste(group, time, sep = "_")) %>%
+
+#setter "group" og "tid" sammen
+  ungroup() %>% #fjerner gruppering
+  select(-m, -s, -group, -time) %>%#fjerner variablene jeg ikke trenger lenger
+  pivot_wider(names_from = group_time, 
+              values_from = ms) %>%
+   mutate(variable = factor(variable, levels = c("n", "arbec_mean_vo2_ml_min", "arbec_mean_RER", "kacl_min", "kj_min"), 
+              labels = c("Antall", "Vo2", "RER", "Kacl/min", "KJ/min"))) %>% # ordner rekkefølge og norske navn
+  select(variable, fls_pre, kon_pre, fls_post, kon_post) %>% #endrer rekkefølge på gruppene
+  arrange(variable) %>% #ordner rekkefølge på variabelene 
+  flextable()  %>%
+   set_header_labels(variable = "",
+                     fls_pre= "Frisklivssentral", 
+                     kon_pre = "Kontroll",
+                     fls_post = "Frisklivssentral", 
+                     kon_post = "Kontroll") %>% # lager overskrifter spesifisert for hver kollonne 
+    add_header_row(values = c("", "Pre", "Pre", "Post", "Post")) %>%
+  merge_at(part = "header", i = 1, j = 2:3) %>%
+    merge_at(part = "header", i = 1, j = 4:5) %>% #justerer skrifttype
+    add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>% #legger til fornote
+    autofit() %>% # gjør av stander like
   print()
 
+#er det mulig å bare korte ned desimaler på RER, Kacl og kj??
 
 
 
