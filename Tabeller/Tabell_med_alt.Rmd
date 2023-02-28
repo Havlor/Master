@@ -15,10 +15,10 @@ library(ggplot2)
 library(readxl)
 library(kableExtra)
 
-data <- read_excel("Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
 O2tabell <- data %>%
-select(id, time, group, weight, bmi, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,`o2_puls (ml)`,hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac, `arbec_%_maksHF`,`arbec_%_o2max`,arbec_mean_o2,arbec_vo2_ml_min, arbec_RER, arbec_HF, one_rm_newton,one_rm_watt,pmax_left,pmax_right,fmax_left,fmax_right)%>%
+select(id, time, group, weight, bmi, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,`o2_puls (ml)`,hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac, `arbec_%_maksHF`,`arbec_%_o2max`,arbec_mean_o2,arbec_vo2_ml_min, arbec_RER, arbec_HF, one_rm_newton,one_rm_watt,pmax_left,pmax_right,fmax_left,fmax_right, chair_stand_test)%>%
 #Velger variabler
 filter(id != "tr031 10541") %>%
   filter(id != "tr031 11421") %>%
@@ -27,7 +27,7 @@ filter(id != "tr031 10541") %>%
   filter(id != "tr031 008") %>%
   filter(id != "tr031 001") %>%
   filter(id != "tr031 016") %>% #filtrer ut droppouts
-group_by(time,group) %>% # grupperer etter tid og FLS/kontroll
+group_by(time,group) %>%# grupperer etter tid og FLS/kontroll
 mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
   pivot_longer(names_to = "variable", 
                values_to = "value", 
@@ -41,15 +41,15 @@ mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
                cols = pre:post) %>%
    group_by(group, time, variable) %>% # legger til variabel i gruppe
 summarise(m = mean(value),
-          s = sd(value), .groups = "drop_last") %>% #summerer og får gjennomsnitt og standartdavik på de ulike variablene 
+          s = sd(value), .groups = "drop_last") %>%#summerer og får gjennomsnitt og standartdavik på de ulike variablene 
   mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 3),  " (", signif(s, 3), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
   group_time = paste(group, time, sep = "_")) %>%#setter "group" og "tid" sammen
   ungroup() %>% #fjerner gruppering
   select(-m, -s, -group, -time) %>%#fjerner variablene jeg ikke trenger lenger
   pivot_wider(names_from = group_time, 
               values_from = ms) %>% # gjør tabellen bredere for å få navn på variabel ved siden av tall
-   mutate(variable = factor(variable, levels = c("n", "weight", "bmi","lean_mass", "vo2max_ml_min_kg_6x5", "vo2max_ml_min_6x5", "rer_max_30sek", "bfmax_30sek", "Ve_L/min_max_30sek", "hf_max", "o2_puls (ml)", "time_to_exhaustion", "borg_end", "lac", "arbec_mean_o2", "arbec_vo2_ml_min", "arbec_%_o2max", "arbec_RER", "arbec_HF", "arbec_%_maksHF", "one_rm_newton", "one_rm_watt", "pmax_left", "pmax_right", "fmax_left", "fmax_right"), 
-              labels = c("Antall", "Vekt (kg)", "KMI", "Mager masse (gram)", "Vo2maks (ml/min/kg)","Vo2maks (ml/min)", "RERmaks", "PFmaks", "VEmaks (L/min)", "HFmaks", "Vo2puls (ml)", "tid til utmatterese (s)", "BORGmaks", "LAKTATmaks (mmol/L)", "Arbeidsøkonomisk Vo2(ml/min/kg)", "Arbeidsøkonomisk Vo2(ml/min)", "Arbeidsøkonomisk prosent av Vo2maks", "Arbeidsøkonomisk RER", "Arbeidsøkonomisk HF", "Arbeidsøkonomisk prosent av maksHF", "1RM i beinpress (Nm)", "1RM i beinpress (watt)", "Maks effekt venstre bein (watt)", "Maks effekt høyre bein (watt)", "Maks kraft venstre bein (N)", "Maks kraft høgre bein (N)" ))) %>% # ordner rekkefølge og norske navn
+   mutate(variable = factor(variable, levels = c("n", "weight", "bmi","lean_mass", "vo2max_ml_min_kg_6x5", "vo2max_ml_min_6x5", "rer_max_30sek", "bfmax_30sek", "Ve_L/min_max_30sek", "hf_max", "o2_puls (ml)", "time_to_exhaustion", "borg_end", "lac", "arbec_mean_o2", "arbec_vo2_ml_min", "arbec_%_o2max", "arbec_RER", "arbec_HF", "arbec_%_maksHF", "one_rm_newton", "one_rm_watt", "pmax_left", "pmax_right", "fmax_left", "fmax_right", "chair_stand_test"), 
+              labels = c("Antall", "Vekt (kg)", "KMI", "Mager masse (gram)", "Vo2maks (ml/min/kg)","Vo2maks (ml/min)", "RERmaks", "PFmaks", "VEmaks (L/min)", "HFmaks", "Vo2puls (ml)", "tid til utmatterese (s)", "BORGmaks", "LAKTATmaks (mmol/L)", "Arbeidsøkonomisk Vo2(ml/min/kg)", "Arbeidsøkonomisk Vo2(ml/min)", "Arbeidsøkonomisk prosent av Vo2maks", "Arbeidsøkonomisk RER", "Arbeidsøkonomisk HF", "Arbeidsøkonomisk prosent av maksHF", "1RM i beinpress (Nm)", "1RM i beinpress (watt)", "Maks effekt venstre bein (watt)", "Maks effekt høyre bein (watt)", "Maks kraft venstre bein (N)", "Maks kraft høgre bein (N)", "Chair stand test"))) %>% # ordner rekkefølge og norske navn
   select(variable, fls_pre, kon_pre, fls_post, kon_post) %>% #endrer rekkefølge på gruppene
   arrange(variable) %>% #ordner rekkefølge på variabelene 
   flextable()  %>%
@@ -74,10 +74,10 @@ library(ggplot2)
 library(readxl)
 library(kableExtra)
 
-data1 <- read_excel("Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+data1 <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
 endringfiltrering <- data1 %>%
-select(id, time, group, weight, bmi, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,`o2_puls (ml)`,hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac, `arbec_%_maksHF`,`arbec_%_o2max`,arbec_mean_o2,arbec_vo2_ml_min, arbec_RER, arbec_HF, one_rm_newton,one_rm_watt,pmax_left,pmax_right,fmax_left,fmax_right) %>%
+select(id, time, group, weight, bmi, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,`o2_puls (ml)`,hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac, `arbec_%_maksHF`,`arbec_%_o2max`,arbec_mean_o2,arbec_vo2_ml_min, arbec_RER, arbec_HF, one_rm_newton,one_rm_watt,pmax_left,pmax_right,fmax_left,fmax_right, chair_stand_test) %>%
 #Velger variabler
 filter(id != "tr031 10541") %>%
   filter(id != "tr031 11421") %>%
@@ -106,8 +106,8 @@ select(-"m", -"s") %>%
   pivot_wider(names_from = group,
               values_from = ms) %>%
   filter(variable != "n")%>%
-   mutate(variable = factor(variable, levels = c("weight", "bmi","lean_mass", "vo2max_ml_min_kg_6x5", "vo2max_ml_min_6x5", "rer_max_30sek", "bfmax_30sek", "Ve_L/min_max_30sek", "hf_max", "o2_puls (ml)", "time_to_exhaustion", "borg_end", "lac", "arbec_mean_o2", "arbec_vo2_ml_min", "arbec_%_o2max", "arbec_RER", "arbec_HF", "arbec_%_maksHF", "one_rm_newton", "one_rm_watt", "pmax_left", "pmax_right", "fmax_left", "fmax_right"), 
-              labels = c("Vekt (kg)", "KMI", "Mager masse (gram)", "Vo2maks (ml/min/kg)","Vo2maks (ml/min)", "RERmaks", "PFmaks", "VEmaks (L/min)", "HFmaks", "Vo2puls (ml)", "tid til utmatterese (s)", "BORGmaks", "LAKTATmaks (mmol/L)", "Arbeidsøkonomisk Vo2(ml/min/kg)", "Arbeidsøkonomisk Vo2(ml/min)", "Arbeidsøkonomisk prosent av Vo2maks", "Arbeidsøkonomisk RER", "Arbeidsøkonomisk HF", "Arbeidsøkonomisk prosent av maksHF", "1RM i beinpress (Nm)", "1RM i beinpress (watt)", "Maks effekt venstre bein (watt)", "Maks effekt høyre bein (watt)", "Maks kraft venstre bein (N)", "Maks kraft høgre bein (N)" ))) %>% # ordner rekkefølge og norske navn
+   mutate(variable = factor(variable, levels = c("weight", "bmi","lean_mass", "vo2max_ml_min_kg_6x5", "vo2max_ml_min_6x5", "rer_max_30sek", "bfmax_30sek", "Ve_L/min_max_30sek", "hf_max", "o2_puls (ml)", "time_to_exhaustion", "borg_end", "lac", "arbec_mean_o2", "arbec_vo2_ml_min", "arbec_%_o2max", "arbec_RER", "arbec_HF", "arbec_%_maksHF", "one_rm_newton", "one_rm_watt", "pmax_left", "pmax_right", "fmax_left", "fmax_right","chair_stand_test"), 
+              labels = c("Vekt (kg)", "KMI", "Mager masse (gram)", "Vo2maks (ml/min/kg)","Vo2maks (ml/min)", "RERmaks", "PFmaks", "VEmaks (L/min)", "HFmaks", "Vo2puls (ml)", "tid til utmatterese (s)", "BORGmaks", "LAKTATmaks (mmol/L)", "Arbeidsøkonomisk Vo2(ml/min/kg)", "Arbeidsøkonomisk Vo2(ml/min)", "Arbeidsøkonomisk prosent av Vo2maks", "Arbeidsøkonomisk RER", "Arbeidsøkonomisk HF", "Arbeidsøkonomisk prosent av maksHF", "1RM i beinpress (Nm)", "1RM i beinpress (watt)", "Maks effekt venstre bein (watt)", "Maks effekt høyre bein (watt)", "Maks kraft venstre bein (N)", "Maks kraft høgre bein (N)", "Chair stand test"))) %>% # ordner rekkefølge og norske navn
   arrange(variable) %>% #ordner rekkefølge på variabelene 
   flextable()  %>%
    set_header_labels(variable = "",

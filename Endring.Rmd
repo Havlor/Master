@@ -14,7 +14,7 @@ library(ggtext)
 library(flextable)
 library(ggplot2)
 
-data <- read_excel("Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
 Vo2endring <- select(data, id, time, group, vo2max_ml_min_kg_6x5) %>%
   filter(id != "tr031 10541") %>%
