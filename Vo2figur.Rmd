@@ -40,10 +40,16 @@ ggplot(Vo2figur, aes(time, vo2max_ml_min_kg_6x5, color = group, group = id)) + g
   labs(x = "Tidspunkt", 
        y = "VO<sub>2max</sub> (ml min<sup> -1</sup>)", color = "Group") +
   geom_hline(data = mean, aes(yintercept = fls, col = "Friklivssentral")) +  geom_hline(data = mean, aes(yintercept = kon, col = "Kontroll"))
-       
+  
+
+esquisser()
+janitor()
 
 ```
 
+#grafer
+
+esquisser()
 
 
 
