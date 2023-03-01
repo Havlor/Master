@@ -98,10 +98,14 @@ summarise(m = mean(value),
  #fjerner variablene jeg ikke trenger lenger
    mutate(variable = factor(variable, levels = c("n", "age", "weight", "height","bmi", "wc", "handgrip", "sys", "dia","vo2max_ml_min_kg_6x5", "lean_mass", "fat_mass", "one_rm_newton"), 
               labels = c("Antall", "Alder (år)", "Vekt (kg)", "Høyde (cm)","KMI",                            "Livvidde (cm)","Grepsstyrke (kg)",                                                 "Systolisk  blodtrykk (mmHg)",                                                      "Diastolisk blodtrykk (mmHg)", "Vo2maks(ml/kg/min)",                                "Mager masse (gram)", "Fettmasse (gram)",
-                         "1RM i benpress (N)" ))) %>%
-  print()
+                         "1RM i benpress (N)" )))
+  
+  
+tabell_testing["mst_fls"][tabell_testing["mst_fls"] == 8] <- "16"
+tabell_testing["mst_kon"][tabell_testing["mst_kon"] == 10.5] <- "21" 
 
-  mutate()# ordner rekkefølge og norske navn #endrer rekkefølge på gruppene
+deskriptiv_tabell <- tabell_testing %>%
+  # ordner rekkefølge og norske navn #endrer rekkefølge på gruppene
   arrange(variable) %>% #ordner rekkefølge på variabelene 
   flextable()  %>%
    set_header_labels(variable = "",
