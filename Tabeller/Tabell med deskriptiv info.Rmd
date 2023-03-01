@@ -34,7 +34,6 @@ summarise(m = mean(value),
   select(-m, -s, -group, -sex) %>% #fjerner variablene jeg ikke trenger lenger
   pivot_wider(names_from = group_sex, 
               values_from = ms) %>% # gjør tabellen bredere for å få navn på variabel ved siden av tall
-  print()
    mutate(variable = factor(variable, levels = c("n", "age", "weight", "height","bmi", "wc", "handgrip", "sys", "dia","vo2max_ml_min_kg_6x5", "lean_mass", "fat_mass", "one_rm_newton"), 
               labels = c("Antall", "Alder (år)", "Vekt (kg)", "Høyde (cm)","KMI",                            "Livvidde (cm)","Grepsstyrke (kg)",                                                 "Systolisk  blodtrykk (mmHg)",                                                      "Diastolisk blodtrykk (mmHg)", "Vo2maks(ml/kg/min)",                                "Mager masse (gram)", "Fettmasse (gram)",
                          "1RM i benpress (N)" ))) %>% # ordner rekkefølge og norske navn
@@ -70,9 +69,16 @@ data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
 tabell_testing <- data %>%
 select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2max_ml_min_kg_6x5, lean_mass, fat_mass, one_rm_newton) %>% #Velger variabler
-drop_na() %>% # fjerner NA
+  
+  tabell_testing$lean_mass[is.na(tabell_testing$lean_mass)] <- mean(tabell_testing$lean_mass, na.rm = TRUE)
+
+ tabell_testing$fat_mass[is.na(tabell_testing$fat_mass)] <- mean(tabell_testing$fat_mass, na.rm = TRUE)
+ 
+ tabell_testing$one_rm_newton[is.na(tabell_testing$one_rm_newton)] <- mean(tabell_testing$one_rm_newton, na.rm = TRUE) # fjerner NA og gjør om til gjennomsnitt i gitt variabel
+
+des <-tabell_testing %>%
 group_by(sex,group) %>% # grupperer etter kjønn og FLS/kontroll
-  filter(time == "pre") %>% #filterer ut post for å bare få pre-tester
+  filter(time == "pre") %>%#filterer ut post for å bare få pre-tester
 mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
   pivot_longer(names_to = "variable", 
                values_to = "value", 
@@ -85,6 +91,7 @@ summarise(m = mean(value),
   ungroup() %>%#setter "group" og "sex" sammen
   pivot_wider(names_from = c(sex, group), 
               values_from = c(m, s)) %>%
+  
   mutate(fls_m_t = (m_1_fls + m_2_fls)/2, fls_s_t = (s_1_fls + m_2_fls)/2, kon_m_t = (m_1_kon + m_2_kon)/2, kon_s_t = (s_1_kon + s_2_kon)/2) %>%
   
   mutate(ms1_fls = if_else(variable == "n", as.character(m_1_fls), paste0(signif(m_1_fls, 3),  " (", signif(s_1_fls, 3), ")")), 
@@ -101,10 +108,10 @@ summarise(m = mean(value),
                          "1RM i benpress (N)" )))
   
   
-tabell_testing["mst_fls"][tabell_testing["mst_fls"] == 8] <- "16"
-tabell_testing["mst_kon"][tabell_testing["mst_kon"] == 10.5] <- "21" 
+des["mst_fls"][des["mst_fls"] == 8] <- "16"
+des["mst_kon"][des["mst_kon"] == 11] <- "22" 
 
-deskriptiv_tabell <- tabell_testing %>%
+deskriptiv_tabell <- des %>%
   # ordner rekkefølge og norske navn #endrer rekkefølge på gruppene
   arrange(variable) %>% #ordner rekkefølge på variabelene 
   flextable()  %>%
