@@ -16,8 +16,8 @@ library(ggplot2)
 
 data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
-Vo2endring <- select(data, id, time, group, vo2max_ml_min_kg_6x5) %>%
-  filter(id != "tr031 10541") %>%
+Vo2endring_pp <- select(data, id, time, group, vo2max_ml_min_kg_6x5) %>%
+filter(id != "tr031 10541") %>%
   filter(id != "tr031 11421") %>%
   filter(id != "tr031 13404") %>%
   filter(id != "tr031 004") %>%
@@ -25,20 +25,75 @@ Vo2endring <- select(data, id, time, group, vo2max_ml_min_kg_6x5) %>%
   filter(id != "tr031 001") %>%
   filter(id != "tr031 016") %>%
   filter(id != "tr031 014") %>%
+  filter(id != "tr031 002") %>%
+  filter(id != "tr031 006") %>%
+  filter(id != "tr031 007") %>%
+  filter(id != "tr031 009") %>%
+  filter(id != "tr031 010") %>%
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 013") %>%
+  filter(id != "tr031 015") %>%
+  
   pivot_wider(names_from = time,
                values_from = vo2max_ml_min_kg_6x5) %>%
   mutate(endring = post-pre, prosentvis_endring = (post - pre)/pre * 100) %>%
   print()
 
 
-vo2_total <- Vo2endring %>%
+ vo2_total_pp <- Vo2endring_pp %>%
   group_by(group)%>%
   summarise(mean = mean(endring),
             sd = sd(endring),
             mean_pro = mean(prosentvis_endring),
             sd_pro = sd(prosentvis_endring)) %>%
   print()
+```
+
+```{r setup, include=FALSE, results='hide'}
+Vo2endring_ppm <- select(data, id, time, group, vo2max_ml_min_kg_6x5) %>%
+filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  filter(id != "tr031 007") %>%
+  filter(id != "tr031 010") %>%
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 013") %>%
+  filter(id != "tr031 014") %>% #gjorde ikke test og ble ikke inkludert her
+  
+  pivot_wider(names_from = time,
+               values_from = vo2max_ml_min_kg_6x5) %>%
+  mutate(endring = post-pre, prosentvis_endring = (post - pre)/pre * 100) %>%
+  print()
 
 
- 
+ vo2_total_ppm <- Vo2endring_ppm %>%
+  group_by(group)%>%
+  summarise(mean = mean(endring),
+            sd = sd(endring),
+            mean_pro = mean(prosentvis_endring),
+            sd_pro = sd(prosentvis_endring)) %>%
+  print()
+```
+
+```{r setup, include=FALSE, results='hide'}
+
+Vo2endring_itt <- select(data, id, time, group, vo2max_ml_min_kg_6x5) %>%
+  pivot_wider(names_from = time,
+               values_from = vo2max_ml_min_kg_6x5) %>%
+  mutate(endring = post-pre, prosentvis_endring = (post - pre)/pre * 100) %>%
+  print()
+
+#nr 014 gjorde ikke vo2maks på post, men fikk her satt inn tilsvarende pre-test
+
+ vo2_total_itt <- Vo2endring_itt %>%
+  group_by(group)%>%
+  summarise(mean = mean(endring),
+            sd = sd(endring),
+            mean_pro = mean(prosentvis_endring),
+            sd_pro = sd(prosentvis_endring)) %>%
+  print()
 ```
