@@ -14,6 +14,7 @@ library(tidyverse)
 library(readxl)
 library(ggtext)
 library(ggplot2)
+library(esquisse)
 data <- read_excel("Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
 Vo2figur <- select(data, id, time, group, vo2max_ml_min_kg_6x5) %>%
@@ -38,11 +39,15 @@ Vo2figur$group <-factor(Vo2figur$group,levels = c("fls", "kon"), labels = c("Fri
 
 ggplot(Vo2figur, aes(time, vo2max_ml_min_kg_6x5, color = group, group = id)) + geom_line() + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
-       y = "VO<sub>2max</sub> (ml min<sup> -1</sup>)", color = "Group") +
-  geom_hline(data = mean, aes(yintercept = fls, col = "Friklivssentral")) +  geom_hline(data = mean, aes(yintercept = kon, col = "Kontroll"))
+       y = "VO<sub>2max</sub> (ml min<sup> -1</sup>)", color = "Group")
+
+  geom_hline(data = mean, aes(yintercept = fls, 
+                              col = "Friklivssentral")) +
+  geom_hline(data = mean, aes(yintercept = kon, col = "Kontroll"))
   
 
 esquisser()
+
 janitor()
 
 ```

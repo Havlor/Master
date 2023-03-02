@@ -17,8 +17,10 @@ library(readxl)
 library(kableExtra)
 library(ggpubr)
 library(dplyr)
+library(rstatix)
+library(broom)
 
-data1 <- read_excel("Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+data1 <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
 endring <- data1 %>%
 select(id, time, group, weight, bmi, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,`o2_puls (ml)`,hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac, `arbec_%_maksHF`,`arbec_%_o2max`,arbec_mean_o2,arbec_vo2_ml_min, arbec_RER, arbec_HF, one_rm_newton,one_rm_watt,pmax_left,pmax_right,fmax_left,fmax_right) %>%
