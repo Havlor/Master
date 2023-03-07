@@ -210,8 +210,8 @@ deskriptiv_tabell12 <- des12 %>%
   #justerer skrifttype
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 7) %>% #legger til fornote
     autofit() %>% # gjør av stander like
+    # save as Word document to filepath
   print()
 
-
-
-  ```
+ flextable::save_as_docx(path = "Test.docx")
+```
