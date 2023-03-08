@@ -43,7 +43,7 @@ mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
 summarise(m = mean(value),
           s = sd(value), .groups = "drop_last") %>%#summerer og får gjennomsnitt og standartdavik på de ulike variablene 
   mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 3),  " (", signif(s, 3), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
-  group_time = paste(group, time, sep = "_")) %>%#setter "group" og "tid" sammen
+  group_time = paste(group, time, sep = "_"))%>%#setter "group" og "tid" sammen
   ungroup() %>% #fjerner gruppering
   select(-m, -s, -group, -time) %>%#fjerner variablene jeg ikke trenger lenger
   pivot_wider(names_from = group_time, 

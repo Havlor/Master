@@ -47,7 +47,7 @@ summarise(m = mean(value),
   pivot_wider(names_from = c(sex, group), 
               values_from = c(m, s)) %>%
   
-  mutate(fls_m_t = (m_1_fls + m_2_fls)/2, fls_s_t = (s_1_fls + m_2_fls)/2, kon_m_t = (m_1_kon + m_2_kon)/2, kon_s_t = (s_1_kon + s_2_kon)/2) %>%
+  mutate(fls_m_t = (m_1_fls + m_2_fls)/2, fls_s_t = (s_1_fls + s_2_fls)/2, kon_m_t = (m_1_kon + m_2_kon)/2, kon_s_t = (s_1_kon + s_2_kon)/2) %>%
   
   mutate(ms1_fls = if_else(variable == "n", as.character(m_1_fls), paste0(signif(m_1_fls, 3),  " (", signif(s_1_fls, 3), ")")), 
          ms2_fls = if_else(variable == "n", as.character(m_2_fls), paste0(signif(m_2_fls, 3),  " (", signif(s_2_fls, 3), ")")),
@@ -67,7 +67,6 @@ summarise(m = mean(value),
                          "Grepsstyrke (kg)", "Systolisk  blodtrykk (mmHg)",
                          "Diastolisk blodtrykk (mmHg)", "Total mager masse (gram)",
                          "Total fettmass (gram)", "1RM i benpress (N)" )))
-  
   
 des["mst_fls"][des["mst_fls"] == 8] <- "16"
 des["mst_kon"][des["mst_kon"] == 11] <- "22" 
@@ -97,3 +96,4 @@ flextable::save_as_docx(path = "Test.docx") #brukes til å lagre til word
 Forslag:
 ⦁	 Erstatt «kombinert» med «menn og kvinner kombinert», evnt blir kjønnstegn.
 ⦁	Få inn kolonner med p-verdi på sammenligning for hhv kombinert, kvinner og menn (uparede t-tester)
+* noe galt med men og kvinner kombinert, sd i fls
