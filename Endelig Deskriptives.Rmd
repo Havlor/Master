@@ -88,6 +88,7 @@ deskriptiv_tabell <- des %>%
   #justerer skrifttype
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 7) %>% #legger til fornote
     autofit() %>% # gjør av stander like
+  flextable::save_as_docx(path = "deskriptives.docx") #brukes til å lagre til word
   print()
 ```
 

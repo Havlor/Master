@@ -20,8 +20,8 @@ library(dplyr)
 library(rstatix)
 library(broom)
 
-data_kom <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
-data_kom %>%
+datades <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+data_kom <- datades %>%
 select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5, lean_mass, fat_mass, one_rm_newton) %>%
   filter(time == "pre") %>% #filterer ut post for å bare få pre-tester#Velger variabler
   print()
@@ -60,8 +60,8 @@ t_1rm_kom
 ```
 
 ```{r setup, include=FALSE}
-data_k <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
-data_k %>%
+datades <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+ddata_k <- datades %>%
 select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5, lean_mass, fat_mass, one_rm_newton) %>%
   group_by(group) %>% # grupperer etter kjønn og FLS/kontroll
   filter(time == "pre") %>%
@@ -103,8 +103,8 @@ t_1rm_k
 
 ```{r setup, include=FALSE}
 
-data_m <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
-data_m %>%
+datades <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+data_m <- datades %>%
 select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5, lean_mass, fat_mass, one_rm_newton) %>%
   group_by(group) %>% # grupperer etter kjønn og FLS/kontroll
   filter(time == "pre") %>%
