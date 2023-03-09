@@ -96,4 +96,3 @@ flextable::save_as_docx(path = "Test.docx") #brukes til å lagre til word
 Forslag:
 ⦁	 Erstatt «kombinert» med «menn og kvinner kombinert», evnt blir kjønnstegn.
 ⦁	Få inn kolonner med p-verdi på sammenligning for hhv kombinert, kvinner og menn (uparede t-tester)
-* noe galt med men og kvinner kombinert, sd i fls

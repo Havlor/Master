@@ -1,0 +1,145 @@
+---
+title: "T-tester deskriptives"
+author: "Håvard Crantz Lorentzen"
+date: "2023-03-09"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+
+library(tidyverse)
+library(knitr)
+library(flextable)
+library(ggplot2)
+library(readxl)
+library(kableExtra)
+library(ggpubr)
+library(dplyr)
+library(rstatix)
+library(broom)
+
+data_kom <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+data_kom %>%
+select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5, lean_mass, fat_mass, one_rm_newton) %>%
+  filter(time == "pre") %>% #filterer ut post for å bare få pre-tester#Velger variabler
+  print()
+
+#tosideig eller ensidig?
+
+t_alder_kom <- t.test(age ~ group, data = data_kom, paired = FALSE)
+t_vekt_kom <- t.test(weight ~ group, data = data_kom, paired = FALSE)
+t_høyde_kom <- t.test(height ~ group, data = data_kom, paired = FALSE)
+t_kmi_kom <- t.test(bmi ~ group, data = data_kom, paired = FALSE)
+t_vo2maks_kg_kom <- t.test(vo2max_ml_min_kg_6x5 ~ group, data = data_kom, paired = FALSE)
+t_vo2maks_ml_kom <- t.test(vo2max_ml_min_6x5 ~ group, data = data_kom, paired = FALSE)
+t_livvidde_kom <- t.test(wc ~ group, data = data_kom, paired = FALSE)
+t_grepsstyrke_kom <- t.test(handgrip ~ group, data = data_kom, paired = FALSE)
+t_sblodtrykk_kom <- t.test(sys ~ group, data = data_kom, paired = FALSE)
+t_dblodtrykk_kom <- t.test(dia ~ group, data = data_kom, paired = FALSE)
+t_mmasse_kom <- t.test(lean_mass ~ group, data = data_kom, paired = FALSE)
+t_fmasse_kom <- t.test(fat_mass ~ group, data = data_kom, paired = FALSE)
+t_1rm_kom <- t.test(one_rm_newton ~ group, data = data_kom, paired = FALSE)
+
+
+t_alder_kom
+t_vekt_kom
+t_høyde_kom
+t_kmi_kom 
+t_vo2maks_kg_kom
+t_vo2maks_ml_kom
+t_livvidde_kom
+t_grepsstyrke_kom
+t_sblodtrykk_kom
+t_dblodtrykk_kom
+t_mmasse_kom
+t_fmasse_kom
+t_1rm_kom
+
+```
+
+```{r setup, include=FALSE}
+data_k <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+data_k %>%
+select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5, lean_mass, fat_mass, one_rm_newton) %>%
+  group_by(group) %>% # grupperer etter kjønn og FLS/kontroll
+  filter(time == "pre") %>%
+  filter(sex == "1") %>%#filterer ut post for å bare få pre-tester#Velger variabler
+  print()
+
+#tosideig eller ensidig?
+
+t_alder_k <- t.test(age ~ group, data = data_k, paired = FALSE)
+t_vekt_k <- t.test(weight ~ group, data = data_k, paired = FALSE)
+t_høyde_k <- t.test(height ~ group, data = data_k, paired = FALSE)
+t_kmi_k <- t.test(bmi ~ group, data = data_k, paired = FALSE)
+t_vo2maks_kg_k <- t.test(vo2max_ml_min_kg_6x5 ~ group, data = data_k, paired = FALSE)
+t_vo2maks_ml_k <- t.test(vo2max_ml_min_6x5 ~ group, data = data_k, paired = FALSE)
+t_livvidde_k <- t.test(wc ~ group, data = data_k, paired = FALSE)
+t_grepsstyrke_k <- t.test(handgrip ~ group, data = data_k, paired = FALSE)
+t_sblodtrykk_k <- t.test(sys ~ group, data = data_k, paired = FALSE)
+t_dblodtrykk_k <- t.test(dia ~ group, data = data_k, paired = FALSE)
+t_mmasse_k <- t.test(lean_mass ~ group, data = data_k, paired = FALSE)
+t_fmasse_k <- t.test(fat_mass ~ group, data = data_k, paired = FALSE)
+t_1rm_k <- t.test(one_rm_newton ~ group, data = data_k, paired = FALSE)
+
+
+t_alder_k
+t_vekt_k
+t_høyde_k
+t_kmi_k 
+t_vo2maks_kg_k
+t_vo2maks_ml_k
+t_livvidde_k
+t_grepsstyrke_k
+t_sblodtrykk_k
+t_dblodtrykk_k
+t_mmasse_k
+t_fmasse_k
+t_1rm_k
+
+```
+
+```{r setup, include=FALSE}
+
+data_m <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+data_m %>%
+select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5, lean_mass, fat_mass, one_rm_newton) %>%
+  group_by(group) %>% # grupperer etter kjønn og FLS/kontroll
+  filter(time == "pre") %>%
+  filter(sex == "2") %>% #filterer ut post for å bare få pre-tester#Velger variabler
+  print()
+
+#tosideig eller ensidig?
+
+t_alder_m <- t.test(age ~ group, data = data_m, paired = FALSE)
+t_vekt_m <- t.test(weight ~ group, data = data_m, paired = FALSE)
+t_høyde_m <- t.test(height ~ group, data = data_m, paired = FALSE)
+t_kmi_m <- t.test(bmi ~ group, data = data_m, paired = FALSE)
+t_vo2maks_kg_m <- t.test(vo2max_ml_min_kg_6x5 ~ group, data = data_m, paired = FALSE)
+t_vo2maks_ml_m <- t.test(vo2max_ml_min_6x5 ~ group, data = data_m, paired = FALSE)
+t_livvidde_m <- t.test(wc ~ group, data = data_m, paired = FALSE)
+t_grepsstyrke_m <- t.test(handgrip ~ group, data = data_m, paired = FALSE)
+t_sblodtrykk_m <- t.test(sys ~ group, data = data_m, paired = FALSE)
+t_dblodtrykk_m <- t.test(dia ~ group, data = data_m, paired = FALSE)
+t_mmasse_m <- t.test(lean_mass ~ group, data = data_m, paired = FALSE)
+t_fmasse_m <- t.test(fat_mass ~ group, data = data_m, paired = FALSE)
+t_1rm_m <- t.test(one_rm_newton ~ group, data = data_m, paired = FALSE)
+
+
+t_alder_m
+t_vekt_m
+t_høyde_m
+t_kmi_m
+t_vo2maks_kg_m
+t_vo2maks_ml_m
+t_livvidde_m
+t_grepsstyrke_m
+t_sblodtrykk_m
+t_dblodtrykk_m
+t_mmasse_m
+t_fmasse_m
+t_1rm_m
+
+```
