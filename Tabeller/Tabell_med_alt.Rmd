@@ -39,9 +39,10 @@ mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
   pivot_longer(names_to = "time", 
                values_to = "value",
                cols = pre:post) %>%
-   group_by(group, time, variable) %>% # legger til variabel i gruppe
+   group_by(group, time, variable) %>%# legger til variabel i gruppe
 summarise(m = mean(value),
-          s = sd(value), .groups = "drop_last") %>%#summerer og får gjennomsnitt og standartdavik på de ulike variablene 
+          s = sd(value), .groups = "drop_last") %>%
+  print()#summerer og får gjennomsnitt og standartdavik på de ulike variablene 
   mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 3),  " (", signif(s, 3), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
   group_time = paste(group, time, sep = "_"))%>%#setter "group" og "tid" sammen
   ungroup() %>% #fjerner gruppering
@@ -62,7 +63,7 @@ summarise(m = mean(value),
   merge_at(part = "header", i = 1, j = 2:3) %>%
     merge_at(part = "header", i = 1, j = 4:5) %>% #justerer skrifttype
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>% #legger til fornote
-    autofit() %>% # gjør av stander like
+    autofit() %>% # gjør avstander like
   print()
 ```
 

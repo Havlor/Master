@@ -1,0 +1,47 @@
+---
+title: "Vo2_tabell"
+author: "Håvard Crantz Lorentzen"
+date: "2023-03-09"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(flextable)
+library(ggplot2)
+library(readxl)
+library(kableExtra)
+
+data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+
+enring_kontroll <- data %>%
+select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, weight, `o2_puls (ml)`, hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac, time_to_exhaustion,`arbec_%_maksHF`,`arbec_%_o2max`,arbec_mean_o2,arbec_vo2_ml_min, arbec_RER, arbec_HF, lean_mass, fat_mass, one_rm_newton, one_rm_watt,pmax_left, pmax_right, fmax_left, fmax_right) %>%
+filter(group != "fls") %>%
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") 
+ 
+  
+endring_kon <- enring_kontroll %>%
+  group_by(time,group) %>%
+   pivot_longer(names_to = "variable", 
+               values_to = "value", 
+               cols = vo2max_ml_min_kg_6x5:fmax_right) %>%
+  filter(value != "na") %>%
+   pivot_wider(names_from = "time",
+              values_from = "value")%>%
+  filter(pre != "na") %>%
+  filter(post != "na") %>%
+  mutate(diff = post/pre*100-100) %>%
+  group_by(group, variable) %>% #legger til variabel i gruppe
+summarise(m = mean(diff)) %>%
+  print()
+```
+
+flextable::save_as_docx(path = "Test.docx") #brukes til å lagre til word
+
+ enring_kon$`o2_puls (ml)`[is.na(enring_kon$`o2_puls (ml)`)] <- mean(enring_kon$`o2_puls (ml)`, na.rm = TRUE)
+  enring_kon$hf_max[is.na(enring_kon$hf_max)] <- mean(enring_kon$hf_max, na.rm = TRUE)
