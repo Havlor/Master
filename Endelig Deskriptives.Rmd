@@ -24,11 +24,11 @@ select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2ma
   filter(time == "pre")%>%
   print()#filterer ut post for å bare få pre-tester#Velger variabler
   
-  tabell_D$lean_mass[is.na(tabell_D$lean_mass)] <- mean(tabell_D$lean_mass, na.rm = TRUE)
+  tabell_D$lean_mass[is.na(tabell_D$lean_mass)] <- mean(tabell_D$lean_mass, na.rm = TRUE) #endre dette så det bare blir gjennomsnittet til kontroll?
 
  tabell_D$fat_mass[is.na(tabell_D$fat_mass)] <- mean(tabell_D$fat_mass, na.rm = TRUE)
  
- tabell_D$one_rm_newton[is.na(tabell_D$one_rm_newton)] <- mean(tabell_D$one_rm_newton, na.rm = TRUE) # fjerner NA og gjør om til gjennomsnitt i gitt variabel
+ tabell_D$one_rm_newton[is.na(tabell_D$one_rm_newton)] <- mean(tabell_D$one_rm_newton, na.rm = TRUE) # fjerner NA og gjør om til gjennomsnitt i gitt variabel #endre dette så det bare blir gjennomsnittet til kontroll?
 
 des <-tabell_D %>%
    mutate(lean_mass_kg = lean_mass/1000) %>%
@@ -88,7 +88,7 @@ deskriptiv_tabell <- des %>%
   #justerer skrifttype
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 7) %>% #legger til fornote
     autofit() %>% # gjør av stander like
-  flextable::save_as_docx(path = "deskriptives.docx") #brukes til å lagre til word
+ 
   print()
 ```
 
