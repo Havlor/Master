@@ -19,16 +19,17 @@ library(kableExtra)
 data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
 tabell_vo2_itt <- data %>%
-select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,`o2_puls (ml)`,hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac) %>%
+select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass, o2_puls_ml ,hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek, time_to_exhaustion, borg_end,lac) %>%
   mutate(lean_mass_kg = lean_mass/1000) %>%
   mutate(vo2max_ml_min_lm_6x5 = vo2max_ml_min_6x5/lean_mass_kg)%>%
-  select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, vo2max_ml_min_lm_6x5,`o2_puls (ml)`,hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac) %>%
+  select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, vo2max_ml_min_lm_6x5,o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek,time_to_exhaustion, borg_end,lac) %>%
   group_by(time,group) %>%# grupperer etter tid og FLS/kontroll
 mutate(n = n()) %>% 
   pivot_longer(names_to = "variable", 
                values_to = "value", 
                cols = vo2max_ml_min_kg_6x5:n) %>%
   group_by(time, group, variable)%>%
+ filter(value != "na") %>%
   summarise(m = mean(value),
           s = sd(value), .groups = "drop_last") %>%
   mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 3),  " (", signif(s, 3), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
@@ -37,8 +38,8 @@ mutate(n = n()) %>%
   select(-m, -s, -group, -time) %>%
   pivot_wider(names_from = group_time, 
               values_from = ms) %>%
-  mutate(variable = factor(variable, levels = c("n", "vo2max_ml_min_kg_6x5", "vo2max_ml_min_6x5", "vo2max_ml_min_lm_6x5" ,"o2_puls (ml)", "hf_max", "rer_max_30sek", "bfmax_30sek", "Ve_L/min_max_30sek", "time_to_exhaustion", "borg_end", "lac"), 
-              labels = c("Antall", "vo2maks (ml/min/kg)", "vo2maks (ml/min)", "vo2maks (ml/min/m.m)", "o2 puls (ml)", "Maks puls", "Maks RER", "Maks pustefrekvens", "Maks ventialsjon (ml)", "Tid til utmattelse (s)", "Borg ved Vo2maks", "Laktat"))) %>% # ordner rekkefølge og norske navn
+  mutate(variable = factor(variable, levels = c("n", "vo2max_ml_min_kg_6x5", "vo2max_ml_min_6x5", "vo2max_ml_min_lm_6x5" ,"o2_puls_ml", "hf_max", "rer_max_30sek", "bfmax_30sek", "Ve_L_min_max_30sek", "time_to_exhaustion", "borg_end", "lac"), 
+              labels = c("Antall", "vo2maks (ml/min/kg)", "vo2maks (ml/min)", "vo2maks (ml/min/m.m)", "o2 puls (ml)", "Maks puls", "Maks RER", "Maks pustefrekvens", "Maks ventialsjon (L/min)", "Tid til utmattelse (s)", "Borg ved Vo2maks", "Laktat"))) %>% # ordner rekkefølge og norske navn
   select(variable, fls_pre, fls_post, kon_pre, kon_post) %>% #endrer rekkefølge på gruppene
   arrange(variable) %>% #ordner rekkefølge på variabelene 
   flextable()  %>%
@@ -55,19 +56,19 @@ mutate(n = n()) %>%
   print()
 
 
-# NA på 14010 HFmax og HFpuls
-# NA på 11716 Lean mass/lean mass o2
-# NA på alle Vo2maks tall hos 014 på post
+# NA på 14010 HFmax og HFpuls - HFmaks ved post ble satt som hfmaks på pre.
+# 11716 har ikke lean mass - variabel ble filtrert ut hos deltager.
+
 
 ```
 
 ```{r setup, include=FALSE}
 
 tabell_vo2_pp <- data %>%
-select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,`o2_puls (ml)`,hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac) %>%
+select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek,time_to_exhaustion, borg_end,lac) %>%
   mutate(lean_mass_kg = lean_mass/1000) %>%
   mutate(vo2max_ml_min_lm_6x5 = vo2max_ml_min_6x5/lean_mass_kg)%>%
-  select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, vo2max_ml_min_lm_6x5,`o2_puls (ml)`,hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac) %>%
+  select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, vo2max_ml_min_lm_6x5,o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek, time_to_exhaustion, borg_end,lac) %>%
   filter(id != "tr031 10541") %>%
   filter(id != "tr031 11421") %>%
   filter(id != "tr031 13404") %>%
@@ -90,6 +91,7 @@ mutate(n = n()) %>%
                values_to = "value", 
                cols = vo2max_ml_min_kg_6x5:n) %>%
   group_by(time, group, variable)%>%
+  filter(value != "na") %>%
   summarise(m = mean(value),
           s = sd(value), .groups = "drop_last") %>%
   mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 3),  " (", signif(s, 3), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
@@ -98,8 +100,8 @@ mutate(n = n()) %>%
   select(-m, -s, -group, -time) %>%
   pivot_wider(names_from = group_time, 
               values_from = ms) %>%
-  mutate(variable = factor(variable, levels = c("n", "vo2max_ml_min_kg_6x5", "vo2max_ml_min_6x5", "vo2max_ml_min_lm_6x5" ,"o2_puls (ml)", "hf_max", "rer_max_30sek", "bfmax_30sek", "Ve_L/min_max_30sek", "time_to_exhaustion", "borg_end", "lac"), 
-              labels = c("Antall", "vo2maks (ml/min/kg)", "vo2maks (ml/min)", "vo2maks (ml/min/m.m)", "o2 puls (ml)", "Maks puls", "Maks RER", "Maks pustefrekvens", "Maks ventialsjon (ml)", "Tid til utmattelse (s)", "Borg ved Vo2maks", "Laktat"))) %>% # ordner rekkefølge og norske navn
+  mutate(variable = factor(variable, levels = c("n", "vo2max_ml_min_kg_6x5", "vo2max_ml_min_6x5", "vo2max_ml_min_lm_6x5" ,"o2_puls_ml", "hf_max", "rer_max_30sek", "bfmax_30sek", "Ve_L_min_max_30sek", "time_to_exhaustion", "borg_end", "lac"), 
+              labels = c("Antall", "vo2maks (ml/min/kg)", "vo2maks (ml/min)", "vo2maks (ml/min/m.m)", "o2 puls (ml)", "Maks puls", "Maks RER", "Maks pustefrekvens", "Maks ventialsjon (L/min)", "Tid til utmattelse (s)", "Borg ved Vo2maks", "Laktat"))) %>% # ordner rekkefølge og norske navn
   select(variable, fls_pre, fls_post, kon_pre, kon_post) %>% #endrer rekkefølge på gruppene
   arrange(variable) %>% #ordner rekkefølge på variabelene 
   flextable()  %>%
@@ -116,17 +118,17 @@ mutate(n = n()) %>%
   print()
 
 
-# NA på 14010 HFmax og HFpuls
-# NA på 11716 Lean mass/lean mass o2
+# NA på 14010 HFmax og HFpuls - HFmaks ved post ble satt som hfmaks på pre.
+# 11716 har ikke lean mass - variabel ble filtrert ut hos deltager.
 ```
 
 ```{r setup, include=FALSE}
 
-tabell_vo2_pp <- data %>%
-select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,`o2_puls (ml)`,hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac) %>%
+tabell_vo2_ppm <- data %>%
+select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,o2_puls_ml,hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek,time_to_exhaustion, borg_end,lac) %>%
   mutate(lean_mass_kg = lean_mass/1000) %>%
   mutate(vo2max_ml_min_lm_6x5 = vo2max_ml_min_6x5/lean_mass_kg)%>%
-  select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, vo2max_ml_min_lm_6x5,`o2_puls (ml)`,hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac) %>%
+  select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, vo2max_ml_min_lm_6x5,o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek, time_to_exhaustion, borg_end,lac) %>%
   filter(id != "tr031 10541") %>%
   filter(id != "tr031 11421") %>%
   filter(id != "tr031 13404") %>%
@@ -144,6 +146,7 @@ mutate(n = n()) %>%
                values_to = "value", 
                cols = vo2max_ml_min_kg_6x5:n) %>%
   group_by(time, group, variable)%>%
+   filter(value != "na") %>%
   summarise(m = mean(value),
           s = sd(value), .groups = "drop_last") %>%
   mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 3),  " (", signif(s, 3), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
@@ -152,7 +155,7 @@ mutate(n = n()) %>%
   select(-m, -s, -group, -time) %>%
   pivot_wider(names_from = group_time, 
               values_from = ms) %>%
-  mutate(variable = factor(variable, levels = c("n", "vo2max_ml_min_kg_6x5", "vo2max_ml_min_6x5", "vo2max_ml_min_lm_6x5" ,"o2_puls (ml)", "hf_max", "rer_max_30sek", "bfmax_30sek", "Ve_L/min_max_30sek", "time_to_exhaustion", "borg_end", "lac"), 
+  mutate(variable = factor(variable, levels = c("n", "vo2max_ml_min_kg_6x5", "vo2max_ml_min_6x5", "vo2max_ml_min_lm_6x5" ,"o2_puls_ml", "hf_max", "rer_max_30sek", "bfmax_30sek", "Ve_L_min_max_30sek", "time_to_exhaustion", "borg_end", "lac"), 
               labels = c("Antall", "vo2maks (ml/min/kg)", "vo2maks (ml/min)", "vo2maks (ml/min/m.m)", "o2 puls (ml)", "Maks puls", "Maks RER", "Maks pustefrekvens", "Maks ventialsjon (ml)", "Tid til utmattelse (s)", "Borg ved Vo2maks", "Laktat"))) %>% # ordner rekkefølge og norske navn
   select(variable, fls_pre, fls_post, kon_pre, kon_post) %>% #endrer rekkefølge på gruppene
   arrange(variable) %>% #ordner rekkefølge på variabelene 
@@ -170,7 +173,6 @@ mutate(n = n()) %>%
   print()
 
 
-# NA på 14010 HFmax og HFpuls
-# NA på 11716 Lean mass/lean mass o2
-# NA på alle Vo2maks tall hos 014 på post
+# NA på 14010 HFmax og HFpuls - HFmaks ved post ble satt som hfmaks på pre.
+# 11716 har ikke lean mass - variabel ble filtrert ut hos deltager.
 ```
