@@ -7,7 +7,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r setup, include=FALSE}
+```{r itt vo2tabell, include=FALSE}
 
 library(tidyverse)
 library(knitr)
@@ -62,7 +62,7 @@ mutate(n = n()) %>%
 
 ```
 
-```{r setup, include=FALSE}
+```{r pp vo2tabell, include=FALSE}
 
 tabell_vo2_pp <- data %>%
 select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek,time_to_exhaustion, borg_end,lac) %>%
@@ -122,7 +122,7 @@ mutate(n = n()) %>%
 # 11716 har ikke lean mass - variabel ble filtrert ut hos deltager.
 ```
 
-```{r setup, include=FALSE}
+```{r ppm vo2tabell, include=FALSE}
 
 tabell_vo2_ppm <- data %>%
 select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,o2_puls_ml,hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek,time_to_exhaustion, borg_end,lac) %>%

@@ -144,42 +144,42 @@ model.metrics_tid_pp %>% levene_test(.resid ~ group)
 model.metrics_borg_pp %>% levene_test(.resid ~ group)
 model.metrics_lac_pp %>% levene_test(.resid ~ group)
 
-model.metrics_pp %>% 
+model.metrics_lac_pp %>% 
   filter(abs(.std.resid) > 3) %>%
   as.data.frame()
 
 res.aov_vo2kg_pp <- Vo2endring_pp %>% anova_test(post_vo2max_ml_min_kg_6x5 ~ pre_vo2max_ml_min_kg_6x5 + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_vo2kg_pp)
 
 res.aov_vo2pp <- Vo2endring_pp %>% anova_test(post_vo2max_ml_min_6x5 ~ pre_vo2max_ml_min_6x5 + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_vo2pp)
 
 res.aov_vo2lmpp <- Vo2endring_pp %>% anova_test(post_vo2max_ml_min_lm_6x5 ~ pre_vo2max_ml_min_lm_6x5 + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_vo2lmpp)
 
 res.aov_o2pulspp <- Vo2endring_pp %>% anova_test(post_o2_puls_ml ~ pre_o2_puls_ml + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_o2pulspp)
 
 res.aov_hfpp <- Vo2endring_pp %>% anova_test(post_hf_max ~ pre_hf_max + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_hfpp)
 
 res.aov_rerpp <- Vo2endring_pp %>% anova_test(post_rer_max_30sek ~ pre_rer_max_30sek + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_rerpp)
 
 res.aov_bfpp <- Vo2endring_pp %>% anova_test(post_bfmax_30sek ~ pre_bfmax_30sek + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_bfpp)
 
 res.aov_vdpp <- Vo2endring_pp %>% anova_test(post_Ve_L_min_max_30sek ~ pre_Ve_L_min_max_30sek + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_vdpp)
 
 res.aov_tidpp <- Vo2endring_pp %>% anova_test(post_time_to_exhaustion ~ pre_time_to_exhaustion + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_tidpp)
 
 res.aov_borgpp <- Vo2endring_pp %>% anova_test(post_borg_end ~ pre_borg_end + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_borgpp)
 
 res.aov_lacpp <- Vo2endring_pp %>% anova_test(post_lac ~ pre_lac + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_lacpp)
 
 
 pwc_vo2kgpp <- Vo2endring_pp%>% 
@@ -231,13 +231,13 @@ pwc_hfpulspp$p
 
 
 
-pwc_pp <- pwc_pp %>% add_xy_position(x = "group", fun = "mean_se")
-ggline(get_emmeans(pwc_pp), x = "group", y = "emmean") +
+pwc_pp <- pwc_lacpp %>% add_xy_position(x = "group", fun = "mean_se")
+ggline(get_emmeans(pwc_lacpp), x = "group", y = "emmean") +
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) + 
-  stat_pvalue_manual(pwc_pp, hide.ns = TRUE, tip.length = FALSE) +
+  stat_pvalue_manual(pwc_lacpp, hide.ns = TRUE, tip.length = FALSE) +
   labs(
-    subtitle = get_test_label(res.aov_pp, detailed = TRUE),
-    caption = get_pwc_label(pwc_pp))
+    subtitle = get_test_label(res.aov_lacpp, detailed = TRUE),
+    caption = get_pwc_label(pwc_lacpp))
 
  vo2_total_pp <- Vo2endring_pp %>%
    mutate(endring = post-pre, prosentvis_endring = (post - pre)/pre * 100) %>%
