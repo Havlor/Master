@@ -6,7 +6,7 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
-```{r setup, include=FALSE, results='hide'}
+```{r Per protokoll ancova, include=FALSE, results='hide'}
 library(tidyverse)
 library(knitr)
 library(readxl)
@@ -250,7 +250,7 @@ ggline(get_emmeans(pwc_pp), x = "group", y = "emmean") +
  
 ```
 
-```{r setup, include=FALSE, results='hide'}
+```{r Modifisert per protokoll ancova, include=FALSE, results='hide'}
 
 Vo2endring_ppm <- data %>%
 select(id, time, group, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5, lean_mass, o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek, time_to_exhaustion, borg_end,lac) %>%
@@ -322,7 +322,7 @@ model.metrics_o2_ppm <- augment(model_o2_ppm) %>%
 model.metrics_o2_lmppm <- augment(model_o2_lmppm) %>%
   select(-.hat, -.sigma, -.fitted) 
   head(model.metrics_o2_lmppm, 22)
-model.metrics_o2puls_pp <- augment(model_o2puls_pp) %>%
+model.metrics_o2puls_ppm <- augment(model_o2puls_ppm) %>%
   select(-.hat, -.sigma, -.fitted) 
   head(model.metrics_o2puls_ppm, 22)
 model.metrics_hf_ppm <- augment(model_hf_ppm) %>%
@@ -379,34 +379,34 @@ res.aov_vo2kg_ppm <- Vo2endring_ppm %>% anova_test(post_vo2max_ml_min_kg_6x5 ~ p
 get_anova_table(res.aov_vo2kg_ppm)
 
 res.aov_vo2ppm <- Vo2endring_ppm %>% anova_test(post_vo2max_ml_min_6x5 ~ pre_vo2max_ml_min_6x5 + group)
-get_anova_table(res.aov_vo2kg_ppm)
+get_anova_table(res.aov_vo2ppm)
 
 res.aov_vo2lmppm <- Vo2endring_ppm %>% anova_test(post_vo2max_ml_min_lm_6x5 ~ pre_vo2max_ml_min_lm_6x5 + group)
-get_anova_table(res.aov_vo2kg_ppm)
+get_anova_table(res.aov_vo2lmppm)
 
 res.aov_o2pulsppm <- Vo2endring_ppm %>% anova_test(post_o2_puls_ml ~ pre_o2_puls_ml + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_o2pulsppm)
 
-res.aov_hfpp <- Vo2endring_pp %>% anova_test(post_hf_max ~ pre_hf_max + group)
-get_anova_table(res.aov_pp)
+res.aov_hfppm <- Vo2endring_ppm %>% anova_test(post_hf_max ~ pre_hf_max + group)
+get_anova_table(res.aov_hfppm)
 
 res.aov_rerppm <- Vo2endring_ppm %>% anova_test(post_rer_max_30sek ~ pre_rer_max_30sek + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_rerppm)
 
 res.aov_bfppm <- Vo2endring_ppm %>% anova_test(post_bfmax_30sek ~ pre_bfmax_30sek + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_bfppm)
 
 res.aov_vdppm <- Vo2endring_ppm %>% anova_test(post_Ve_L_min_max_30sek ~ pre_Ve_L_min_max_30sek + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_vdppm)
 
 res.aov_tidppm <- Vo2endring_ppm %>% anova_test(post_time_to_exhaustion ~ pre_time_to_exhaustion + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_tidppm)
 
 res.aov_borgppm <- Vo2endring_ppm %>% anova_test(post_borg_end ~ pre_borg_end + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_borgppm)
 
 res.aov_lacppm <- Vo2endring_ppm %>% anova_test(post_lac ~ pre_lac + group)
-get_anova_table(res.aov_pp)
+get_anova_table(res.aov_lacppm)
 
 
 pwc_vo2kgppm <- Vo2endring_ppm%>% 
@@ -456,30 +456,209 @@ pwc_vo2ppm$p
 pwc_veppm$p
 pwc_hfpulsppm$p
 
-
-
-pwc_pp <- pwc_pp %>% add_xy_position(x = "group", fun = "mean_se")
-ggline(get_emmeans(pwc_pp), x = "group", y = "emmean") +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) + 
-  stat_pvalue_manual(pwc_pp, hide.ns = TRUE, tip.length = FALSE) +
-  labs(
-    subtitle = get_test_label(res.aov_pp, detailed = TRUE),
-    caption = get_pwc_label(pwc_pp))
-
- vo2_total_pp <- Vo2endring_pp %>%
-   mutate(endring = post-pre, prosentvis_endring = (post - pre)/pre * 100) %>%
-  group_by(group)%>%
-  summarise(mean = mean(endring),
-            sd = sd(endring),
-            mean_pro = mean(prosentvis_endring),
-            sd_pro = sd(prosentvis_endring)) %>%
-  print()
  
 ```
 
+```{r Intension to treat ancova, include=FALSE, results='hide'}
+
+Vo2endring_itt <- data %>%
+select(id, time, group, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5, lean_mass, o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek, time_to_exhaustion, borg_end,lac) %>%
+  mutate(lean_mass_kg = lean_mass/1000) %>%
+  mutate(vo2max_ml_min_lm_6x5 = vo2max_ml_min_6x5/lean_mass_kg)%>%
+  select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, vo2max_ml_min_lm_6x5,o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek,time_to_exhaustion, borg_end,lac) %>%
+  group_by(time,group) %>%# grupperer etter tid og FLS/kontroll
+  pivot_longer(names_to = "variable", 
+               values_to = "value", 
+               cols = vo2max_ml_min_kg_6x5:lac) %>%
+  group_by(time, group, variable)%>%
+  pivot_wider(names_from = time,
+               values_from = value)%>%
+  pivot_wider(names_from = variable,
+              values_from = c(pre,post))%>%
+  ungroup()%>%
+  print()
+
+ggscatter(Vo2endring_itt, x = "pre_vo2max_ml_min_kg_6x5", y = "post_vo2max_ml_min_kg_6x5",
+  color = "group", add = "reg.line"
+  )+
+  stat_regline_equation(
+    aes(label =  paste(..eq.label.., ..rr.label.., sep = "~~~~"), color = group))
+
+Vo2endring_itt %>% anova_test(post_vo2max_ml_min_kg_6x5 ~ group*pre_vo2max_ml_min_kg_6x5)
+Vo2endring_itt %>% anova_test(post_vo2max_ml_min_6x5 ~ group*pre_vo2max_ml_min_6x5)
+Vo2endring_itt %>% anova_test(post_vo2max_ml_min_lm_6x5 ~ group*pre_vo2max_ml_min_lm_6x5)
+Vo2endring_itt %>% anova_test(post_o2_puls_ml ~ group*pre_o2_puls_ml)
+Vo2endring_itt %>% anova_test(post_hf_max ~ group*pre_hf_max)
+Vo2endring_itt %>% anova_test(post_rer_max_30sek ~ group*pre_rer_max_30sek)
+Vo2endring_itt %>% anova_test(post_bfmax_30sek ~ group*pre_bfmax_30sek)
+Vo2endring_itt %>% anova_test(post_Ve_L_min_max_30sek ~ group*pre_Ve_L_min_max_30sek)
+Vo2endring_itt %>% anova_test(post_time_to_exhaustion ~ group*pre_time_to_exhaustion)
+Vo2endring_itt %>% anova_test(post_borg_end ~ group*pre_borg_end)
+Vo2endring_itt %>% anova_test(post_lac ~ group*pre_lac)
+#Homogeneity of regression slopes
+
+# Fit the model, the covariate goes first
+model_o2kg_itt <- lm(post_vo2max_ml_min_kg_6x5 ~ pre_vo2max_ml_min_kg_6x5 + group, data = Vo2endring_itt)
+model_o2_itt <- lm(post_vo2max_ml_min_6x5 ~ pre_vo2max_ml_min_6x5 + group, data = Vo2endring_itt)
+model_o2_lmitt <- lm(post_vo2max_ml_min_lm_6x5 ~ pre_vo2max_ml_min_lm_6x5 + group, data = Vo2endring_itt)
+model_o2puls_itt <- lm(post_o2_puls_ml ~ pre_o2_puls_ml + group, data = Vo2endring_itt)
+model_hf_itt <- lm(post_hf_max ~ pre_hf_max + group, data = Vo2endring_itt)
+model_rer_itt <- lm(post_rer_max_30sek ~ pre_rer_max_30sek + group, data = Vo2endring_itt)
+model_bf_itt <- lm(post_bfmax_30sek ~ pre_bfmax_30sek + group, data = Vo2endring_itt)
+model_ve_itt <- lm(post_Ve_L_min_max_30sek ~ pre_Ve_L_min_max_30sek + group, data = Vo2endring_itt)
+model_tid_itt <- lm(post_time_to_exhaustion ~ pre_time_to_exhaustion + group, data = Vo2endring_itt)
+model_borg_itt <- lm(post_borg_end ~ pre_borg_end + group, data = Vo2endring_itt)
+model_lac_itt <- lm(post_lac ~ pre_lac + group, data = Vo2endring_itt)
+
+# Inspect the model diagnostic metrics
+model.metrics_o2kg_itt <- augment(model_o2kg_itt) %>%
+  select(-.hat, -.sigma, -.fitted) # Remove details
+  head(model.metrics_o2kg_itt, 22)
+model.metrics_o2_itt <- augment(model_o2_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_o2_itt, 22)
+model.metrics_o2_lmitt <- augment(model_o2_lmitt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_o2_lmitt, 22)
+model.metrics_o2puls_itt <- augment(model_o2puls_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_o2puls_itt, 22)
+model.metrics_hf_itt <- augment(model_hf_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_hf_itt, 22)
+model.metrics_rer_itt <- augment(model_rer_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_rer_itt, 22)
+model.metrics_bf_itt <- augment(model_bf_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_bf_itt, 22)
+model.metrics_ve_itt <- augment(model_ve_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_ve_itt, 22)
+model.metrics_tid_itt <- augment(model_tid_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_tid_itt, 22)
+model.metrics_borg_itt <- augment(model_borg_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_borg_itt, 22)
+model.metrics_lac_itt <- augment(model_lac_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_lac_itt, 22)  
+
+shapiro_test(model.metrics_o2kg_itt$.resid)
+shapiro_test(model.metrics_o2_itt$.resid)
+shapiro_test(model.metrics_o2_lmitt$.resid)
+shapiro_test(model.metrics_o2puls_itt$.resid)
+shapiro_test(model.metrics_hf_itt$.resid)
+shapiro_test(model.metrics_rer_itt$.resid)
+shapiro_test(model.metrics_bf_itt$.resid)
+shapiro_test(model.metrics_ve_itt$.resid)
+shapiro_test(model.metrics_tid_itt$.resid)
+shapiro_test(model.metrics_borg_itt$.resid)
+shapiro_test(model.metrics_lac_itt$.resid)
+
+model.metrics_o2kg_itt %>% levene_test(.resid ~ group)
+model.metrics_o2_itt %>% levene_test(.resid ~ group)
+model.metrics_o2_lmitt %>% levene_test(.resid ~ group)
+model.metrics_o2puls_itt %>% levene_test(.resid ~ group)
+model.metrics_hf_itt %>% levene_test(.resid ~ group)
+model.metrics_rer_itt %>% levene_test(.resid ~ group)
+model.metrics_bf_itt %>% levene_test(.resid ~ group)
+model.metrics_ve_itt %>% levene_test(.resid ~ group)
+model.metrics_tid_itt %>% levene_test(.resid ~ group)
+model.metrics_borg_itt %>% levene_test(.resid ~ group)
+model.metrics_lac_itt %>% levene_test(.resid ~ group)
+
+model.metrics_lac_itt %>% 
+  filter(abs(.std.resid) > 3) %>%
+  as.data.frame()
+
+res.aov_vo2kg_itt <- Vo2endring_itt %>% anova_test(post_vo2max_ml_min_kg_6x5 ~ pre_vo2max_ml_min_kg_6x5 + group)
+get_anova_table(res.aov_vo2kg_itt)
+
+res.aov_vo2itt <- Vo2endring_itt %>% anova_test(post_vo2max_ml_min_6x5 ~ pre_vo2max_ml_min_6x5 + group)
+get_anova_table(res.aov_vo2itt)
+
+res.aov_vo2lmitt <- Vo2endring_itt %>% anova_test(post_vo2max_ml_min_lm_6x5 ~ pre_vo2max_ml_min_lm_6x5 + group)
+get_anova_table(res.aov_vo2lmitt)
+
+res.aov_o2pulsitt <- Vo2endring_itt %>% anova_test(post_o2_puls_ml ~ pre_o2_puls_ml + group)
+get_anova_table(res.aov_o2pulsitt)
+
+res.aov_hfitt <- Vo2endring_itt %>% anova_test(post_hf_max ~ pre_hf_max + group)
+get_anova_table(res.aov_hfitt)
+
+res.aov_reritt <- Vo2endring_itt %>% anova_test(post_rer_max_30sek ~ pre_rer_max_30sek + group)
+get_anova_table(res.aov_reritt)
+
+res.aov_bfitt <- Vo2endring_itt %>% anova_test(post_bfmax_30sek ~ pre_bfmax_30sek + group)
+get_anova_table(res.aov_bfitt)
+
+res.aov_veitt <- Vo2endring_itt %>% anova_test(post_Ve_L_min_max_30sek ~ pre_Ve_L_min_max_30sek + group)
+get_anova_table(res.aov_veitt)
+
+res.aov_tiditt <- Vo2endring_itt %>% anova_test(post_time_to_exhaustion ~ pre_time_to_exhaustion + group)
+get_anova_table(res.aov_tiditt)
+
+res.aov_borgitt <- Vo2endring_itt %>% anova_test(post_borg_end ~ pre_borg_end + group)
+get_anova_table(res.aov_borgitt)
+
+res.aov_lacitt <- Vo2endring_itt %>% anova_test(post_lac ~ pre_lac + group)
+get_anova_table(res.aov_lacitt)
 
 
-```{r setup, include=FALSE, results='hide'}
+
+pwc_vo2kgitt <- Vo2endring_itt%>% 
+  emmeans_test(post_vo2max_ml_min_kg_6x5 ~ group, covariate = pre_vo2max_ml_min_kg_6x5, p.adjust.method = "bonferroni")
+pwc_vo2kgitt
+get_emmeans(pwc_vo2kgitt)
+
+pwc_vo2itt <- Vo2endring_itt%>% 
+emmeans_test(post_vo2max_ml_min_6x5 ~ group, covariate = pre_vo2max_ml_min_6x5, p.adjust.method = "bonferroni")
+
+pwc_vo2lmitt <- Vo2endring_itt%>% 
+  emmeans_test(post_vo2max_ml_min_lm_6x5 ~ group, covariate = pre_vo2max_ml_min_lm_6x5, p.adjust.method = "bonferroni")
+
+pwc_hfpulsitt <- Vo2endring_itt %>% 
+  emmeans_test(post_o2_puls_ml ~ group, covariate = pre_o2_puls_ml, p.adjust.method = "bonferroni")
+
+pwc_hfitt <- Vo2endring_itt%>% 
+  emmeans_test(post_hf_max ~ group, covariate = pre_hf_max, p.adjust.method = "bonferroni")
+
+pwc_reritt <- Vo2endring_itt%>% 
+  emmeans_test(post_rer_max_30sek ~ group, covariate = pre_rer_max_30sek, p.adjust.method = "bonferroni")
+
+pwc_bfitt <- Vo2endring_itt%>% 
+  emmeans_test(post_bfmax_30sek ~ group, covariate = pre_bfmax_30sek, p.adjust.method = "bonferroni")
+
+pwc_veitt <- Vo2endring_itt%>% 
+  emmeans_test(post_Ve_L_min_max_30sek ~ group, covariate = pre_Ve_L_min_max_30sek, p.adjust.method = "bonferroni")
+
+pwc_tiditt <- Vo2endring_itt%>% 
+  emmeans_test(post_time_to_exhaustion ~ group, covariate = pre_time_to_exhaustion, p.adjust.method = "bonferroni")
+
+pwc_borgitt <- Vo2endring_itt%>% 
+  emmeans_test(post_borg_end ~ group, covariate = pre_borg_end, p.adjust.method = "bonferroni")
+
+pwc_lacitt <- Vo2endring_itt%>% 
+  emmeans_test(post_lac ~ group, covariate = pre_lac, p.adjust.method = "bonferroni")
+
+pwc_bfitt$p
+pwc_borgitt$p
+pwc_hfitt$p
+pwc_lacitt$p
+pwc_reritt$p
+pwc_tiditt$p
+pwc_vo2kgitt$p
+pwc_vo2lmitt$p
+pwc_vo2itt$p
+pwc_veitt$p
+pwc_hfpulsitt$p
+
+```
+
+
+```{r bare vo2maks modifisert per protokoll, include=FALSE, results='hide'}
 Vo2endring_ppm <- select(data, id, time, group, vo2max_ml_min_kg_6x5) %>%
 filter(id != "tr031 10541") %>%
   filter(id != "tr031 11421") %>%
@@ -555,7 +734,7 @@ ggline(get_emmeans(pwc_ppm), x = "group", y = "emmean") +
   print()
 ```
 
-```{r setup, include=FALSE, results='hide'}
+```{r bare vo2maks ITT, include=FALSE, results='hide'}
 
 Vo2endring_itt <- select(data, id, time, group, vo2max_ml_min_kg_6x5) %>%
   pivot_wider(names_from = time,
@@ -616,4 +795,44 @@ ggline(get_emmeans(pwc_itt), x = "group", y = "emmean") +
             mean_pro = mean(prosentvis_endring),
             sd_pro = sd(prosentvis_endring)) %>%
   print()
+```
+
+```{r soppsummerte ancova pverdier, include=FALSE, results='hide'}
+
+pwc_bfpp$p
+pwc_borgpp$p
+pwc_hfpp$p
+pwc_lacpp$p
+pwc_rerpp$p
+pwc_tidpp$p
+pwc_vo2kgpp$p
+pwc_vo2lmpp$p
+pwc_vo2pp$p
+pwc_vepp$p
+pwc_hfpulspp$p
+
+pwc_bfppm$p
+pwc_borgppm$p
+pwc_hfppm$p
+pwc_lacppm$p
+pwc_rerppm$p
+pwc_tidppm$p
+pwc_vo2kgppm$p
+pwc_vo2lmppm$p
+pwc_vo2ppm$p
+pwc_veppm$p
+pwc_hfpulsppm$p
+
+pwc_bfitt$p
+pwc_borgitt$p
+pwc_hfitt$p
+pwc_lacitt$p
+pwc_reritt$p
+pwc_tiditt$p
+pwc_vo2kgitt$p
+pwc_vo2lmitt$p
+pwc_vo2itt$p
+pwc_veitt$p
+pwc_hfpulsitt$p
+
 ```

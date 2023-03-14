@@ -1,0 +1,450 @@
+---
+title: "parred t-test på vo2maks"
+author: "Håvard Crantz Lorentzen"
+date: "2023-03-02"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r parra t-test itt, include=FALSE}
+
+library(tidyverse)
+library(knitr)
+library(flextable)
+library(ggplot2)
+library(readxl)
+library(kableExtra)
+library(ggpubr)
+library(dplyr)
+library(rstatix)
+library(broom)
+
+data1 <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+
+endring_itt <- data1 %>%
+select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek,time_to_exhaustion, borg_end,lac) %>%
+  mutate(lean_mass_kg = lean_mass/1000) %>%
+  mutate(vo2max_ml_min_lm_6x5 = vo2max_ml_min_6x5/lean_mass_kg)%>%
+  select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, vo2max_ml_min_lm_6x5,o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek, time_to_exhaustion, borg_end,lac) %>%
+#Velger variabler
+group_by(time,group) %>% # gruitterer etter tid og FLS/kontroll 
+  print()
+   
+endringFLS_itt <- endring_itt %>%
+  filter(group != "kon")
+  
+endringKON_itt <- endring_itt %>%
+  filter(group != "fls")
+  
+    
+#Normalitetssjekk
+difFLS_vo2kg_itt <- with(endringFLS_itt, vo2max_ml_min_kg_6x5[time == "pre"] - vo2max_ml_min_kg_6x5[time == "post"])
+shapiro.test(difFLS_vo2kg_itt)
+difFLS_vo2_itt <- with(endringFLS_itt, vo2max_ml_min_6x5[time == "pre"] - vo2max_ml_min_6x5[time == "post"])
+shapiro.test(difFLS_vo2_itt)
+difFLS_vo2lm_itt <- with(endringFLS_itt, vo2max_ml_min_lm_6x5[time == "pre"] - vo2max_ml_min_lm_6x5[time == "post"])
+shapiro.test(difFLS_vo2lm_itt)
+difFLS_o2puls_itt <- with(endringFLS_itt, o2_puls_ml[time == "pre"] - o2_puls_ml[time == "post"])
+shapiro.test(difFLS_o2puls_itt)
+difFLS_hf_itt <- with(endringFLS_itt, hf_max[time == "pre"] - hf_max[time == "post"])
+shapiro.test(difFLS_hf_itt)
+difFLS_rer_itt <- with(endringFLS_itt, rer_max_30sek[time == "pre"] - rer_max_30sek[time == "post"])
+shapiro.test(difFLS_rer_itt)
+difFLS_bf_itt <- with(endringFLS_itt, bfmax_30sek[time == "pre"] - bfmax_30sek[time == "post"])
+shapiro.test(difFLS_bf_itt)
+difFLS_ve_itt <- with(endringFLS_itt, Ve_L_min_max_30sek[time == "pre"] - Ve_L_min_max_30sek[time == "post"])
+shapiro.test(difFLS_ve_itt)
+difFLS_tid_itt <- with(endringFLS_itt, time_to_exhaustion[time == "pre"] - time_to_exhaustion[time == "post"])
+shapiro.test(difFLS_tid_itt)
+difFLS_borg_itt <- with(endringFLS_itt, borg_end[time == "pre"] - borg_end[time == "post"])
+shapiro.test(difFLS_borg_itt)
+difFLS_lac_itt <- with(endringFLS_itt, lac[time == "pre"] - lac[time == "post"])
+shapiro.test(difFLS_lac_itt)
+
+
+
+difKON_vo2kg_itt <- with(endringKON_itt, vo2max_ml_min_kg_6x5[time == "pre"] - vo2max_ml_min_kg_6x5[time == "post"])
+shapiro.test(difKON_vo2kg_itt)
+difFLS_vo2_itt <- with(endringKON_itt, vo2max_ml_min_6x5[time == "pre"] - vo2max_ml_min_6x5[time == "post"])
+shapiro.test(difFLS_vo2_itt)
+difKON_vo2lm_itt <- with(endringKON_itt, vo2max_ml_min_lm_6x5[time == "pre"] - vo2max_ml_min_lm_6x5[time == "post"])
+shapiro.test(difKON_vo2lm_itt)
+difKON_o2puls_itt <- with(endringKON_itt, o2_puls_ml[time == "pre"] - o2_puls_ml[time == "post"])
+shapiro.test(difKON_o2puls_itt)
+difKON_hf_itt <- with(endringKON_itt, hf_max[time == "pre"] - hf_max[time == "post"])
+shapiro.test(difKON_hf_itt)
+difKON_rer_itt <- with(endringKON_itt, rer_max_30sek[time == "pre"] - rer_max_30sek[time == "post"])
+shapiro.test(difKON_rer_itt)
+difKON_bf_itt <- with(endringKON_itt, bfmax_30sek[time == "pre"] - bfmax_30sek[time == "post"])
+shapiro.test(difKON_bf_itt)
+difKON_ve_itt <- with(endringKON_itt, Ve_L_min_max_30sek[time == "pre"] - Ve_L_min_max_30sek[time == "post"])
+shapiro.test(difKON_ve_itt)
+difKON_tid_itt <- with(endringKON_itt, time_to_exhaustion[time == "pre"] - time_to_exhaustion[time == "post"])
+shapiro.test(difKON_tid_itt)
+difKON_borg_itt <- with(endringKON_itt, borg_end[time == "pre"] - borg_end[time == "post"])
+shapiro.test(difKON_borg_itt)
+difKON_lac_itt <- with(endringKON_itt,lac[time == "pre"] - lac[time == "post"])
+shapiro.test(difKON_lac_itt)
+
+#parret T-test
+t_testFLS_vo2kg_itt <- t.test(vo2max_ml_min_kg_6x5 ~ time, data = endringFLS_itt, paired = TRUE)
+t_testFLS_vo2_itt <- t.test(vo2max_ml_min_6x5 ~ time, data = endringFLS_itt, paired = TRUE)
+t_testFLS_vo2lm_itt <- t.test(vo2max_ml_min_lm_6x5 ~ time, data = endringFLS_itt, paired = TRUE)
+t_testFLS_o2puls_itt <- t.test(o2_puls_ml ~ time, data = endringFLS_itt, paired = TRUE)
+t_testFLS_hf_itt <- t.test(hf_max ~ time, data = endringFLS_itt, paired = TRUE)
+t_testFLS_rer_itt <- t.test(rer_max_30sek ~ time, data = endringFLS_itt, paired = TRUE)
+t_testFLS_bf_itt <- t.test(bfmax_30sek ~ time, data = endringFLS_itt, paired = TRUE)
+t_testFLS_ve_itt <- t.test(Ve_L_min_max_30sek ~ time, data = endringFLS_itt, paired = TRUE)
+t_testFLS_tid_itt <- t.test(time_to_exhaustion ~ time, data = endringFLS_itt, paired = TRUE)
+t_testFLS_borg_itt <- t.test(borg_end ~ time, data = endringFLS_itt, paired = TRUE)
+t_testFLS_lac_itt <- t.test(lac ~ time, data = endringFLS_itt, paired = TRUE)
+
+
+t_testKON_vo2kg_itt <- t.test(vo2max_ml_min_kg_6x5 ~ time, data = endringKON_itt, paired = TRUE)
+t_testKON_vo2_itt <- t.test(vo2max_ml_min_6x5 ~ time, data = endringKON_itt, paired = TRUE)
+t_testKON_vo2lm_itt <- t.test(vo2max_ml_min_lm_6x5 ~ time, data = endringKON_itt, paired = TRUE)
+t_testKON_o2puls_itt <- t.test(o2_puls_ml ~ time, data = endringKON_itt, paired = TRUE)
+t_testKON_hf_itt <- t.test(hf_max ~ time, data = endringKON_itt, paired = TRUE)
+t_testKON_rer_itt <- t.test(rer_max_30sek ~ time, data = endringKON_itt, paired = TRUE)
+t_testKON_bf_itt <- t.test(bfmax_30sek ~ time, data = endringKON_itt, paired = TRUE)
+t_testKON_ve_itt <- t.test(Ve_L_min_max_30sek ~ time, data = endringKON_itt, paired = TRUE)
+t_testKON_tid_itt <- t.test(time_to_exhaustion ~ time, data = endringKON_itt, paired = TRUE)
+t_testKON_borg_itt <- t.test(borg_end ~ time, data = endringKON_itt, paired = TRUE)
+t_testKON_lac_itt <- t.test(lac ~ time, data = endringKON_itt, paired = TRUE)
+
+t_testFLS_bf_itt
+t_testFLS_borg_itt
+t_testFLS_hf_itt
+t_testFLS_lac_itt
+t_testFLS_o2puls_itt
+t_testFLS_rer_itt
+t_testFLS_tid_itt
+t_testFLS_ve_itt
+t_testFLS_vo2_itt
+t_testFLS_vo2kg_itt
+t_testFLS_vo2lm_itt
+
+t_testKON_bf_itt
+t_testKON_borg_itt
+t_testKON_hf_itt
+t_testKON_lac_itt
+t_testKON_o2puls_itt
+t_testKON_rer_itt
+t_testKON_tid_itt
+t_testKON_ve_itt
+t_testKON_vo2_itt
+t_testKON_vo2kg_itt
+t_testKON_vo2lm_itt
+```
+
+```{r parra t-test pp , include=FALSE}
+
+endring_pp <- data1 %>%
+select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek,time_to_exhaustion, borg_end,lac) %>%
+  mutate(lean_mass_kg = lean_mass/1000) %>%
+  mutate(vo2max_ml_min_lm_6x5 = vo2max_ml_min_6x5/lean_mass_kg)%>%
+  select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, vo2max_ml_min_lm_6x5,o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek, time_to_exhaustion, borg_end,lac) %>%
+#Velger variabler
+   filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  filter(id != "tr031 014") %>%
+  filter(id != "tr031 002") %>%
+  filter(id != "tr031 006") %>%
+  filter(id != "tr031 007") %>%
+  filter(id != "tr031 009") %>%
+  filter(id != "tr031 010") %>%
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 013") %>%
+  filter(id != "tr031 015") %>%
+group_by(time,group) %>% # grupperer etter tid og FLS/kontroll 
+  print()
+   
+endringFLS_pp <- endring_pp %>%
+  filter(group != "kon")
+  
+endringKON_pp <- endring_pp %>%
+  filter(group != "fls")
+  
+    
+#Normalitetssjekk
+difFLS_vo2kg_pp <- with(endringFLS_pp, vo2max_ml_min_kg_6x5[time == "pre"] - vo2max_ml_min_kg_6x5[time == "post"])
+shapiro.test(difFLS_vo2kg_pp)
+difFLS_vo2_pp <- with(endringFLS_pp, vo2max_ml_min_6x5[time == "pre"] - vo2max_ml_min_6x5[time == "post"])
+shapiro.test(difFLS_vo2_pp)
+difFLS_vo2lm_pp <- with(endringFLS_pp, vo2max_ml_min_lm_6x5[time == "pre"] - vo2max_ml_min_lm_6x5[time == "post"])
+shapiro.test(difFLS_vo2lm_pp)
+difFLS_o2puls_pp <- with(endringFLS_pp, o2_puls_ml[time == "pre"] - o2_puls_ml[time == "post"])
+shapiro.test(difFLS_o2puls_pp)
+difFLS_hf_pp <- with(endringFLS_pp, hf_max[time == "pre"] - hf_max[time == "post"])
+shapiro.test(difFLS_hf_pp)
+difFLS_rer_pp <- with(endringFLS_pp, rer_max_30sek[time == "pre"] - rer_max_30sek[time == "post"])
+shapiro.test(difFLS_rer_pp)
+difFLS_bf_pp <- with(endringFLS_pp, bfmax_30sek[time == "pre"] - bfmax_30sek[time == "post"])
+shapiro.test(difFLS_bf_pp)
+difFLS_ve_pp <- with(endringFLS_pp, Ve_L_min_max_30sek[time == "pre"] - Ve_L_min_max_30sek[time == "post"])
+shapiro.test(difFLS_ve_pp)
+difFLS_tid_pp <- with(endringFLS_pp, time_to_exhaustion[time == "pre"] - time_to_exhaustion[time == "post"])
+shapiro.test(difFLS_tid_pp)
+difFLS_borg_pp <- with(endringFLS_pp, borg_end[time == "pre"] - borg_end[time == "post"])
+shapiro.test(difFLS_borg_pp)
+difFLS_lac_pp <- with(endringFLS_pp, lac[time == "pre"] - lac[time == "post"])
+shapiro.test(difFLS_lac_pp)
+
+
+
+difKON_vo2kg_pp <- with(endringKON_pp, vo2max_ml_min_kg_6x5[time == "pre"] - vo2max_ml_min_kg_6x5[time == "post"])
+shapiro.test(difKON_vo2kg_pp)
+difFLS_vo2_pp <- with(endringKON_pp, vo2max_ml_min_6x5[time == "pre"] - vo2max_ml_min_6x5[time == "post"])
+shapiro.test(difFLS_vo2_pp)
+difKON_vo2lm_pp <- with(endringKON_pp, vo2max_ml_min_lm_6x5[time == "pre"] - vo2max_ml_min_lm_6x5[time == "post"])
+shapiro.test(difKON_vo2lm_pp)
+difKON_o2puls_pp <- with(endringKON_pp, o2_puls_ml[time == "pre"] - o2_puls_ml[time == "post"])
+shapiro.test(difKON_o2puls_pp)
+difKON_hf_pp <- with(endringKON_pp, hf_max[time == "pre"] - hf_max[time == "post"])
+shapiro.test(difKON_hf_pp)
+difKON_rer_pp <- with(endringKON_pp, rer_max_30sek[time == "pre"] - rer_max_30sek[time == "post"])
+shapiro.test(difKON_rer_pp)
+difKON_bf_pp <- with(endringKON_pp, bfmax_30sek[time == "pre"] - bfmax_30sek[time == "post"])
+shapiro.test(difKON_bf_pp)
+difKON_ve_pp <- with(endringKON_pp, Ve_L_min_max_30sek[time == "pre"] - Ve_L_min_max_30sek[time == "post"])
+shapiro.test(difKON_ve_pp)
+difKON_tid_pp <- with(endringKON_pp, time_to_exhaustion[time == "pre"] - time_to_exhaustion[time == "post"])
+shapiro.test(difKON_tid_pp)
+difKON_borg_pp <- with(endringKON_pp, borg_end[time == "pre"] - borg_end[time == "post"])
+shapiro.test(difKON_borg_pp)
+difKON_lac_pp <- with(endringKON_pp,lac[time == "pre"] - lac[time == "post"])
+shapiro.test(difKON_lac_pp)
+
+#parret T-test
+t_testFLS_vo2kg_pp <- t.test(vo2max_ml_min_kg_6x5 ~ time, data = endringFLS_pp, paired = TRUE)
+t_testFLS_vo2_pp <- t.test(vo2max_ml_min_6x5 ~ time, data = endringFLS_pp, paired = TRUE)
+t_testFLS_vo2lm_pp <- t.test(vo2max_ml_min_lm_6x5 ~ time, data = endringFLS_pp, paired = TRUE)
+t_testFLS_o2puls_pp <- t.test(o2_puls_ml ~ time, data = endringFLS_pp, paired = TRUE)
+t_testFLS_hf_pp <- t.test(hf_max ~ time, data = endringFLS_pp, paired = TRUE)
+t_testFLS_rer_pp <- t.test(rer_max_30sek ~ time, data = endringFLS_pp, paired = TRUE)
+t_testFLS_bf_pp <- t.test(bfmax_30sek ~ time, data = endringFLS_pp, paired = TRUE)
+t_testFLS_ve_pp <- t.test(Ve_L_min_max_30sek ~ time, data = endringFLS_pp, paired = TRUE)
+t_testFLS_tid_pp <- t.test(time_to_exhaustion ~ time, data = endringFLS_pp, paired = TRUE)
+t_testFLS_borg_pp <- t.test(borg_end ~ time, data = endringFLS_pp, paired = TRUE)
+t_testFLS_lac_pp <- t.test(lac ~ time, data = endringFLS_pp, paired = TRUE)
+
+
+t_testKON_vo2kg_pp <- t.test(vo2max_ml_min_kg_6x5 ~ time, data = endringKON_pp, paired = TRUE)
+t_testKON_vo2_pp <- t.test(vo2max_ml_min_6x5 ~ time, data = endringKON_pp, paired = TRUE)
+t_testKON_vo2lm_pp <- t.test(vo2max_ml_min_lm_6x5 ~ time, data = endringKON_pp, paired = TRUE)
+t_testKON_o2puls_pp <- t.test(o2_puls_ml ~ time, data = endringKON_pp, paired = TRUE)
+t_testKON_hf_pp <- t.test(hf_max ~ time, data = endringKON_pp, paired = TRUE)
+t_testKON_rer_pp <- t.test(rer_max_30sek ~ time, data = endringKON_pp, paired = TRUE)
+t_testKON_bf_pp <- t.test(bfmax_30sek ~ time, data = endringKON_pp, paired = TRUE)
+t_testKON_ve_pp <- t.test(Ve_L_min_max_30sek ~ time, data = endringKON_pp, paired = TRUE)
+t_testKON_tid_pp <- t.test(time_to_exhaustion ~ time, data = endringKON_pp, paired = TRUE)
+t_testKON_borg_pp <- t.test(borg_end ~ time, data = endringKON_pp, paired = TRUE)
+t_testKON_lac_pp <- t.test(lac ~ time, data = endringKON_pp, paired = TRUE)
+
+t_testFLS_bf_pp
+t_testFLS_borg_pp
+t_testFLS_hf_pp
+t_testFLS_lac_pp
+t_testFLS_o2puls_pp
+t_testFLS_rer_pp
+t_testFLS_tid_pp
+t_testFLS_ve_pp
+t_testFLS_vo2_pp
+t_testFLS_vo2kg_pp
+t_testFLS_vo2lm_pp
+
+t_testKON_bf_pp
+t_testKON_borg_pp
+t_testKON_hf_pp
+t_testKON_lac_pp
+t_testKON_o2puls_pp
+t_testKON_rer_pp
+t_testKON_tid_pp
+t_testKON_ve_pp
+t_testKON_vo2_pp
+t_testKON_vo2kg_pp
+t_testKON_vo2lm_pp
+
+```
+
+```{r parra t-test ppm, include=FALSE}
+endring_ppm <- data1 %>%
+select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek,time_to_exhaustion, borg_end,lac) %>%
+  mutate(lean_mass_kg = lean_mass/1000) %>%
+  mutate(vo2max_ml_min_lm_6x5 = vo2max_ml_min_6x5/lean_mass_kg)%>%
+  select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, vo2max_ml_min_lm_6x5,o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek, time_to_exhaustion, borg_end,lac) %>%
+#Velger variabler
+   filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  filter(id != "tr031 007") %>%
+  filter(id != "tr031 010") %>%
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 013") %>%
+group_by(time,group) %>% # gruppmerer etter tid og FLS/kontroll 
+  print()
+   
+endringFLS_ppm <- endring_ppm %>%
+  filter(group != "kon")
+  
+endringKON_ppm <- endring_ppm %>%
+  filter(group != "fls")
+  
+    
+#Normalitetssjekk
+difFLS_vo2kg_ppm <- with(endringFLS_ppm, vo2max_ml_min_kg_6x5[time == "pre"] - vo2max_ml_min_kg_6x5[time == "post"])
+shapiro.test(difFLS_vo2kg_ppm)
+difFLS_vo2_ppm <- with(endringFLS_ppm, vo2max_ml_min_6x5[time == "pre"] - vo2max_ml_min_6x5[time == "post"])
+shapiro.test(difFLS_vo2_ppm)
+difFLS_vo2lm_ppm <- with(endringFLS_ppm, vo2max_ml_min_lm_6x5[time == "pre"] - vo2max_ml_min_lm_6x5[time == "post"])
+shapiro.test(difFLS_vo2lm_ppm)
+difFLS_o2puls_ppm <- with(endringFLS_ppm, o2_puls_ml[time == "pre"] - o2_puls_ml[time == "post"])
+shapiro.test(difFLS_o2puls_ppm)
+difFLS_hf_ppm <- with(endringFLS_ppm, hf_max[time == "pre"] - hf_max[time == "post"])
+shapiro.test(difFLS_hf_ppm)
+difFLS_rer_ppm <- with(endringFLS_ppm, rer_max_30sek[time == "pre"] - rer_max_30sek[time == "post"])
+shapiro.test(difFLS_rer_ppm)
+difFLS_bf_ppm <- with(endringFLS_ppm, bfmax_30sek[time == "pre"] - bfmax_30sek[time == "post"])
+shapiro.test(difFLS_bf_ppm)
+difFLS_ve_ppm <- with(endringFLS_ppm, Ve_L_min_max_30sek[time == "pre"] - Ve_L_min_max_30sek[time == "post"])
+shapiro.test(difFLS_ve_ppm)
+difFLS_tid_ppm <- with(endringFLS_ppm, time_to_exhaustion[time == "pre"] - time_to_exhaustion[time == "post"])
+shapiro.test(difFLS_tid_ppm)
+difFLS_borg_ppm <- with(endringFLS_ppm, borg_end[time == "pre"] - borg_end[time == "post"])
+shapiro.test(difFLS_borg_ppm)
+difFLS_lac_ppm <- with(endringFLS_ppm, lac[time == "pre"] - lac[time == "post"])
+shapiro.test(difFLS_lac_ppm)
+
+
+
+difKON_vo2kg_ppm <- with(endringKON_ppm, vo2max_ml_min_kg_6x5[time == "pre"] - vo2max_ml_min_kg_6x5[time == "post"])
+shapiro.test(difKON_vo2kg_ppm)
+difFLS_vo2_ppm <- with(endringKON_ppm, vo2max_ml_min_6x5[time == "pre"] - vo2max_ml_min_6x5[time == "post"])
+shapiro.test(difFLS_vo2_ppm)
+difKON_vo2lm_ppm <- with(endringKON_ppm, vo2max_ml_min_lm_6x5[time == "pre"] - vo2max_ml_min_lm_6x5[time == "post"])
+shapiro.test(difKON_vo2lm_ppm)
+difKON_o2puls_ppm <- with(endringKON_ppm, o2_puls_ml[time == "pre"] - o2_puls_ml[time == "post"])
+shapiro.test(difKON_o2puls_ppm)
+difKON_hf_ppm <- with(endringKON_ppm, hf_max[time == "pre"] - hf_max[time == "post"])
+shapiro.test(difKON_hf_ppm)
+difKON_rer_ppm <- with(endringKON_ppm, rer_max_30sek[time == "pre"] - rer_max_30sek[time == "post"])
+shapiro.test(difKON_rer_ppm)
+difKON_bf_ppm <- with(endringKON_ppm, bfmax_30sek[time == "pre"] - bfmax_30sek[time == "post"])
+shapiro.test(difKON_bf_ppm)
+difKON_ve_ppm <- with(endringKON_ppm, Ve_L_min_max_30sek[time == "pre"] - Ve_L_min_max_30sek[time == "post"])
+shapiro.test(difKON_ve_ppm)
+difKON_tid_ppm <- with(endringKON_ppm, time_to_exhaustion[time == "pre"] - time_to_exhaustion[time == "post"])
+shapiro.test(difKON_tid_ppm)
+difKON_borg_ppm <- with(endringKON_ppm, borg_end[time == "pre"] - borg_end[time == "post"])
+shapiro.test(difKON_borg_ppm)
+difKON_lac_ppm <- with(endringKON_ppm,lac[time == "pre"] - lac[time == "post"])
+shapiro.test(difKON_lac_ppm)
+
+#parret T-test
+t_testFLS_vo2kg_ppm <- t.test(vo2max_ml_min_kg_6x5 ~ time, data = endringFLS_ppm, paired = TRUE)
+t_testFLS_vo2_ppm <- t.test(vo2max_ml_min_6x5 ~ time, data = endringFLS_ppm, paired = TRUE)
+t_testFLS_vo2lm_ppm <- t.test(vo2max_ml_min_lm_6x5 ~ time, data = endringFLS_ppm, paired = TRUE)
+t_testFLS_o2puls_ppm <- t.test(o2_puls_ml ~ time, data = endringFLS_ppm, paired = TRUE)
+t_testFLS_hf_ppm <- t.test(hf_max ~ time, data = endringFLS_ppm, paired = TRUE)
+t_testFLS_rer_ppm <- t.test(rer_max_30sek ~ time, data = endringFLS_ppm, paired = TRUE)
+t_testFLS_bf_ppm <- t.test(bfmax_30sek ~ time, data = endringFLS_ppm, paired = TRUE)
+t_testFLS_ve_ppm <- t.test(Ve_L_min_max_30sek ~ time, data = endringFLS_ppm, paired = TRUE)
+t_testFLS_tid_ppm <- t.test(time_to_exhaustion ~ time, data = endringFLS_ppm, paired = TRUE)
+t_testFLS_borg_ppm <- t.test(borg_end ~ time, data = endringFLS_ppm, paired = TRUE)
+t_testFLS_lac_ppm <- t.test(lac ~ time, data = endringFLS_ppm, paired = TRUE)
+
+
+t_testKON_vo2kg_ppm <- t.test(vo2max_ml_min_kg_6x5 ~ time, data = endringKON_ppm, paired = TRUE)
+t_testKON_vo2_ppm <- t.test(vo2max_ml_min_6x5 ~ time, data = endringKON_ppm, paired = TRUE)
+t_testKON_vo2lm_ppm <- t.test(vo2max_ml_min_lm_6x5 ~ time, data = endringKON_ppm, paired = TRUE)
+t_testKON_o2puls_ppm <- t.test(o2_puls_ml ~ time, data = endringKON_ppm, paired = TRUE)
+t_testKON_hf_ppm <- t.test(hf_max ~ time, data = endringKON_ppm, paired = TRUE)
+t_testKON_rer_ppm <- t.test(rer_max_30sek ~ time, data = endringKON_ppm, paired = TRUE)
+t_testKON_bf_ppm <- t.test(bfmax_30sek ~ time, data = endringKON_ppm, paired = TRUE)
+t_testKON_ve_ppm <- t.test(Ve_L_min_max_30sek ~ time, data = endringKON_ppm, paired = TRUE)
+t_testKON_tid_ppm <- t.test(time_to_exhaustion ~ time, data = endringKON_ppm, paired = TRUE)
+t_testKON_borg_ppm <- t.test(borg_end ~ time, data = endringKON_ppm, paired = TRUE)
+t_testKON_lac_ppm <- t.test(lac ~ time, data = endringKON_ppm, paired = TRUE)
+
+t_testFLS_bf_ppm
+t_testFLS_borg_ppm
+t_testFLS_hf_ppm
+t_testFLS_lac_ppm
+t_testFLS_o2puls_ppm
+t_testFLS_rer_ppm
+t_testFLS_tid_ppm
+t_testFLS_ve_ppm
+t_testFLS_vo2_ppm
+t_testFLS_vo2kg_ppm
+t_testFLS_vo2lm_ppm
+
+t_testKON_bf_ppm
+t_testKON_borg_ppm
+t_testKON_hf_ppm
+t_testKON_lac_ppm
+t_testKON_o2puls_ppm
+t_testKON_rer_ppm
+t_testKON_tid_ppm
+t_testKON_ve_ppm
+t_testKON_vo2_ppm
+t_testKON_vo2kg_ppm
+t_testKON_vo2lm_ppm
+```
+
+```{r setup, include=FALSE}
+
+endring_pp <- data1 %>%
+select(id, time, group, vo2max_ml_min_kg_6x5)%>% #Velger variabler 
+group_by(time,group) %>% # grupperer etter tid og FLS/kontroll 
+  print()
+   
+  
+endringFLS_pp <- endring_pp %>%
+  filter(group != "kon")
+  
+endringKON_pp <- endring_pp %>%
+  filter(group != "fls")
+  
+    
+#Normalitetssjekk
+difFLS_pp <- with(endringFLS_pp, vo2max_ml_min_kg_6x5[time == "pre"] - vo2max_ml_min_kg_6x5[time == "post"])
+
+shapiro.test(difFLS_pp)
+
+difKON_pp <- with(endringKON_pp, vo2max_ml_min_kg_6x5[time == "pre"] - vo2max_ml_min_kg_6x5[time == "post"])
+
+shapiro.test(difKON_pp)
+
+#parret T-test
+t_testFLS_pp <- t.test(vo2max_ml_min_kg_6x5 ~ time, data = endringFLS_pp, paired = TRUE)
+
+t_testKON_pp <- t.test(vo2max_ml_min_kg_6x5 ~ time, data = endringKON_pp , paired = TRUE)
+
+
+
+
+t_testFLS_pp
+t_testKON_pp
+
+t_testFLS_ppm
+t_testKON_ppm
+
+t_testFLS_pp
+t_testKON_pp
+
+
+
+
+
+```
