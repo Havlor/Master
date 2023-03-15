@@ -9,7 +9,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r setup, include=FALSE, fig.cap= "Endring av maksimalt oksygenopptak fra Pre- posttest"}
+```{r Vo2figur itt, include=FALSE, fig.cap= "Endring av maksimalt oksygenopptak fra Pre- posttest"}
 library(tidyverse)
 library(readxl)
 library(ggtext)
@@ -22,28 +22,117 @@ figurdata <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter 
 Vo2figur_itt <- figurdata %>%
 select(id, time, group, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5)%>%
 print()
- 
 
 Vo2figur_itt$time <- factor(Vo2figur_itt$time, levels = c("pre", "post"), labels = c("Pre", "Post"))
 Vo2figur_itt$group <-factor(Vo2figur_itt$group,levels = c("fls", "kon"), labels = c("Friklivssentral", "Kontroll"))
 
-Vo2kg_figur_itt <-ggplot(Vo2figur_itt, aes(time, vo2max_ml_min_kg_6x5, group = id)) + geom_line() + geom_point(size = 2, fill = "lightblue", shape = 21) +
+
+Vo2kg_figur_itt <-ggplot(Vo2figur_itt, aes(time, vo2max_ml_min_kg_6x5, group = id)) + geom_line(linetype = "dashed", size = 1) + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
-       y = "VO<sub>2max</sub> (ml min<sup> -1</sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
-    shape = 17, size = 3) + facet_grid(. ~ time) + facet_wrap(vars(group)) + geom_smooth()
+       y = "Vo2maks", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
+    shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
+ theme_bw()
 
-
-Vo2_figur_itt <- ggplot(Vo2figur_itt, aes(time, vo2max_ml_min_6x5, group = id)) + geom_line() + geom_point(size = 2, fill = "lightblue", shape = 21) +
+Vo2_figur_itt <- ggplot(Vo2figur_itt, aes(time, vo2max_ml_min_6x5, group = id)) + geom_line(linetype = "dashed", size = 1) + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
-       y = "VO<sub>2max</sub> (ml min<sup> -1</sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
-    shape = 17, size = 3) + facet_grid(. ~ time) + facet_wrap(vars(group)) + geom_smooth()
-
-
-
-
+       y = "Vo2maks", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
+    shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
+ theme_bw()
 
 ```
 
+
+```{r Vo2figur pp, include=FALSE, fig.cap= "Endring av maksimalt oksygenopptak fra Pre- posttest"}
+figurdata <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+
+Vo2figur_pp <- figurdata %>%
+select(id, time, group, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5)%>%
+    filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  filter(id != "tr031 014") %>%
+  filter(id != "tr031 002") %>%
+  filter(id != "tr031 006") %>%
+  filter(id != "tr031 007") %>%
+  filter(id != "tr031 009") %>%
+  filter(id != "tr031 010") %>%
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 013") %>%
+  filter(id != "tr031 015") %>%
+print()
+
+Vo2figur_pp$time <- factor(Vo2figur_pp$time, levels = c("pre", "post"), labels = c("Pre", "Post"))
+Vo2figur_pp$group <-factor(Vo2figur_pp$group,levels = c("fls", "kon"), labels = c("Friklivssentral", "Kontroll"))
+
+
+Vo2kg_figur_pp <-ggplot(Vo2figur_pp, aes(time, vo2max_ml_min_kg_6x5, group = id)) + geom_line(linetype = "dashed", size = 1) + geom_point(size = 2, fill = "lightblue", shape = 21) +
+  labs(x = "Tidspunkt", 
+       y = "Vo2maks", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
+    shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
+ theme_bw()
+
+Vo2_figur_pp <- ggplot(Vo2figur_pp, aes(time, vo2max_ml_min_6x5, group = id)) + geom_line(linetype = "dashed", size = 1) + geom_point(size = 2, fill = "lightblue", shape = 21) +
+  labs(x = "Tidspunkt", 
+       y = "Vo2maks", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
+    shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
+ theme_bw()
+```
+
+```{r Vo2figur ppm, include=FALSE, fig.cap= "Endring av maksimalt oksygenopptak fra Pre- posttest"}
+figurdata <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+
+Vo2figur_ppm <- figurdata %>%
+select(id, time, group, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5)%>%
+   filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  filter(id != "tr031 007") %>%
+  filter(id != "tr031 010") %>%
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 013") %>%
+print()
+
+Vo2figur_ppm$time <- factor(Vo2figur_ppm$time, levels = c("pre", "post"), labels = c("Pre", "Post"))
+Vo2figur_ppm$group <-factor(Vo2figur_ppm$group,levels = c("fls", "kon"), labels = c("Friklivssentral", "Kontroll"))
+
+
+Vo2kg_figur_ppm <- ggplot(Vo2figur_ppm, aes(time, vo2max_ml_min_kg_6x5, group = id)) + geom_line(linetype = "dashed", size = 1) + geom_point(size = 2, fill = "lightblue", shape = 21) +
+  labs(x = "Tidspunkt", 
+       y = "Vo2maks", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
+    shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
+ theme_bw()
+
+
+
+Vo2_figur_ppm <- ggplot(Vo2figur_ppm, aes(time, vo2max_ml_min_6x5, group = id)) + geom_line(linetype = "dashed", size = 1) + geom_point(size = 2, fill = "lightblue", shape = 21) +
+  labs(x = "Tidspunkt", 
+       y = "Vo2maks", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
+    shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
+ theme_bw()
+```
+
+```{r Oppsummering, include=FALSE, fig.cap= "Endring av maksimalt oksygenopptak fra Pre- posttest"}
+
+Vo2kg_figur_itt
+Vo2_figur_itt
+
+
+Vo2kg_figur_pp
+Vo2_figur_pp
+
+
+Vo2kg_figur_ppm
+Vo2_figur_ppm
+
+```
 #grafer
 
 esquisser() vertøy for å bygge grafer
