@@ -15,46 +15,38 @@ library(readxl)
 library(ggtext)
 library(ggplot2)
 library(esquisse)
-data <- read_excel("Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+library(janitor)
 
-Vo2figur <- select(data, id, time, group, vo2max_ml_min_kg_6x5) %>%
-  filter(id != "tr031 10541") %>%
-  filter(id != "tr031 11421") %>%
-  filter(id != "tr031 13404") %>%
-  filter(id != "tr031 004") %>%
-  filter(id != "tr031 008") %>%
-  filter(id != "tr031 001") %>%
-  filter(id != "tr031 016")%>%
-  filter(id != "tr031 014")
+figurdata <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
-mean <- Vo2figur%>%
-  group_by(group)%>%
-  summarise(gjennomsnitt = mean(vo2max_ml_min_kg_6x5))%>%
-  pivot_wider(names_from = group,
-              values_from = gjennomsnitt)
+Vo2figur_itt <- figurdata %>%
+select(id, time, group, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5)%>%
+print()
+ 
 
+Vo2figur_itt$time <- factor(Vo2figur_itt$time, levels = c("pre", "post"), labels = c("Pre", "Post"))
+Vo2figur_itt$group <-factor(Vo2figur_itt$group,levels = c("fls", "kon"), labels = c("Friklivssentral", "Kontroll"))
 
-Vo2figur$time <- factor(Vo2figur$time, levels = c("pre", "post"), labels = c("Pre", "Post"))
-Vo2figur$group <-factor(Vo2figur$group,levels = c("fls", "kon"), labels = c("Friklivssentral", "Kontroll"))
-
-ggplot(Vo2figur, aes(time, vo2max_ml_min_kg_6x5, color = group, group = id)) + geom_line() + geom_point(size = 2, fill = "lightblue", shape = 21) +
+Vo2kg_figur_itt <-ggplot(Vo2figur_itt, aes(time, vo2max_ml_min_kg_6x5, group = id)) + geom_line() + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
-       y = "VO<sub>2max</sub> (ml min<sup> -1</sup>)", color = "Group")
+       y = "VO<sub>2max</sub> (ml min<sup> -1</sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
+    shape = 17, size = 3) + facet_grid(. ~ time) + facet_wrap(vars(group)) + geom_smooth()
 
-  geom_hline(data = mean, aes(yintercept = fls, 
-                              col = "Friklivssentral")) +
-  geom_hline(data = mean, aes(yintercept = kon, col = "Kontroll"))
-  
 
-esquisser()
+Vo2_figur_itt <- ggplot(Vo2figur_itt, aes(time, vo2max_ml_min_6x5, group = id)) + geom_line() + geom_point(size = 2, fill = "lightblue", shape = 21) +
+  labs(x = "Tidspunkt", 
+       y = "VO<sub>2max</sub> (ml min<sup> -1</sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
+    shape = 17, size = 3) + facet_grid(. ~ time) + facet_wrap(vars(group)) + geom_smooth()
 
-janitor()
+
+
+
 
 ```
 
 #grafer
 
-esquisser()
-
+esquisser() vertøy for å bygge grafer
+janitor() verktøy for å rydde
 
 
