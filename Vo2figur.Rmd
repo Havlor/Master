@@ -27,13 +27,13 @@ Vo2figur_itt$time <- factor(Vo2figur_itt$time, levels = c("pre", "post"), labels
 Vo2figur_itt$group <-factor(Vo2figur_itt$group,levels = c("fls", "kon"), labels = c("Friklivssentral", "Kontroll"))
 
 
-Vo2kg_figur_itt <-ggplot(Vo2figur_itt, aes(time, vo2max_ml_min_kg_6x5, group = id)) + geom_line(linetype = "dashed", size = 1) + geom_point(size = 2, fill = "lightblue", shape = 21) +
+Vo2kg_figur_itt <-ggplot(Vo2figur_itt, aes(time, vo2max_ml_min_kg_6x5, group = id)) + geom_line(linetype = "dashed", size = 0.5) + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
        y = "Vo2maks", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
     shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
  theme_bw()
 
-Vo2_figur_itt <- ggplot(Vo2figur_itt, aes(time, vo2max_ml_min_6x5, group = id)) + geom_line(linetype = "dashed", size = 1) + geom_point(size = 2, fill = "lightblue", shape = 21) +
+Vo2_figur_itt <- ggplot(Vo2figur_itt, aes(time, vo2max_ml_min_6x5, group = id)) + geom_line(linetype = "dashed", size = 0.5) + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
        y = "Vo2maks", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
     shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
@@ -69,13 +69,13 @@ Vo2figur_pp$time <- factor(Vo2figur_pp$time, levels = c("pre", "post"), labels =
 Vo2figur_pp$group <-factor(Vo2figur_pp$group,levels = c("fls", "kon"), labels = c("Friklivssentral", "Kontroll"))
 
 
-Vo2kg_figur_pp <-ggplot(Vo2figur_pp, aes(time, vo2max_ml_min_kg_6x5, group = id)) + geom_line(linetype = "dashed", size = 1) + geom_point(size = 2, fill = "lightblue", shape = 21) +
+Vo2kg_figur_pp <-ggplot(Vo2figur_pp, aes(time, vo2max_ml_min_kg_6x5, group = id)) + geom_line(linetype = "dashed", size = 0.5) + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
        y = "Vo2maks", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
     shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
  theme_bw()
 
-Vo2_figur_pp <- ggplot(Vo2figur_pp, aes(time, vo2max_ml_min_6x5, group = id)) + geom_line(linetype = "dashed", size = 1) + geom_point(size = 2, fill = "lightblue", shape = 21) +
+Vo2_figur_pp <- ggplot(Vo2figur_pp, aes(time, vo2max_ml_min_6x5, group = id)) + geom_line(linetype = "dashed", size = 0.5) + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
        y = "Vo2maks", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
     shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
@@ -104,7 +104,7 @@ Vo2figur_ppm$time <- factor(Vo2figur_ppm$time, levels = c("pre", "post"), labels
 Vo2figur_ppm$group <-factor(Vo2figur_ppm$group,levels = c("fls", "kon"), labels = c("Friklivssentral", "Kontroll"))
 
 
-Vo2kg_figur_ppm <- ggplot(Vo2figur_ppm, aes(time, vo2max_ml_min_kg_6x5, group = id)) + geom_line(linetype = "dashed", size = 1) + geom_point(size = 2, fill = "lightblue", shape = 21) +
+Vo2kg_figur_ppm <- ggplot(Vo2figur_ppm, aes(time, vo2max_ml_min_kg_6x5, group = id)) + geom_line(linetype = "dashed", size = 0.5) + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
        y = "Vo2maks", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
     shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
@@ -112,11 +112,12 @@ Vo2kg_figur_ppm <- ggplot(Vo2figur_ppm, aes(time, vo2max_ml_min_kg_6x5, group = 
 
 
 
-Vo2_figur_ppm <- ggplot(Vo2figur_ppm, aes(time, vo2max_ml_min_6x5, group = id)) + geom_line(linetype = "dashed", size = 1) + geom_point(size = 2, fill = "lightblue", shape = 21) +
+Vo2_figur_ppm <- ggplot(Vo2figur_ppm, aes(time, vo2max_ml_min_6x5, group = id)) + geom_line(linetype = "dashed", size = 0.5) + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
        y = "Vo2maks", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
     shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
  theme_bw()
+
 ```
 
 ```{r Oppsummering, include=FALSE, fig.cap= "Endring av maksimalt oksygenopptak fra Pre- posttest"}
