@@ -110,8 +110,6 @@ Vo2kg_figur_ppm <- ggplot(Vo2figur_ppm, aes(time, vo2max_ml_min_kg_6x5, group = 
     shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
  theme_bw()
 
-
-
 Vo2_figur_ppm <- ggplot(Vo2figur_ppm, aes(time, vo2max_ml_min_6x5, group = id)) + geom_line(linetype = "dashed", size = 0.5) + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
        y = "Vo2maks", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
