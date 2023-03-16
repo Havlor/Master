@@ -1,0 +1,478 @@
+---
+title: "Ancova arb"
+author: "Håvard Crantz Lorentzen"
+date: "2023-03-16"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r arb ancova itt, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(readxl)
+library(ggtext)
+library(flextable)
+library(ggplot2)
+library(emmeans)
+library(ggpubr)
+library(broom)
+library(rstatix)
+
+data2 <- read_excel("data/Regning av kaloriforbruk.xlsx")
+
+
+arb_endring1_itt <- data2 %>%
+select(id, group, time, prosent_hfmaks, prosent_vo2maks, arbec_mean_vo2_ml_min, arbec_mean_RER, kacl_min, kj_min) %>%
+   filter(id != "tr031 008") %>%
+  mutate(kacl_min = as.numeric(kacl_min)) %>%
+mutate(kj_min = as.numeric(kj_min))%>%
+  group_by(time,group) %>%# grupperer etter tid og FLS/kontroll
+  pivot_longer(names_to = "variable", 
+               values_to = "value", 
+               cols = prosent_hfmaks:kj_min) %>%
+  group_by(time, group, variable)%>%
+  pivot_wider(names_from = time,
+               values_from = value)%>%
+  pivot_wider(names_from = variable,
+              values_from = c(pre,post))%>%
+  ungroup()%>%
+  print()
+
+arb_endring1_itt %>% anova_test(post_prosent_hfmaks ~ group*pre_prosent_hfmaks)
+arb_endring1_itt %>% anova_test(post_prosent_vo2maks ~ group*pre_prosent_vo2maks)
+arb_endring1_itt %>% anova_test(post_arbec_mean_vo2_ml_min ~ group*pre_arbec_mean_vo2_ml_min)
+arb_endring1_itt %>% anova_test(post_arbec_mean_RER ~ group*pre_arbec_mean_RER)
+arb_endring1_itt %>% anova_test(post_kacl_min ~ group*pre_kacl_min)
+arb_endring1_itt %>% anova_test(post_kj_min ~ group*pre_kj_min)
+
+#Homogeneity of regression slopes
+
+# Fit the model, the covariate goes first
+model_phf_itt <- lm(post_prosent_hfmaks ~ pre_prosent_hfmaks + group, data = arb_endring1_itt)
+model_pvo2_itt <- lm(post_prosent_vo2maks ~ pre_prosent_vo2maks + group, data = arb_endring1_itt)
+model_vo2_itt <- lm(post_arbec_mean_vo2_ml_min ~ pre_arbec_mean_vo2_ml_min + group, data = arb_endring1_itt)
+model_RER_itt <- lm(post_arbec_mean_RER ~ pre_arbec_mean_RER + group, data = arb_endring1_itt)
+model_kacl_itt <- lm(post_kacl_min ~ pre_kacl_min + group, data = arb_endring1_itt)
+model_kj_itt <- lm(post_kj_min ~ pre_kj_min + group, data = arb_endring1_itt)
+
+
+# Inspect the model diagnostic metrics
+model.metrics_phf_itt <- augment(model_phf_itt) %>%
+  select(-.hat, -.sigma, -.fitted) # Remove details
+  head(model.metrics_phf_itt, 22)
+  
+model.metrics_pvo2_itt <- augment(model_pvo2_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_pvo2_itt, 22)
+  
+model.metrics_vo2_itt <- augment(model_vo2_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_vo2_itt, 22)
+  
+model.metrics_RER_itt <- augment(model_RER_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_RER_itt, 22)
+  
+model.metrics_kacl_itt <- augment(model_kacl_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_kacl_itt, 22)
+  
+model.metrics_kj_itt <- augment(model_kj_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_kj_itt, 22)
+
+  
+
+shapiro_test(model.metrics_phf_itt$.resid)
+shapiro_test(model.metrics_pvo2_itt$.resid)
+shapiro_test(model.metrics_vo2_itt$.resid)
+shapiro_test(model.metrics_RER_itt$.resid)
+shapiro_test(model.metrics_kacl_itt$.resid)
+shapiro_test(model.metrics_kj_itt$.resid)
+
+
+
+model.metrics_phf_itt %>% levene_test(.resid ~ group)
+model.metrics_pvo2_itt %>% levene_test(.resid ~ group)
+model.metrics_vo2_itt %>% levene_test(.resid ~ group)
+model.metrics_RER_itt %>% levene_test(.resid ~ group)
+model.metrics_kacl_itt %>% levene_test(.resid ~ group)
+model.metrics_kj_itt %>% levene_test(.resid ~ group)
+
+
+model.metrics_kj_itt %>% 
+  filter(abs(.std.resid) > 3) %>%
+  as.data.frame()
+
+res.aov_phf_itt <- arb_endring1_itt %>% anova_test(post_prosent_hfmaks ~ pre_prosent_hfmaks + group)
+get_anova_table(res.aov_phf_itt)
+
+res.aov_pvo2_itt <- arb_endring1_itt %>% anova_test(post_prosent_vo2maks ~ pre_prosent_vo2maks + group)
+get_anova_table(res.aov_pvo2_itt)
+
+res.aov_vo2_itt <- arb_endring1_itt %>% anova_test(post_arbec_mean_vo2_ml_min ~ pre_arbec_mean_vo2_ml_min + group)
+get_anova_table(res.aov_vo2_itt)
+
+res.aov_RER_itt <- arb_endring1_itt %>% anova_test(post_arbec_mean_RER ~ pre_arbec_mean_RER + group)
+get_anova_table(res.aov_RER_itt)
+
+res.aov_kacl_itt <- arb_endring1_itt %>% anova_test(post_kacl_min ~ pre_kacl_min + group)
+get_anova_table(res.aov_kacl_itt)
+
+res.aov_kj_itt <- arb_endring1_itt %>% anova_test(post_kj_min ~ pre_kj_min + group)
+get_anova_table(res.aov_kj_itt)
+
+
+
+
+pwc_phf_itt <- arb_endring1_itt%>% 
+    emmeans_test(post_prosent_hfmaks ~ group, covariate = pre_prosent_hfmaks, p.adjust.method = "bonferroni")
+pwc_phf_itt
+get_emmeans(pwc_phfitt)
+
+pwc_pvo2_itt <- arb_endring1_itt%>% 
+emmeans_test(post_prosent_vo2maks ~ group, covariate = pre_prosent_vo2maks, p.adjust.method = "bonferroni")
+
+pwc_vo2_itt <- arb_endring1_itt%>% 
+  emmeans_test(post_arbec_mean_vo2_ml_min ~ group, covariate = pre_arbec_mean_vo2_ml_min, p.adjust.method = "bonferroni")
+
+pwc_RER_itt <- arb_endring1_itt %>% 
+  emmeans_test(post_arbec_mean_RER ~ group, covariate = pre_arbec_mean_RER, p.adjust.method = "bonferroni")
+
+pwc_kacl_itt <- arb_endring1_itt%>% 
+  emmeans_test(post_kacl_min ~ group, covariate = pre_kacl_min, p.adjust.method = "bonferroni")
+
+pwc_kj_itt <- arb_endring1_itt%>% 
+  emmeans_test(post_kj_min ~ group, covariate = pre_kj_min, p.adjust.method = "bonferroni")
+
+
+pwc_phf_itt$p
+pwc_pvo2_itt$p
+pwc_vo2_itt$p
+pwc_RER_itt$p
+pwc_kacl_itt$p
+pwc_kj_itt$p
+```
+
+```{r arb ancova pp, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(readxl)
+library(ggtext)
+library(flextable)
+library(ggplot2)
+library(emmeans)
+library(ggpubr)
+library(broom)
+library(rstatix)
+
+data2 <- read_excel("data/Regning av kaloriforbruk.xlsx")
+
+
+arb_endring1_pp <- data2 %>%
+select(id, group, time, prosent_hfmaks, prosent_vo2maks, arbec_mean_vo2_ml_min, arbec_mean_RER, kacl_min, kj_min) %>%
+   filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  filter(id != "tr031 014") %>%
+  filter(id != "tr031 002") %>%
+  filter(id != "tr031 006") %>%
+  filter(id != "tr031 007") %>%
+  filter(id != "tr031 009") %>%
+  filter(id != "tr031 010") %>%
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 013") %>%
+  filter(id != "tr031 015") %>%
+  mutate(kacl_min = as.numeric(kacl_min)) %>%
+mutate(kj_min = as.numeric(kj_min))%>%
+  group_by(time,group) %>%# grupperer etter tid og FLS/kontroll
+  pivot_longer(names_to = "variable", 
+               values_to = "value", 
+               cols = prosent_hfmaks:kj_min) %>%
+  group_by(time, group, variable)%>%
+  pivot_wider(names_from = time,
+               values_from = value)%>%
+  pivot_wider(names_from = variable,
+              values_from = c(pre,post))%>%
+  ungroup()%>%
+  print()
+
+arb_endring1_pp %>% anova_test(post_prosent_hfmaks ~ group*pre_prosent_hfmaks)
+arb_endring1_pp %>% anova_test(post_prosent_vo2maks ~ group*pre_prosent_vo2maks)
+arb_endring1_pp %>% anova_test(post_arbec_mean_vo2_ml_min ~ group*pre_arbec_mean_vo2_ml_min)
+arb_endring1_pp %>% anova_test(post_arbec_mean_RER ~ group*pre_arbec_mean_RER)
+arb_endring1_pp %>% anova_test(post_kacl_min ~ group*pre_kacl_min)
+arb_endring1_pp %>% anova_test(post_kj_min ~ group*pre_kj_min)
+
+#Homogeneity of regression slopes
+
+# Fit the model, the covariate goes first
+model_phf_pp <- lm(post_prosent_hfmaks ~ pre_prosent_hfmaks + group, data = arb_endring1_pp)
+model_pvo2_pp <- lm(post_prosent_vo2maks ~ pre_prosent_vo2maks + group, data = arb_endring1_pp)
+model_vo2_pp <- lm(post_arbec_mean_vo2_ml_min ~ pre_arbec_mean_vo2_ml_min + group, data = arb_endring1_pp)
+model_RER_pp <- lm(post_arbec_mean_RER ~ pre_arbec_mean_RER + group, data = arb_endring1_pp)
+model_kacl_pp <- lm(post_kacl_min ~ pre_kacl_min + group, data = arb_endring1_pp)
+model_kj_pp <- lm(post_kj_min ~ pre_kj_min + group, data = arb_endring1_pp)
+
+
+# Inspect the model diagnostic metrics
+model.metrics_phf_pp <- augment(model_phf_pp) %>%
+  select(-.hat, -.sigma) # Remove details
+  head(model.metrics_phf_pp, 22)
+  
+model.metrics_pvo2_pp <- augment(model_pvo2_pp) %>%
+  select(-.hat, -.sigma, -.fpped) 
+  head(model.metrics_pvo2_pp, 22)
+  
+model.metrics_vo2_pp <- augment(model_vo2_pp) %>%
+  select(-.hat, -.sigma, -.fpped) 
+  head(model.metrics_vo2_pp, 22)
+  
+model.metrics_RER_pp <- augment(model_RER_pp) %>%
+  select(-.hat, -.sigma, -.fpped) 
+  head(model.metrics_RER_pp, 22)
+  
+model.metrics_kacl_pp <- augment(model_kacl_pp) %>%
+  select(-.hat, -.sigma, -.fpped) 
+  head(model.metrics_kacl_pp, 22)
+  
+model.metrics_kj_pp <- augment(model_kj_pp) %>%
+  select(-.hat, -.sigma, -.fpped) 
+  head(model.metrics_kj_pp, 22)
+
+  
+
+shapiro_test(model.metrics_phf_pp$.resid)
+shapiro_test(model.metrics_pvo2_pp$.resid)
+shapiro_test(model.metrics_vo2_pp$.resid)
+shapiro_test(model.metrics_RER_pp$.resid)
+shapiro_test(model.metrics_kacl_pp$.resid)
+shapiro_test(model.metrics_kj_pp$.resid)
+
+
+
+model.metrics_phf_pp %>% levene_test(.resid ~ group)
+model.metrics_pvo2_pp %>% levene_test(.resid ~ group)
+model.metrics_vo2_pp %>% levene_test(.resid ~ group)
+model.metrics_RER_pp %>% levene_test(.resid ~ group)
+model.metrics_kacl_pp %>% levene_test(.resid ~ group)
+model.metrics_kj_pp %>% levene_test(.resid ~ group)
+
+
+model.metrics_kj_pp %>% 
+  filter(abs(.std.resid) > 3) %>%
+  as.data.frame()
+
+res.aov_phf_pp <- arb_endring1_pp %>% anova_test(post_prosent_hfmaks ~ pre_prosent_hfmaks + group)
+get_anova_table(res.aov_phf_pp)
+
+res.aov_pvo2_pp <- arb_endring1_pp %>% anova_test(post_prosent_vo2maks ~ pre_prosent_vo2maks + group)
+get_anova_table(res.aov_pvo2_pp)
+
+res.aov_vo2_pp <- arb_endring1_pp %>% anova_test(post_arbec_mean_vo2_ml_min ~ pre_arbec_mean_vo2_ml_min + group)
+get_anova_table(res.aov_vo2_pp)
+
+res.aov_RER_pp <- arb_endring1_pp %>% anova_test(post_arbec_mean_RER ~ pre_arbec_mean_RER + group)
+get_anova_table(res.aov_RER_pp)
+
+res.aov_kacl_pp <- arb_endring1_pp %>% anova_test(post_kacl_min ~ pre_kacl_min + group)
+get_anova_table(res.aov_kacl_pp)
+
+res.aov_kj_pp <- arb_endring1_pp %>% anova_test(post_kj_min ~ pre_kj_min + group)
+get_anova_table(res.aov_kj_pp)
+
+
+
+
+pwc_phf_pp <- arb_endring1_pp%>% 
+    emmeans_test(post_prosent_hfmaks ~ group, covariate = pre_prosent_hfmaks, p.adjust.method = "bonferroni")
+pwc_phf_pp
+get_emmeans(pwc_phf_pp)
+
+pwc_pvo2_pp <- arb_endring1_pp%>% 
+emmeans_test(post_prosent_vo2maks ~ group, covariate = pre_prosent_vo2maks, p.adjust.method = "bonferroni")
+
+pwc_vo2_pp <- arb_endring1_pp%>% 
+  emmeans_test(post_arbec_mean_vo2_ml_min ~ group, covariate = pre_arbec_mean_vo2_ml_min, p.adjust.method = "bonferroni")
+
+pwc_RER_pp <- arb_endring1_pp %>% 
+  emmeans_test(post_arbec_mean_RER ~ group, covariate = pre_arbec_mean_RER, p.adjust.method = "bonferroni")
+
+pwc_kacl_pp <- arb_endring1_pp%>% 
+  emmeans_test(post_kacl_min ~ group, covariate = pre_kacl_min, p.adjust.method = "bonferroni")
+
+pwc_kj_pp <- arb_endring1_pp%>% 
+  emmeans_test(post_kj_min ~ group, covariate = pre_kj_min, p.adjust.method = "bonferroni")
+
+
+pwc_phf_pp$p
+pwc_pvo2_pp$p
+pwc_vo2_pp$p
+pwc_RER_pp$p
+pwc_kacl_pp$p
+pwc_kj_pp$p
+```
+
+```{r arb ancova ppm, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(readxl)
+library(ggtext)
+library(flextable)
+library(ggplot2)
+library(emmeans)
+library(ggpubr)
+library(broom)
+library(rstatix)
+
+data2 <- read_excel("data/Regning av kaloriforbruk.xlsx")
+
+
+arb_endring1_ppm <- data2 %>%
+select(id, group, time, prosent_hfmaks, prosent_vo2maks, arbec_mean_vo2_ml_min, arbec_mean_RER, kacl_min, kj_min) %>%
+   filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  filter(id != "tr031 007") %>%
+  filter(id != "tr031 010") %>%
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 013") %>%
+  mutate(kacl_min = as.numeric(kacl_min)) %>%
+mutate(kj_min = as.numeric(kj_min))%>%
+  group_by(time,group) %>%# grupperer etter tid og FLS/kontroll
+  pivot_longer(names_to = "variable", 
+               values_to = "value", 
+               cols = prosent_hfmaks:kj_min) %>%
+  group_by(time, group, variable)%>%
+  pivot_wider(names_from = time,
+               values_from = value)%>%
+  pivot_wider(names_from = variable,
+              values_from = c(pre,post))%>%
+  ungroup()%>%
+  print()
+
+arb_endring1_ppm %>% anova_test(post_prosent_hfmaks ~ group*pre_prosent_hfmaks)
+arb_endring1_ppm %>% anova_test(post_prosent_vo2maks ~ group*pre_prosent_vo2maks)
+arb_endring1_ppm %>% anova_test(post_arbec_mean_vo2_ml_min ~ group*pre_arbec_mean_vo2_ml_min)
+arb_endring1_ppm %>% anova_test(post_arbec_mean_RER ~ group*pre_arbec_mean_RER)
+arb_endring1_ppm %>% anova_test(post_kacl_min ~ group*pre_kacl_min)
+arb_endring1_ppm %>% anova_test(post_kj_min ~ group*pre_kj_min)
+
+#Homogeneity of regression slopes
+
+# Fit the model, the covariate goes first
+model_phf_ppm <- lm(post_prosent_hfmaks ~ pre_prosent_hfmaks + group, data = arb_endring1_ppm)
+model_pvo2_ppm <- lm(post_prosent_vo2maks ~ pre_prosent_vo2maks + group, data = arb_endring1_ppm)
+model_vo2_ppm <- lm(post_arbec_mean_vo2_ml_min ~ pre_arbec_mean_vo2_ml_min + group, data = arb_endring1_ppm)
+model_RER_ppm <- lm(post_arbec_mean_RER ~ pre_arbec_mean_RER + group, data = arb_endring1_ppm)
+model_kacl_ppm <- lm(post_kacl_min ~ pre_kacl_min + group, data = arb_endring1_ppm)
+model_kj_ppm <- lm(post_kj_min ~ pre_kj_min + group, data = arb_endring1_ppm)
+
+
+# Inspect the model diagnostic metrics
+model.metrics_phf_ppm <- augment(model_phf_ppm) %>%
+  select(-.hat, -.sigma, -.fppmed) # Remove details
+  head(model.metrics_phf_ppm, 22)
+  
+model.metrics_pvo2_ppm <- augment(model_pvo2_ppm) %>%
+  select(-.hat, -.sigma, -.fppmed) 
+  head(model.metrics_pvo2_ppm, 22)
+  
+model.metrics_vo2_ppm <- augment(model_vo2_ppm) %>%
+  select(-.hat, -.sigma, -.fppmed) 
+  head(model.metrics_vo2_ppm, 22)
+  
+model.metrics_RER_ppm <- augment(model_RER_ppm) %>%
+  select(-.hat, -.sigma, -.fppmed) 
+  head(model.metrics_RER_ppm, 22)
+  
+model.metrics_kacl_ppm <- augment(model_kacl_ppm) %>%
+  select(-.hat, -.sigma, -.fppmed) 
+  head(model.metrics_kacl_ppm, 22)
+  
+model.metrics_kj_ppm <- augment(model_kj_ppm) %>%
+  select(-.hat, -.sigma, -.fppmed) 
+  head(model.metrics_kj_ppm, 22)
+
+  
+
+shapiro_test(model.metrics_phf_ppm$.resid)
+shapiro_test(model.metrics_pvo2_ppm$.resid)
+shapiro_test(model.metrics_vo2_ppm$.resid)
+shapiro_test(model.metrics_RER_ppm$.resid)
+shapiro_test(model.metrics_kacl_ppm$.resid)
+shapiro_test(model.metrics_kj_ppm$.resid)
+
+
+
+model.metrics_phf_ppm %>% levene_test(.resid ~ group)
+model.metrics_pvo2_ppm %>% levene_test(.resid ~ group)
+model.metrics_vo2_ppm %>% levene_test(.resid ~ group)
+model.metrics_RER_ppm %>% levene_test(.resid ~ group)
+model.metrics_kacl_ppm %>% levene_test(.resid ~ group)
+model.metrics_kj_ppm %>% levene_test(.resid ~ group)
+
+
+model.metrics_kj_ppm %>% 
+  filter(abs(.std.resid) > 3) %>%
+  as.data.frame()
+
+res.aov_phf_ppm <- arb_endring1_ppm %>% anova_test(post_prosent_hfmaks ~ pre_prosent_hfmaks + group)
+get_anova_table(res.aov_phf_ppm)
+
+res.aov_pvo2_ppm <- arb_endring1_ppm %>% anova_test(post_prosent_vo2maks ~ pre_prosent_vo2maks + group)
+get_anova_table(res.aov_pvo2_ppm)
+
+res.aov_vo2_ppm <- arb_endring1_ppm %>% anova_test(post_arbec_mean_vo2_ml_min ~ pre_arbec_mean_vo2_ml_min + group)
+get_anova_table(res.aov_vo2_ppm)
+
+res.aov_RER_ppm <- arb_endring1_ppm %>% anova_test(post_arbec_mean_RER ~ pre_arbec_mean_RER + group)
+get_anova_table(res.aov_RER_ppm)
+
+res.aov_kacl_ppm <- arb_endring1_ppm %>% anova_test(post_kacl_min ~ pre_kacl_min + group)
+get_anova_table(res.aov_kacl_ppm)
+
+res.aov_kj_ppm <- arb_endring1_ppm %>% anova_test(post_kj_min ~ pre_kj_min + group)
+get_anova_table(res.aov_kj_ppm)
+
+
+
+
+pwc_phf_ppm <- arb_endring1_ppm%>% 
+    emmeans_test(post_prosent_hfmaks ~ group, covariate = pre_prosent_hfmaks, p.adjust.method = "bonferroni")
+pwc_phf_ppm
+get_emmeans(pwc_phf_ppm)
+
+pwc_pvo2_ppm <- arb_endring1_ppm%>% 
+emmeans_test(post_prosent_vo2maks ~ group, covariate = pre_prosent_vo2maks, p.adjust.method = "bonferroni")
+
+pwc_vo2_ppm <- arb_endring1_ppm%>% 
+  emmeans_test(post_arbec_mean_vo2_ml_min ~ group, covariate = pre_arbec_mean_vo2_ml_min, p.adjust.method = "bonferroni")
+
+pwc_RER_ppm <- arb_endring1_ppm %>% 
+  emmeans_test(post_arbec_mean_RER ~ group, covariate = pre_arbec_mean_RER, p.adjust.method = "bonferroni")
+
+pwc_kacl_ppm <- arb_endring1_ppm%>% 
+  emmeans_test(post_kacl_min ~ group, covariate = pre_kacl_min, p.adjust.method = "bonferroni")
+
+pwc_kj_ppm <- arb_endring1_ppm%>% 
+  emmeans_test(post_kj_min ~ group, covariate = pre_kj_min, p.adjust.method = "bonferroni")
+
+
+pwc_phf_ppm$p
+pwc_pvo2_ppm$p
+pwc_vo2_ppm$p
+pwc_RER_ppm$p
+pwc_kacl_ppm$p
+pwc_kj_ppm$p
+```
+
