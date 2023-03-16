@@ -90,7 +90,11 @@ deskriptiv_tabell <- des %>%
     autofit() %>% # gjør av stander like
  
   print()
+
 ```
+
+
+
 
 flextable::save_as_docx(path = "Test.docx") #brukes til å lagre til word
 

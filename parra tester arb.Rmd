@@ -1,0 +1,306 @@
+---
+title: "arb parra t-test"
+author: "Håvard Crantz Lorentzen"
+date: "2023-03-16"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+```{r parra t-test itt, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(flextable)
+library(ggplot2)
+library(readxl)
+library(kableExtra)
+library(ggpubr)
+library(dplyr)
+library(rstatix)
+library(broom)
+
+data2 <- read_excel("data/Regning av kaloriforbruk.xlsx")
+
+
+arb_endring_itt <- data2 %>%
+select(id, group, time, prosent_hfmaks, prosent_vo2maks, arbec_mean_vo2_ml_min, arbec_mean_RER, kacl_min, kj_min) %>%
+   filter(id != "tr031 008") %>%
+  mutate(kacl_min = as.numeric(kacl_min)) %>%
+mutate(kj_min = as.numeric(kj_min))%>%
+group_by(time,group) %>% # gruitterer etter tid og KON/kontroll 
+  print()
+   
+endring_arb_FLS_itt <- arb_endring_itt %>%
+  filter(group != "kon")
+  
+endring_arb_KON_itt <- arb_endring_itt %>%
+  filter(group != "fls")
+  
+    
+#Normalitetssjekk
+difFLS_phf_itt <- with(endring_arb_FLS_itt, prosent_hfmaks[time == "pre"] - prosent_hfmaks[time == "post"])
+shapiro.test(difFLS_phf_itt)
+
+difFLS_pvo2_itt <- with(endring_arb_FLS_itt, prosent_vo2maks[time == "pre"] - prosent_vo2maks[time == "post"])
+shapiro.test(difFLS_pvo2_itt)
+
+difFLS_vo2_itt <- with(endring_arb_FLS_itt, arbec_mean_vo2_ml_min[time == "pre"] - arbec_mean_vo2_ml_min[time == "post"])
+shapiro.test(difFLS_vo2_itt)
+
+difFLS_RER_itt <- with(endring_arb_FLS_itt,arbec_mean_RER[time == "pre"] - arbec_mean_RER[time == "post"])
+shapiro.test(difFLS_RER_itt)
+
+difFLS_kacl_itt <- with(endring_arb_FLS_itt,kacl_min[time == "pre"] - kacl_min[time == "post"])
+shapiro.test(difFLS_kacl_itt)
+
+difFLS_kj_itt <- with(endring_arb_FLS_itt, kj_min[time == "pre"] - kj_min[time == "post"])
+shapiro.test(difFLS_kj_itt)
+
+
+
+
+difKON_phf_itt <- with(endring_arb_KON_itt, prosent_hfmaks[time == "pre"] - prosent_hfmaks[time == "post"])
+shapiro.test(difKON_phf_itt)
+
+difKON_pvo2_itt <- with(endring_arb_KON_itt, prosent_vo2maks[time == "pre"] - prosent_vo2maks[time == "post"])
+shapiro.test(difKON_pvo2_itt)
+
+difKON_vo2_itt <- with(endring_arb_KON_itt, arbec_mean_vo2_ml_min[time == "pre"] - arbec_mean_vo2_ml_min[time == "post"])
+shapiro.test(difKON_vo2_itt)
+
+difKON_RER_itt <- with(endring_arb_KON_itt,arbec_mean_RER[time == "pre"] - arbec_mean_RER[time == "post"])
+shapiro.test(difKON_RER_itt)
+
+difKON_kacl_itt <- with(endring_arb_KON_itt,kacl_min[time == "pre"] - kacl_min[time == "post"])
+shapiro.test(difKON_kacl_itt)
+
+difKON_kj_itt <- with(endring_arb_KON_itt, kj_min[time == "pre"] - kj_min[time == "post"])
+shapiro.test(difKON_kj_itt)
+
+#parret T-test Friskliv
+t_testFLS_phf_itt <- t.test(prosent_hfmaks ~ time, data = endring_arb_FLS_itt, paired = TRUE)
+t_testFLS_pvo2_itt <- t.test(prosent_vo2maks ~ time, data = endring_arb_FLS_itt, paired = TRUE)
+t_testFLS_vo2_itt <- t.test(arbec_mean_vo2_ml_min ~ time, data = endring_arb_FLS_itt, paired = TRUE)
+t_testFLS_RER_itt <- t.test(arbec_mean_RER ~ time, data = endring_arb_FLS_itt, paired = TRUE)
+t_testFLS_kacl_itt <- t.test(kacl_min ~ time, data = endring_arb_FLS_itt, paired = TRUE)
+t_testFLS_kj_itt <- t.test( kj_min ~ time, data = endring_arb_FLS_itt, paired = TRUE)
+
+#parret T-test Kontroll
+t_testKON_phf_itt <- t.test(prosent_hfmaks ~ time, data = endring_arb_KON_itt, paired = TRUE)
+t_testKON_pvo2_itt <- t.test(prosent_vo2maks ~ time, data = endring_arb_KON_itt, paired = TRUE)
+t_testKON_vo2_itt <- t.test(arbec_mean_vo2_ml_min ~ time, data = endring_arb_KON_itt, paired = TRUE)
+t_testKON_RER_itt <- t.test(arbec_mean_RER ~ time, data = endring_arb_KON_itt, paired = TRUE)
+t_testKON_kacl_itt <- t.test(kacl_min ~ time, data = endring_arb_KON_itt, paired = TRUE)
+t_testKON_kj_itt <- t.test( kj_min ~ time, data = endring_arb_KON_itt, paired = TRUE)
+
+
+t_testFLS_phf_itt
+t_testFLS_pvo2_itt
+t_testFLS_vo2_itt
+t_testFLS_RER_itt
+t_testFLS_kacl_itt
+t_testFLS_kj_itt
+
+#parret T-test Kontroll
+t_testKON_phf_itt
+t_testKON_pvo2_itt
+t_testKON_vo2_itt
+t_testKON_RER_itt
+t_testKON_kacl_itt
+t_testKON_kj_itt
+```
+
+
+```{r parra t-test pp, include=FALSE}
+
+arb_endring_pp <- data2 %>%
+select(id, group, time, prosent_hfmaks, prosent_vo2maks, arbec_mean_vo2_ml_min, arbec_mean_RER, kacl_min, kj_min) %>%
+   filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  filter(id != "tr031 014") %>%
+  filter(id != "tr031 002") %>%
+  filter(id != "tr031 006") %>%
+  filter(id != "tr031 007") %>%
+  filter(id != "tr031 009") %>%
+  filter(id != "tr031 010") %>%
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 013") %>%
+  filter(id != "tr031 015") %>%
+  mutate(kacl_min = as.numeric(kacl_min)) %>%
+mutate(kj_min = as.numeric(kj_min))%>%
+group_by(time,group) %>% # grupperer etter tid og KON/kontroll 
+  print()
+   
+endring_arb_FLS_pp <- arb_endring_pp %>%
+  filter(group != "kon")
+  
+endring_arb_KON_pp <- arb_endring_pp %>%
+  filter(group != "fls")
+  
+    
+#Normalitetssjekk
+difFLS_phf_pp <- with(endring_arb_FLS_pp, prosent_hfmaks[time == "pre"] - prosent_hfmaks[time == "post"])
+shapiro.test(difFLS_phf_pp)
+
+difFLS_pvo2_pp <- with(endring_arb_FLS_pp, prosent_vo2maks[time == "pre"] - prosent_vo2maks[time == "post"])
+shapiro.test(difFLS_pvo2_pp)
+
+difFLS_vo2_pp <- with(endring_arb_FLS_pp, arbec_mean_vo2_ml_min[time == "pre"] - arbec_mean_vo2_ml_min[time == "post"])
+shapiro.test(difFLS_vo2_pp)
+
+difFLS_RER_pp <- with(endring_arb_FLS_pp,arbec_mean_RER[time == "pre"] - arbec_mean_RER[time == "post"])
+shapiro.test(difFLS_RER_pp)
+
+difFLS_kacl_pp <- with(endring_arb_FLS_pp,kacl_min[time == "pre"] - kacl_min[time == "post"])
+shapiro.test(difFLS_kacl_pp)
+
+difFLS_kj_pp <- with(endring_arb_FLS_pp, kj_min[time == "pre"] - kj_min[time == "post"])
+shapiro.test(difFLS_kj_pp)
+
+
+
+
+difKON_phf_pp <- with(endring_arb_KON_pp, prosent_hfmaks[time == "pre"] - prosent_hfmaks[time == "post"])
+shapiro.test(difKON_phf_pp)
+
+difKON_pvo2_pp <- with(endring_arb_KON_pp, prosent_vo2maks[time == "pre"] - prosent_vo2maks[time == "post"])
+shapiro.test(difKON_pvo2_pp)
+
+difKON_vo2_pp <- with(endring_arb_KON_pp, arbec_mean_vo2_ml_min[time == "pre"] - arbec_mean_vo2_ml_min[time == "post"])
+shapiro.test(difKON_vo2_pp)
+
+difKON_RER_pp <- with(endring_arb_KON_pp,arbec_mean_RER[time == "pre"] - arbec_mean_RER[time == "post"])
+shapiro.test(difKON_RER_pp)
+
+difKON_kacl_pp <- with(endring_arb_KON_pp,kacl_min[time == "pre"] - kacl_min[time == "post"])
+shapiro.test(difKON_kacl_pp)
+
+difKON_kj_pp <- with(endring_arb_KON_pp, kj_min[time == "pre"] - kj_min[time == "post"])
+shapiro.test(difKON_kj_pp)
+
+#parret T-test Friskliv
+t_testFLS_phf_pp <- t.test(prosent_hfmaks ~ time, data = endring_arb_FLS_pp, paired = TRUE)
+t_testFLS_pvo2_pp <- t.test(prosent_vo2maks ~ time, data = endring_arb_FLS_pp, paired = TRUE)
+t_testFLS_vo2_pp <- t.test(arbec_mean_vo2_ml_min ~ time, data = endring_arb_FLS_pp, paired = TRUE)
+t_testFLS_RER_pp <- t.test(arbec_mean_RER ~ time, data = endring_arb_FLS_pp, paired = TRUE)
+t_testFLS_kacl_pp <- t.test(kacl_min ~ time, data = endring_arb_FLS_pp, paired = TRUE)
+t_testFLS_kj_pp <- t.test( kj_min ~ time, data = endring_arb_FLS_pp, paired = TRUE)
+
+#parret T-test Kontroll
+t_testKON_phf_pp <- t.test(prosent_hfmaks ~ time, data = endring_arb_KON_pp, paired = TRUE)
+t_testKON_pvo2_pp <- t.test(prosent_vo2maks ~ time, data = endring_arb_KON_pp, paired = TRUE)
+t_testKON_vo2_pp <- t.test(arbec_mean_vo2_ml_min ~ time, data = endring_arb_KON_pp, paired = TRUE)
+t_testKON_RER_pp <- t.test(arbec_mean_RER ~ time, data = endring_arb_KON_pp, paired = TRUE)
+t_testKON_kacl_pp <- t.test(kacl_min ~ time, data = endring_arb_KON_pp, paired = TRUE)
+t_testKON_kj_pp <- t.test( kj_min ~ time, data = endring_arb_KON_pp, paired = TRUE)
+
+
+t_testFLS_phf_pp
+t_testFLS_pvo2_pp
+t_testFLS_vo2_pp
+t_testFLS_RER_pp
+t_testFLS_kacl_pp
+t_testFLS_kj_pp
+
+#parret T-test Kontroll
+t_testKON_phf_pp
+t_testKON_pvo2_pp
+t_testKON_vo2_pp
+t_testKON_RER_pp
+t_testKON_kacl_pp
+t_testKON_kj_pp
+```
+
+
+```{r parra t-test ppm, include=FALSE}
+arb_endring_ppm <- data2 %>%
+select(id, group, time, prosent_hfmaks, prosent_vo2maks, arbec_mean_vo2_ml_min, arbec_mean_RER, kacl_min, kj_min) %>%
+   filter(id != "tr031 008") %>%
+  mutate(kacl_min = as.numeric(kacl_min)) %>%
+mutate(kj_min = as.numeric(kj_min))%>%
+group_by(time,group) %>% # gruppmerer etter tid og KON/kontroll 
+  print()
+   
+endring_arb_FLS_ppm <- arb_endring_ppm %>%
+  filter(group != "kon")
+  
+endring_arb_KON_ppm <- arb_endring_ppm %>%
+  filter(group != "fls")
+  
+    
+#Normalitetssjekk
+difFLS_phf_ppm <- with(endring_arb_FLS_ppm, prosent_hfmaks[time == "pre"] - prosent_hfmaks[time == "post"])
+shapiro.test(difFLS_phf_ppm)
+
+difFLS_pvo2_ppm <- with(endring_arb_FLS_ppm, prosent_vo2maks[time == "pre"] - prosent_vo2maks[time == "post"])
+shapiro.test(difFLS_pvo2_ppm)
+
+difFLS_vo2_ppm <- with(endring_arb_FLS_ppm, arbec_mean_vo2_ml_min[time == "pre"] - arbec_mean_vo2_ml_min[time == "post"])
+shapiro.test(difFLS_vo2_ppm)
+
+difFLS_RER_ppm <- with(endring_arb_FLS_ppm,arbec_mean_RER[time == "pre"] - arbec_mean_RER[time == "post"])
+shapiro.test(difFLS_RER_ppm)
+
+difFLS_kacl_ppm <- with(endring_arb_FLS_ppm,kacl_min[time == "pre"] - kacl_min[time == "post"])
+shapiro.test(difFLS_kacl_ppm)
+
+difFLS_kj_ppm <- with(endring_arb_FLS_ppm, kj_min[time == "pre"] - kj_min[time == "post"])
+shapiro.test(difFLS_kj_ppm)
+
+
+
+
+difKON_phf_ppm <- with(endring_arb_KON_ppm, prosent_hfmaks[time == "pre"] - prosent_hfmaks[time == "post"])
+shapiro.test(difKON_phf_ppm)
+
+difKON_pvo2_ppm <- with(endring_arb_KON_ppm, prosent_vo2maks[time == "pre"] - prosent_vo2maks[time == "post"])
+shapiro.test(difKON_pvo2_ppm)
+
+difKON_vo2_ppm <- with(endring_arb_KON_ppm, arbec_mean_vo2_ml_min[time == "pre"] - arbec_mean_vo2_ml_min[time == "post"])
+shapiro.test(difKON_vo2_ppm)
+
+difKON_RER_ppm <- with(endring_arb_KON_ppm,arbec_mean_RER[time == "pre"] - arbec_mean_RER[time == "post"])
+shapiro.test(difKON_RER_ppm)
+
+difKON_kacl_ppm <- with(endring_arb_KON_ppm,kacl_min[time == "pre"] - kacl_min[time == "post"])
+shapiro.test(difKON_kacl_ppm)
+
+difKON_kj_ppm <- with(endring_arb_KON_ppm, kj_min[time == "pre"] - kj_min[time == "post"])
+shapiro.test(difKON_kj_ppm)
+
+#parret T-test Friskliv
+t_testFLS_phf_ppm <- t.test(prosent_hfmaks ~ time, data = endring_arb_FLS_ppm, paired = TRUE)
+t_testFLS_pvo2_ppm <- t.test(prosent_vo2maks ~ time, data = endring_arb_FLS_ppm, paired = TRUE)
+t_testFLS_vo2_ppm <- t.test(arbec_mean_vo2_ml_min ~ time, data = endring_arb_FLS_ppm, paired = TRUE)
+t_testFLS_RER_ppm <- t.test(arbec_mean_RER ~ time, data = endring_arb_FLS_ppm, paired = TRUE)
+t_testFLS_kacl_ppm <- t.test(kacl_min ~ time, data = endring_arb_FLS_ppm, paired = TRUE)
+t_testFLS_kj_ppm <- t.test( kj_min ~ time, data = endring_arb_FLS_ppm, paired = TRUE)
+
+#parret T-test Kontroll
+t_testKON_phf_ppm <- t.test(prosent_hfmaks ~ time, data = endring_arb_KON_ppm, paired = TRUE)
+t_testKON_pvo2_ppm <- t.test(prosent_vo2maks ~ time, data = endring_arb_KON_ppm, paired = TRUE)
+t_testKON_vo2_ppm <- t.test(arbec_mean_vo2_ml_min ~ time, data = endring_arb_KON_ppm, paired = TRUE)
+t_testKON_RER_ppm <- t.test(arbec_mean_RER ~ time, data = endring_arb_KON_ppm, paired = TRUE)
+t_testKON_kacl_ppm <- t.test(kacl_min ~ time, data = endring_arb_KON_ppm, paired = TRUE)
+t_testKON_kj_ppm <- t.test( kj_min ~ time, data = endring_arb_KON_ppm, paired = TRUE)
+
+
+t_testFLS_phf_ppm
+t_testFLS_pvo2_ppm
+t_testFLS_vo2_ppm
+t_testFLS_RER_ppm
+t_testFLS_kacl_ppm
+t_testFLS_kj_ppm
+
+#parret T-test Kontroll
+t_testKON_phf_ppm
+t_testKON_pvo2_ppm
+t_testKON_vo2_ppm
+t_testKON_RER_ppm
+t_testKON_kacl_ppm
+t_testKON_kj_ppm
+```
