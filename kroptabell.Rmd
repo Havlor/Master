@@ -1,0 +1,55 @@
+---
+title: "kroppsammensetning"
+author: "Håvard Crantz Lorentzen"
+date: "2023-03-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable)
+
+data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA")
+
+dax_d <- data %>%
+  select(id, time, group,bmi, wc, lean_mass, fat_mass, total_mass) %>% # velgerrelevante variabler
+   mutate(lean_mass_kg = lean_mass/1000) %>%
+  mutate(fat_mass_kg = fat_mass/1000) %>%
+  mutate(total_mass_kg = total_mass/1000) %>%
+  mutate(fatp = fat_mass/total_mass*100) %>%
+  select(-lean_mass, -total_mass, -fat_mass) %>%
+  group_by(time,group) %>% # grupperer etter tid og FLS/kontroll
+mutate(n = n()) %>% 
+  pivot_longer(names_to = "variable", 
+               values_to = "value", 
+               cols = bmi:n) %>%
+  group_by(time, group, variable)%>%
+  filter(value != "na") %>%
+  summarise(m = mean(value),
+          s = sd(value), .groups = "drop_last") %>%
+  mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 3),  " (", signif(s, 3), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
+  group_time = paste(group, time, sep = "_"))%>%#setter "group" og "tid" sammen
+  ungroup() %>% #fjerner gruppering
+  select(-m, -s, -group, -time) %>%
+  pivot_wider(names_from = group_time, 
+              values_from = ms) %>%
+  mutate(variable = factor(variable, levels = c("bmi","total_mass_kg", "wc", "lean_mass_kg", "fat_mass_kg", "fatp"), 
+              labels = c("KMI","Taotal kroppsmasse", "Midjemål", "Mager masse", "Fett masse", "Fettprosent"))) %>% # ordner rekkefølge og norske navn
+  select(variable, fls_pre, fls_post, kon_pre, kon_post) %>% #endrer rekkefølge på gruppene
+  arrange(variable) %>% #ordner rekkefølge på variabelene 
+  flextable()  %>%
+  set_header_labels(variable = "",
+                     fls_pre= "Pre", 
+                     fls_post = "Post",
+                     kon_pre = "Pre", 
+                     kon_post = "Post") %>% # lager overskrifter spesifisert for hver kollonne 
+    add_header_row(values = c("", "Frisklivssentral", "Frisklivssentral", "Kontroll", "Kontroll")) %>%
+  merge_at(part = "header", i = 1, j = 2:3) %>%
+    merge_at(part = "header", i = 1, j = 4:5) %>% #justerer skrifttype
+    add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>% #legger til fornote
+    autofit() %>% # gjør avstander like
+ 
+  print()
+  # filtrerer verdier fra pretest
+   flextable::save_as_docx(path = "kropp.docx")
+```
+
