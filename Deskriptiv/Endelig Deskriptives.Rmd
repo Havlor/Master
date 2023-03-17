@@ -22,13 +22,8 @@ tabell_D <- data %>%
 select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5, lean_mass, fat_mass, one_rm_newton) %>%
   group_by(sex,group) %>% # grupperer etter kjønn og FLS/kontroll
   filter(time == "pre")%>%
-  print()#filterer ut post for å bare få pre-tester#Velger variabler
-  
-  tabell_D$lean_mass[is.na(tabell_D$lean_mass)] <- mean(tabell_D$lean_mass, na.rm = TRUE) #endre dette så det bare blir gjennomsnittet til kontroll?
+  print(n=38)#filterer ut post for å bare få pre-tester#Velger variabler
 
- tabell_D$fat_mass[is.na(tabell_D$fat_mass)] <- mean(tabell_D$fat_mass, na.rm = TRUE)
- 
- tabell_D$one_rm_newton[is.na(tabell_D$one_rm_newton)] <- mean(tabell_D$one_rm_newton, na.rm = TRUE) # fjerner NA og gjør om til gjennomsnitt i gitt variabel #endre dette så det bare blir gjennomsnittet til kontroll?
 
 des <-tabell_D %>%
    mutate(lean_mass_kg = lean_mass/1000) %>%
@@ -37,13 +32,12 @@ des <-tabell_D %>%
 mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
   pivot_longer(names_to = "variable", 
                values_to = "value", 
-               cols = age:n) %>% # omorgansiserer tallene for å få verdier nedover
+               cols = age:n) %>%# omorgansiserer tallene for å få verdier nedover
    group_by(group,sex, variable) %>%
  # legger til variabel i gruppe
-summarise(m = mean(value),
-          s = sd(value), .groups = "drop_last") %>% #summerer og får gjennomsnitt og standartdavik på de ulike variablene 
- 
-  ungroup() %>%#setter "group" og "sex" sammen
+summarise(m = mean(value, na.rm = TRUE),
+          s = sd(value, na.rm = TRUE)) %>%  #summerer og får gjennomsnitt og standartdavik på de ulike variablene 
+ #setter "group" og "sex" sammen
   pivot_wider(names_from = c(sex, group), 
               values_from = c(m, s)) %>%
   
@@ -87,7 +81,8 @@ deskriptiv_tabell <- des %>%
     merge_at(part = "header", i = 1, j = 4:5) %>%
   #justerer skrifttype
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 7) %>% #legger til fornote
-    autofit() %>% # gjør av stander like
+    autofit() %>% 
+  # gjør av stander like
  
   print()
 

@@ -1,0 +1,135 @@
+---
+title: "ny des"
+author: "Håvard Crantz Lorentzen"
+date: "2023-03-17"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#slår sammen tabeller i en for å få med og uten kjønn
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable)
+
+Resultatskjema <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA")
+# uavnhengig av kjønn
+table2 <- Resultatskjema %>%
+  # velger relevante variabler
+  select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5, lean_mass, fat_mass, one_rm_newton) %>%
+  # filtrerer verdier fra pretest
+  filter(time == "pre") %>%
+  # grupperer etter gruppe og kjønn
+  group_by(group) %>%
+  # lager en ny variabler som teller antall i grupperte variabler
+  mutate(n = n()) %>%
+  # endrer verdier fra gram til kg
+  mutate(lean_mass_kg = lean_mass / 1000) %>%
+  mutate(fat_mass_kg = fat_mass / 1000) %>%
+  select(-fat_mass, -lean_mass) %>%
+  # forlenger tabellen slik at gjennomsnittsverdier er mulig å regne ut
+  pivot_longer(names_to = "variable",
+               values_to = "value",
+               cols = age:fat_mass_kg) %>%
+  # legger til gruppering av "variable"
+  group_by(variable, group) %>%
+  # gjennomsnittsverdier og sd
+  summarise(m = mean(value, na.rm = TRUE),
+            s = sd(value, na.rm = TRUE)) %>%
+  # formatterer data slik at det ser fint ut
+  mutate(ms = if_else(variable == "n",
+                      as.character(m),
+                        paste0(signif(m, 3),
+                      " (",signif(s, 3),
+                     ")"))) %>%
+  ungroup() %>%
+  select(-m, -s) %>%
+  # endrer tabellen slik at gruppene, kontroll og intervensjon, danner en rad
+  # endrer navn på variablene og endrer til ønsket rekkefølge i tabellen
+  mutate(variable = factor(variable, levels = c("n", "age", "weight", 
+                        "height","bmi","vo2max_ml_min_kg_6x5", "vo2max_ml_min_6x5",
+                         "wc", "handgrip", "sys", "dia", 
+                         "lean_mass_kg", "fat_mass_kg", "one_rm_newton"), 
+              labels = c("Antall", "Alder (år)", "Vekt (kg)", "Høyde (cm)","KMI",
+                         "Vo2maks(ml/kg/min)", "Vo2maks(ml/min)", "Livvidde (cm)",
+                         "Grepsstyrke (kg)", "Systolisk  blodtrykk (mmHg)",
+                         "Diastolisk blodtrykk (mmHg)", "Total mager masse (gram)",
+                         "Total fettmass (gram)", "1RM i benpress (N)" ))) %>%
+  pivot_wider(names_from = group,
+              values_from = ms) %>%
+  select(variable, kon, fls) %>%
+  arrange(variable) %>%
+  print()
+# fordelt på kjønn
+table1 <- Resultatskjema %>%
+  # velger relevante variabler
+  select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5, lean_mass, fat_mass, one_rm_newton) %>%
+  # filtrerer verdier fra pretest
+  filter(time == "pre") %>%
+  # grupperer etter gruppe og kjønn
+  group_by(group, sex) %>%
+  # lager en ny variabler som teller antall i grupperte variabler
+  mutate(n = n()) %>%
+  # endrer verdier fra gram til kg
+
+  mutate(lean_mass_kg = lean_mass / 1000) %>%
+  mutate(fat_mass_kg = fat_mass / 1000) %>%
+  select(-fat_mass, -lean_mass) %>%
+  
+  # forlenger tabellen slik at gjennomsnittsverdier er mulig å regne ut
+  pivot_longer(names_to = "variable",
+               values_to = "value",
+               cols = age:fat_mass_kg) %>%
+  # legger til gruppering av "variable"
+  group_by(group, sex, variable) %>%
+  # gjennomsnittsverdier og sd
+  summarise(m = mean(value, na.rm = TRUE),
+            s = sd(value, na.rm = TRUE)) %>%
+  # formatterer data slik at det ser fint ut
+  mutate(ms = if_else(variable == "n",
+                      as.character(m),
+                      paste0(sprintf("%.2f", round(m, 2)),
+                      " (",sprintf("%.2f", round(s, 2)),
+                     ")")), 
+         # setter sammen gruppe og kjønn til en variabel
+         group_sex = paste(group, sex, sep = "_")) %>%
+  ungroup() %>%
+  select(-group, -sex, -m, -s) %>%
+  # endrer tabellen slik at gruppene, kontroll og intervensjon, danner en rad
+  pivot_wider(names_from = group_sex,
+              values_from = ms) %>%
+  # endrer navn på variablene og endrer til ønsket rekkefølge i tabellen
+   mutate(variable = factor(variable, levels = c("n", "age", "weight", 
+                        "height","bmi","vo2max_ml_min_kg_6x5", "vo2max_ml_min_6x5",
+                         "wc", "handgrip", "sys", "dia", 
+                         "lean_mass_kg", "fat_mass_kg", "one_rm_newton"), 
+              labels = c("Antall", "Alder (år)", "Vekt (kg)", "Høyde (cm)","KMI",
+                         "Vo2maks(ml/kg/min)", "Vo2maks(ml/min)", "Livvidde (cm)",
+                         "Grepsstyrke (kg)", "Systolisk  blodtrykk (mmHg)",
+                         "Diastolisk blodtrykk (mmHg)", "Total mager masse (gram)",
+                         "Total fettmass (gram)", "1RM i benpress (N)" ))) %>%
+  select(variable, kon_1, kon_2, fls_1, fls_2) %>%
+  arrange(variable) %>%
+  print()
+# slår sammen tabellene til en
+table.baselinechar <- inner_join(x = table2, y = table1) %>%
+  select(variable, fls, kon, fls_1, kon_1, fls_2, kon_2) %>%
+ arrange(variable) %>% #ordner rekkefølge på variabelene 
+  flextable()  %>%
+   set_header_labels(variable = "",
+                     fls= "Frisklivssentral",
+                     kon = "kontroll",
+                     fls_1= "Frisklivssentral", 
+                     kon_1 = "Kontroll",
+                     fls_2 = "Frisklivssentral", 
+                     kon_2 = "Kontroll") %>% # lager overskrifter spesifisert for hver kollonne 
+    add_header_row(values = c("", "Menn og kvinner kombiner", "menn og kvinner kombiner", "Kvinner", "Kvinner", "Menn", "Menn")) %>%
+  merge_at(part = "header", i = 1, j = 2:3) %>%
+    merge_at(part = "header", i = 1, j = 4:5) %>%
+  #justerer skrifttype
+    add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 7) %>% #legger til fornote
+    autofit() %>% # gjør avstander like
+ flextable::save_as_docx(path = "nydes.docx")
+  print()
+
+
+```
