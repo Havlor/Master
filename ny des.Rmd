@@ -128,8 +128,8 @@ table.baselinechar <- inner_join(x = table2, y = table1) %>%
   #justerer skrifttype
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 7) %>% #legger til fornote
     autofit() %>% # gjør avstander like
- flextable::save_as_docx(path = "nydes.docx")
   print()
 
-
 ```
+
+ flextable::save_as_docx(path = "nydes.docx")
