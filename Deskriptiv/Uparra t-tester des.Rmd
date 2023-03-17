@@ -61,7 +61,7 @@ t_1rm_kom
 
 ```{r setup, include=FALSE}
 datades <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
-ddata_k <- datades %>%
+data_k <- datades %>%
 select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5, lean_mass, fat_mass, one_rm_newton) %>%
   group_by(group) %>% # grupperer etter kjønn og FLS/kontroll
   filter(time == "pre") %>%
