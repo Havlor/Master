@@ -53,10 +53,10 @@ mutate(n = n()) %>%
     merge_at(part = "header", i = 1, j = 4:5) %>% #justerer skrifttype
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>% #legger til fornote
     autofit() %>% # gjør avstander like
-  flextable::save_as_docx(path = "itt_vo2.docx")
+
   print()
 
-
+  flextable::save_as_docx(path = "itt_vo2.docx")
 # NA på 14010 HFmax og HFpuls - HFmaks ved post ble satt som hfmaks på pre.
 # 11716 har ikke lean mass - variabel ble filtrert ut hos deltager.
 
