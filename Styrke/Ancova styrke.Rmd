@@ -3,28 +3,454 @@ title: "Ancova_styrke"
 author: "Håvard Crantz Lorentzen"
 date: "2023-03-20"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r Per protokoll ancova, include=FALSE, results='hide'}
+library(tidyverse)
+library(knitr)
+library(readxl)
+library(ggtext)
+library(flextable)
+library(ggplot2)
+library(emmeans)
+library(ggpubr)
+library(broom)
+library(rstatix)
+
+data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+
+styrke_pp <- data %>%
+  select(id, time, group, chair_stand_test, one_rm_newton, one_rm_watt, fmax_left, fmax_right, pmax_left, pmax_right) %>% # velgerrelevante variabler
+   mutate(fmax = (fmax_right + fmax_left)/2) %>%
+  mutate(pmax = (pmax_right + pmax_left)/2) %>%
+  select(-fmax_left, -fmax_right, -pmax_left, -pmax_right ) %>%
+filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  filter(id != "tr031 014") %>%
+  filter(id != "tr031 002") %>%
+  filter(id != "tr031 006") %>%
+  filter(id != "tr031 007") %>%
+  filter(id != "tr031 009") %>%
+  filter(id != "tr031 010") %>%
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 013") %>%
+  filter(id != "tr031 015") %>%
+  group_by(time,group) %>%# grupperer etter tid og FLS/kontroll
+  pivot_longer(names_to = "variable", 
+               values_to = "value", 
+               cols = chair_stand_test:pmax) %>%
+  group_by(time, group, variable)%>%
+  pivot_wider(names_from = time,
+               values_from = value)%>%
+  pivot_wider(names_from = variable,
+              values_from = c(pre,post))%>%
+  ungroup()%>%
+  print()
+
+ggscatter(styrke_pp, x = "pre_pmax", y = "post_pmax",
+  color = "group", add = "reg.line"
+  )+
+  stat_regline_equation(
+    aes(label =  paste(..eq.label.., ..rr.label.., sep = "~~~~"), color = group))
+
+styrke_pp %>% anova_test(post_chair_stand_test ~ group*pre_chair_stand_test)
+styrke_pp %>% anova_test(post_one_rm_newton ~ group*pre_one_rm_newton)
+styrke_pp %>% anova_test(post_one_rm_watt ~ group*pre_one_rm_watt)
+styrke_pp %>% anova_test(post_fmax ~ group*pre_fmax)
+styrke_pp %>% anova_test(post_pmax ~ group*pre_pmax)
+
+#Homogeneity of regression slopes
+
+# Fit the model, the covariate goes first
+model_chair_stand_test_pp <- lm(post_chair_stand_test ~ pre_chair_stand_test + group, data = styrke_pp)
+model_one_rm_newton_pp <- lm(post_one_rm_newton ~ pre_one_rm_newton + group, data = styrke_pp)
+model_rmw_pp <- lm(post_one_rm_watt ~ pre_one_rm_watt + group, data = styrke_pp)
+model_pmax_pp <- lm(post_pmax ~ pre_pmax + group, data = styrke_pp)
+model_fmax_pp <- lm(post_fmax ~ pre_fmax + group, data = styrke_pp)
+
+
+
+# Inspect the model diagnostic metrics
+model.metrics_chair_stand_test_pp <- augment(model_chair_stand_test_pp) %>%
+  select(-.hat, -.sigma, -.fitted) # Remove details
+  head(model.metrics_chair_stand_test_pp, 22)
+model.metrics_one_rm_newton_pp <- augment(model_one_rm_newton_pp) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_one_rm_newton_pp, 22)
+model.metrics_rmw_pp <- augment(model_rmw_pp) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_rmw_pp, 22)
+model.metrics_pmax_pp <- augment(model_pmax_pp) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_pmax_pp, 22)
+model.metrics_fmax_pp <- augment(model_fmax_pp) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_fmax_pp, 22)
+
+
+shapiro_test(model.metrics_chair_stand_test_pp$.resid)
+shapiro_test(model.metrics_one_rm_newton_pp$.resid)
+shapiro_test(model.metrics_rmw_pp$.resid)
+shapiro_test(model.metrics_pmax_pp$.resid)
+shapiro_test(model.metrics_fmax_pp$.resid)
+
+
+
+model.metrics_chair_stand_test_pp %>% levene_test(.resid ~ group)
+model.metrics_one_rm_newton_pp %>% levene_test(.resid ~ group)
+model.metrics_rmw_pp %>% levene_test(.resid ~ group)
+model.metrics_pmax_pp %>% levene_test(.resid ~ group)
+model.metrics_fmax_pp %>% levene_test(.resid ~ group)
+
+
+model.metrics_chair_stand_test_pp %>% 
+  filter(abs(.std.resid) > 3) %>%
+  as.data.frame()
+
+res.aov_chair_stand_test_pp <- styrke_pp %>% anova_test(post_chair_stand_test ~ pre_chair_stand_test + group)
+get_anova_table(res.aov_chair_stand_test_pp)
+
+res.aov_one_rm_newton_pp <- styrke_pp %>% anova_test(post_one_rm_newton ~ pre_one_rm_newton + group)
+get_anova_table(res.aov_one_rm_newton_pp)
+
+res.aov_rmw_pp <- styrke_pp %>% anova_test(post_one_rm_watt ~ pre_one_rm_watt + group)
+get_anova_table(res.aov_rmw_pp)
+
+res.aov_fmax_pp <- styrke_pp %>% anova_test(post_fmax ~ pre_fmax + group)
+get_anova_table(res.aov_fmax_pp)
+
+res.aov_pmax_pp <- styrke_pp %>% anova_test(post_pmax ~ pre_pmax + group)
+get_anova_table(res.aov_pmax_pp)
+
+
+
+
+
+pwc_chair_stand_test_pp <- styrke_pp %>% 
+  emmeans_test(post_chair_stand_test ~ group, covariate = pre_chair_stand_test, p.adjust.method = "bonferroni")
+pwc_chair_stand_test_pp
+get_emmeans(pwc_chair_stand_test_pp)
+
+pwc_one_rm_newton_pp <- styrke_pp%>% 
+emmeans_test(post_one_rm_newton ~ group, covariate = pre_one_rm_newton, p.adjust.method = "bonferroni")
+
+pwc_rmw_pp <- styrke_pp%>% 
+  emmeans_test(post_one_rm_watt ~ group, covariate = pre_one_rm_watt, p.adjust.method = "bonferroni")
+
+pwc_fmax_pp <- styrke_pp %>% 
+  emmeans_test(post_fmax ~ group, covariate = pre_fmax, p.adjust.method = "bonferroni")
+
+pwc_pmax_pp <- styrke_pp%>% 
+  emmeans_test(post_pmax ~ group, covariate = pre_pmax, p.adjust.method = "bonferroni")
+
+
+
+
+
+pwc_chair_stand_test_pp$p
+pwc_one_rm_newton_pp$p
+pwc_rmw_pp$p
+pwc_fmax_pp$p
+pwc_pmax_pp$p
+
+ 
 ```
 
-## R Markdown
+```{r Modifisert per protokoll ancova, include=FALSE, results='hide'}
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+styrke_ppm <- data %>%
+  select(id, time, group, chair_stand_test, one_rm_newton, one_rm_watt, fmax_left, fmax_right, pmax_left, pmax_right) %>% # velgerrelevante variabler
+   mutate(fmax = (fmax_right + fmax_left)/2) %>%
+  mutate(pmax = (pmax_right + pmax_left)/2) %>%
+  select(-fmax_left, -fmax_right, -pmax_left, -pmax_right ) %>%
+    filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  filter(id != "tr031 007") %>%
+  filter(id != "tr031 010") %>%
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 013") %>%
+  group_by(time,group) %>%# gruppmerer etter tid og FLS/kontroll
+  pivot_longer(names_to = "variable", 
+               values_to = "value", 
+               cols = chair_stand_test:pmax) %>%
+  group_by(time, group, variable)%>%
+  pivot_wider(names_from = time,
+               values_from = value)%>%
+  pivot_wider(names_from = variable,
+              values_from = c(pre,post))%>%
+  ungroup()%>%
+  print()
 
-```{r cars}
-summary(cars)
+ggscatter(styrke_ppm, x = "pre_pmax", y = "post_pmax",
+  color = "group", add = "reg.line"
+  )+
+  stat_regline_equation(
+    aes(label =  paste(..eq.label.., ..rr.label.., sep = "~~~~"), color = group))
+
+styrke_ppm %>% anova_test(post_chair_stand_test ~ group*pre_chair_stand_test)
+styrke_ppm %>% anova_test(post_one_rm_newton ~ group*pre_one_rm_newton)
+styrke_ppm %>% anova_test(post_one_rm_watt ~ group*pre_one_rm_watt)
+styrke_ppm %>% anova_test(post_fmax ~ group*pre_fmax)
+styrke_ppm %>% anova_test(post_pmax ~ group*pre_pmax)
+
+#Homogeneity of regression slopes
+
+# Fit the model, the covariate goes first
+model_chair_stand_test_ppm <- lm(post_chair_stand_test ~ pre_chair_stand_test + group, data = styrke_ppm)
+model_one_rm_newton_ppm <- lm(post_one_rm_newton ~ pre_one_rm_newton + group, data = styrke_ppm)
+model_rmw_ppm <- lm(post_one_rm_watt ~ pre_one_rm_watt + group, data = styrke_ppm)
+model_pmax_ppm <- lm(post_pmax ~ pre_pmax + group, data = styrke_ppm)
+model_fmax_ppm <- lm(post_fmax ~ pre_fmax + group, data = styrke_ppm)
+
+
+
+# Inspect the model diagnostic metrics
+model.metrics_chair_stand_test_ppm <- augment(model_chair_stand_test_ppm) %>%
+  select(-.hat, -.sigma, -.fitted) # Remove details
+  head(model.metrics_chair_stand_test_ppm, 22)
+model.metrics_one_rm_newton_ppm <- augment(model_one_rm_newton_ppm) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_one_rm_newton_ppm, 22)
+model.metrics_rmw_ppm <- augment(model_rmw_ppm) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_rmw_ppm, 22)
+model.metrics_pmax_ppm <- augment(model_pmax_ppm) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_pmax_ppm, 22)
+model.metrics_fmax_ppm <- augment(model_fmax_ppm) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_fmax_ppm, 22)
+
+
+shapiro_test(model.metrics_chair_stand_test_ppm$.resid)
+shapiro_test(model.metrics_one_rm_newton_ppm$.resid)
+shapiro_test(model.metrics_rmw_ppm$.resid)
+shapiro_test(model.metrics_pmax_ppm$.resid)
+shapiro_test(model.metrics_fmax_ppm$.resid)
+
+
+
+model.metrics_chair_stand_test_ppm %>% levene_test(.resid ~ group)
+model.metrics_one_rm_newton_ppm %>% levene_test(.resid ~ group)
+model.metrics_rmw_ppm %>% levene_test(.resid ~ group)
+model.metrics_pmax_ppm %>% levene_test(.resid ~ group)
+model.metrics_fmax_ppm %>% levene_test(.resid ~ group)
+
+
+model.metrics_chair_stand_test_ppm %>% 
+  filter(abs(.std.resid) > 3) %>%
+  as.data.frame()
+
+res.aov_chair_stand_test_ppm <- styrke_ppm %>% anova_test(post_chair_stand_test ~ pre_chair_stand_test + group)
+get_anova_table(res.aov_chair_stand_test_ppm)
+
+res.aov_one_rm_newton_ppm <- styrke_ppm %>% anova_test(post_one_rm_newton ~ pre_one_rm_newton + group)
+get_anova_table(res.aov_one_rm_newton_ppm)
+
+res.aov_rmw_ppm <- styrke_ppm %>% anova_test(post_one_rm_watt ~ pre_one_rm_watt + group)
+get_anova_table(res.aov_rmw_ppm)
+
+res.aov_fmax_ppm <- styrke_ppm %>% anova_test(post_fmax ~ pre_fmax + group)
+get_anova_table(res.aov_fmax_ppm)
+
+res.aov_pmax_ppm <- styrke_ppm %>% anova_test(post_pmax ~ pre_pmax + group)
+get_anova_table(res.aov_pmax_ppm)
+
+
+
+
+
+pwc_chair_stand_test_ppm <- styrke_ppm %>% 
+  emmeans_test(post_chair_stand_test ~ group, covariate = pre_chair_stand_test, p.adjust.method = "bonferroni")
+pwc_chair_stand_test_ppm
+get_emmeans(pwc_chair_stand_test_ppm)
+
+pwc_one_rm_newton_ppm <- styrke_ppm%>% 
+emmeans_test(post_one_rm_newton ~ group, covariate = pre_one_rm_newton, p.adjust.method = "bonferroni")
+
+pwc_rmw_ppm <- styrke_ppm%>% 
+  emmeans_test(post_one_rm_watt ~ group, covariate = pre_one_rm_watt, p.adjust.method = "bonferroni")
+
+pwc_fmax_ppm <- styrke_ppm %>% 
+  emmeans_test(post_fmax ~ group, covariate = pre_fmax, p.adjust.method = "bonferroni")
+
+pwc_pmax_ppm <- styrke_ppm%>% 
+  emmeans_test(post_pmax ~ group, covariate = pre_pmax, p.adjust.method = "bonferroni")
+
+
+
+
+
+pwc_chair_stand_test_ppm$p
+pwc_one_rm_newton_ppm$p
+pwc_rmw_ppm$p
+pwc_fmax_ppm$p
+pwc_pmax_ppm$p
+ 
 ```
 
-## Including Plots
+```{r Intension to treat ancova, include=FALSE, results='hide'}
 
-You can also embed plots, for example:
+data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+styrke_itt <- data %>%
+  select(id, time, group, chair_stand_test, one_rm_newton, one_rm_watt, fmax_left, fmax_right, pmax_left, pmax_right) %>% # velgerrelevante variabler
+   mutate(fmax = (fmax_right + fmax_left)/2) %>%
+  mutate(pmax = (pmax_right + pmax_left)/2) %>%
+  select(-fmax_left, -fmax_right, -pmax_left, -pmax_right ) %>%
+  group_by(time,group) %>%# gruitterer etter tid og FLS/kontroll
+  pivot_longer(names_to = "variable", 
+               values_to = "value", 
+               cols = chair_stand_test:pmax) %>%
+  group_by(time, group, variable)%>%
+  pivot_wider(names_from = time,
+               values_from = value)%>%
+  pivot_wider(names_from = variable,
+              values_from = c(pre,post))%>%
+  ungroup()%>%
+  print()
+
+ggscatter(styrke_itt, x = "pre_pmax", y = "post_pmax",
+  color = "group", add = "reg.line"
+  )+
+  stat_regline_equation(
+    aes(label =  paste(..eq.label.., ..rr.label.., sep = "~~~~"), color = group))
+
+styrke_itt %>% anova_test(post_chair_stand_test ~ group*pre_chair_stand_test)
+styrke_itt %>% anova_test(post_one_rm_newton ~ group*pre_one_rm_newton)
+styrke_itt %>% anova_test(post_one_rm_watt ~ group*pre_one_rm_watt)
+styrke_itt %>% anova_test(post_fmax ~ group*pre_fmax)
+styrke_itt %>% anova_test(post_pmax ~ group*pre_pmax)
+
+#Homogeneity of regression slopes
+
+# Fit the model, the covariate goes first
+model_chair_stand_test_itt <- lm(post_chair_stand_test ~ pre_chair_stand_test + group, data = styrke_itt)
+model_one_rm_newton_itt <- lm(post_one_rm_newton ~ pre_one_rm_newton + group, data = styrke_itt)
+model_rmw_itt <- lm(post_one_rm_watt ~ pre_one_rm_watt + group, data = styrke_itt)
+model_pmax_itt <- lm(post_pmax ~ pre_pmax + group, data = styrke_itt)
+model_fmax_itt <- lm(post_fmax ~ pre_fmax + group, data = styrke_itt)
+
+
+
+# Inspect the model diagnostic metrics
+model.metrics_chair_stand_test_itt <- augment(model_chair_stand_test_itt) %>%
+  select(-.hat, -.sigma, -.fitted) # Remove details
+  head(model.metrics_chair_stand_test_itt, 22)
+model.metrics_one_rm_newton_itt <- augment(model_one_rm_newton_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_one_rm_newton_itt, 22)
+model.metrics_rmw_itt <- augment(model_rmw_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_rmw_itt, 22)
+model.metrics_pmax_itt <- augment(model_pmax_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_pmax_itt, 22)
+model.metrics_fmax_itt <- augment(model_fmax_itt) %>%
+  select(-.hat, -.sigma, -.fitted) 
+  head(model.metrics_fmax_itt, 22)
+
+
+shapiro_test(model.metrics_chair_stand_test_itt$.resid)
+shapiro_test(model.metrics_one_rm_newton_itt$.resid)
+shapiro_test(model.metrics_rmw_itt$.resid)
+shapiro_test(model.metrics_pmax_itt$.resid)
+shapiro_test(model.metrics_fmax_itt$.resid)
+
+
+
+model.metrics_chair_stand_test_itt %>% levene_test(.resid ~ group)
+model.metrics_one_rm_newton_itt %>% levene_test(.resid ~ group)
+model.metrics_rmw_itt %>% levene_test(.resid ~ group)
+model.metrics_pmax_itt %>% levene_test(.resid ~ group)
+model.metrics_fmax_itt %>% levene_test(.resid ~ group)
+
+
+model.metrics_chair_stand_test_itt %>% 
+  filter(abs(.std.resid) > 3) %>%
+  as.data.frame()
+
+res.aov_chair_stand_test_itt <- styrke_itt %>% anova_test(post_chair_stand_test ~ pre_chair_stand_test + group)
+get_anova_table(res.aov_chair_stand_test_itt)
+
+res.aov_one_rm_newton_itt <- styrke_itt %>% anova_test(post_one_rm_newton ~ pre_one_rm_newton + group)
+get_anova_table(res.aov_one_rm_newton_itt)
+
+res.aov_rmw_itt <- styrke_itt %>% anova_test(post_one_rm_watt ~ pre_one_rm_watt + group)
+get_anova_table(res.aov_rmw_itt)
+
+res.aov_fmax_itt <- styrke_itt %>% anova_test(post_fmax ~ pre_fmax + group)
+get_anova_table(res.aov_fmax_itt)
+
+res.aov_pmax_itt <- styrke_itt %>% anova_test(post_pmax ~ pre_pmax + group)
+get_anova_table(res.aov_pmax_itt)
+
+
+
+
+
+pwc_chair_stand_test_itt <- styrke_itt %>% 
+  emmeans_test(post_chair_stand_test ~ group, covariate = pre_chair_stand_test, p.adjust.method = "bonferroni")
+pwc_chair_stand_test_itt
+get_emmeans(pwc_chair_stand_test_itt)
+
+pwc_one_rm_newton_itt <- styrke_itt%>% 
+emmeans_test(post_one_rm_newton ~ group, covariate = pre_one_rm_newton, p.adjust.method = "bonferroni")
+
+pwc_rmw_itt <- styrke_itt%>% 
+  emmeans_test(post_one_rm_watt ~ group, covariate = pre_one_rm_watt, p.adjust.method = "bonferroni")
+
+pwc_fmax_itt <- styrke_itt %>% 
+  emmeans_test(post_fmax ~ group, covariate = pre_fmax, p.adjust.method = "bonferroni")
+
+pwc_pmax_itt <- styrke_itt%>% 
+  emmeans_test(post_pmax ~ group, covariate = pre_pmax, p.adjust.method = "bonferroni")
+
+
+
+
+
+pwc_chair_stand_test_itt$p
+pwc_one_rm_newton_itt$p
+pwc_rmw_itt$p
+pwc_fmax_itt$p
+pwc_pmax_itt$p
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r soppsummerte ancova pverdier, include=FALSE, results='hide'}
+
+pwc_chair_stand_test_pp$p
+pwc_one_rm_newton_pp$p
+pwc_rmw_pp$p
+pwc_fmax_pp$p
+pwc_pmax_pp$p
+
+pwc_chair_stand_test_ppm$p
+pwc_one_rm_newton_ppm$p
+pwc_rmw_ppm$p
+pwc_fmax_ppm$p
+pwc_pmax_ppm$p
+
+pwc_chair_stand_test_itt$p
+pwc_one_rm_newton_itt$p
+pwc_rmw_itt$p
+pwc_fmax_itt$p
+pwc_pmax_itt$p
+
+```

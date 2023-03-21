@@ -81,21 +81,21 @@ difKON_fatp_itt <- with(dexaKON_itt, fatp[time == "pre"] - fatp[time == "post"])
 shapiro.test(difKON_fatp_itt)
 
 #parret T-test
-t_testFLS_bmi_itt <- t.test(bmi ~ time, data = dexa_itt, paired = TRUE)
-t_testFLS_wc_itt <- t.test(wc ~ time, data = dexa_itt, paired = TRUE)
-t_testFLS_lean_itt <- t.test(lean_mass_kg ~ time, data = dexa_itt, paired = TRUE)
-t_testFLS_fat_itt <- t.test(fat_mass_kg ~ time, data = dexa_itt, paired = TRUE)
-t_testFLS_total_itt <- t.test(total_mass_kg ~ time, data = dexa_itt, paired = TRUE)
-t_testFLS_fatp_itt <- t.test(fatp ~ time, data = dexa_itt, paired = TRUE)
+t_testFLS_bmi_itt <- t.test(bmi ~ time, data = dexaFLS_itt, paired = TRUE)
+t_testFLS_wc_itt <- t.test(wc ~ time, data = dexaFLS_itt, paired = TRUE)
+t_testFLS_lean_itt <- t.test(lean_mass_kg ~ time, data = dexaFLS_itt, paired = TRUE)
+t_testFLS_fat_itt <- t.test(fat_mass_kg ~ time, data = dexaFLS_itt, paired = TRUE)
+t_testFLS_total_itt <- t.test(total_mass_kg ~ time, data = dexaFLS_itt, paired = TRUE)
+t_testFLS_fatp_itt <- t.test(fatp ~ time, data = dexaFLS_itt, paired = TRUE)
 
 
 
-t_testKON_bmi_itt <- t.test(bmi ~ time, data = dexa_itt, paired = TRUE)
-t_testKON_wc_itt <- t.test(wc ~ time, data = dexa_itt, paired = TRUE)
-t_testKON_lean_itt <- t.test(lean_mass_kg ~ time, data = dexa_itt, paired = TRUE)
-t_testKON_fat_itt <- t.test(fat_mass_kg ~ time, data = dexa_itt, paired = TRUE)
-t_testKON_total_itt <- t.test(total_mass_kg ~ time, data = dexa_itt, paired = TRUE)
-t_testKON_fatp_itt <- t.test(fatp ~ time, data = dexa_itt, paired = TRUE)
+t_testKON_bmi_itt <- t.test(bmi ~ time, data = dexaKON_itt, paired = TRUE)
+t_testKON_wc_itt <- t.test(wc ~ time, data = dexaKON_itt, paired = TRUE)
+t_testKON_lean_itt <- t.test(lean_mass_kg ~ time, data = dexaKON_itt, paired = TRUE)
+t_testKON_fat_itt <- t.test(fat_mass_kg ~ time, data = dexaKON_itt, paired = TRUE)
+t_testKON_total_itt <- t.test(total_mass_kg ~ time, data = dexaKON_itt, paired = TRUE)
+t_testKON_fatp_itt <- t.test(fatp ~ time, data = dexaKON_itt, paired = TRUE)
 
 t_testFLS_bmi_itt
 t_testFLS_wc_itt
@@ -190,21 +190,21 @@ difKON_fatp_pp <- with(dexaKON_pp, fatp[time == "pre"] - fatp[time == "post"])
 shapiro.test(difKON_fatp_pp)
 
 #parret T-test
-t_testFLS_bmi_pp <- t.test(bmi ~ time, data = dexa_pp, paired = TRUE)
-t_testFLS_wc_pp <- t.test(wc ~ time, data = dexa_pp, paired = TRUE)
-t_testFLS_lean_pp <- t.test(lean_mass_kg ~ time, data = dexa_pp, paired = TRUE)
-t_testFLS_fat_pp <- t.test(fat_mass_kg ~ time, data = dexa_pp, paired = TRUE)
-t_testFLS_total_pp <- t.test(total_mass_kg ~ time, data = dexa_pp, paired = TRUE)
-t_testFLS_fatp_pp <- t.test(fatp ~ time, data = dexa_pp, paired = TRUE)
+t_testFLS_bmi_pp <- t.test(bmi ~ time, data = dexaFLS_pp, paired = TRUE)
+t_testFLS_wc_pp <- t.test(wc ~ time, data = dexaFLS_pp, paired = TRUE)
+t_testFLS_lean_pp <- t.test(lean_mass_kg ~ time, data = dexaFLS_pp, paired = TRUE)
+t_testFLS_fat_pp <- t.test(fat_mass_kg ~ time, data = dexaFLS_pp, paired = TRUE)
+t_testFLS_total_pp <- t.test(total_mass_kg ~ time, data = dexaFLS_pp, paired = TRUE)
+t_testFLS_fatp_pp <- t.test(fatp ~ time, data = dexaFLS_pp, paired = TRUE)
 
 
 
-t_testKON_bmi_pp <- t.test(bmi ~ time, data = dexa_pp, paired = TRUE)
-t_testKON_wc_pp <- t.test(wc ~ time, data = dexa_pp, paired = TRUE)
-t_testKON_lean_pp <- t.test(lean_mass_kg ~ time, data = dexa_pp, paired = TRUE)
-t_testKON_fat_pp <- t.test(fat_mass_kg ~ time, data = dexa_pp, paired = TRUE)
-t_testKON_total_pp <- t.test(total_mass_kg ~ time, data = dexa_pp, paired = TRUE)
-t_testKON_fatp_pp <- t.test(fatp ~ time, data = dexa_pp, paired = TRUE)
+t_testKON_bmi_pp <- t.test(bmi ~ time, data = dexaKON_pp, paired = TRUE)
+t_testKON_wc_pp <- t.test(wc ~ time, data = dexaKON_pp, paired = TRUE)
+t_testKON_lean_pp <- t.test(lean_mass_kg ~ time, data = dexaKON_pp, paired = TRUE)
+t_testKON_fat_pp <- t.test(fat_mass_kg ~ time, data = dexaKON_pp, paired = TRUE)
+t_testKON_total_pp <- t.test(total_mass_kg ~ time, data = dexaKON_pp, paired = TRUE)
+t_testKON_fatp_pp <- t.test(fatp ~ time, data = dexaKON_pp, paired = TRUE)
 
 t_testFLS_bmi_pp
 t_testFLS_wc_pp
@@ -293,21 +293,21 @@ difKON_fatp_ppm <- with(dexaKON_ppm, fatp[time == "pre"] - fatp[time == "post"])
 shapiro.test(difKON_fatp_ppm)
 
 #parret T-test
-t_testFLS_bmi_ppm <- t.test(bmi ~ time, data = dexa_ppm, paired = TRUE)
-t_testFLS_wc_ppm <- t.test(wc ~ time, data = dexa_ppm, paired = TRUE)
-t_testFLS_lean_ppm <- t.test(lean_mass_kg ~ time, data = dexa_ppm, paired = TRUE)
-t_testFLS_fat_ppm <- t.test(fat_mass_kg ~ time, data = dexa_ppm, paired = TRUE)
-t_testFLS_total_ppm <- t.test(total_mass_kg ~ time, data = dexa_ppm, paired = TRUE)
-t_testFLS_fatp_ppm <- t.test(fatp ~ time, data = dexa_ppm, paired = TRUE)
+t_testFLS_bmi_ppm <- t.test(bmi ~ time, data = dexaFLS_ppm, paired = TRUE)
+t_testFLS_wc_ppm <- t.test(wc ~ time, data = dexaFLS_ppm, paired = TRUE)
+t_testFLS_lean_ppm <- t.test(lean_mass_kg ~ time, data = dexaFLS_ppm, paired = TRUE)
+t_testFLS_fat_ppm <- t.test(fat_mass_kg ~ time, data = dexaFLS_ppm, paired = TRUE)
+t_testFLS_total_ppm <- t.test(total_mass_kg ~ time, data = dexaFLS_ppm, paired = TRUE)
+t_testFLS_fatp_ppm <- t.test(fatp ~ time, data = dexaFLS_ppm, paired = TRUE)
 
 
 
-t_testKON_bmi_ppm <- t.test(bmi ~ time, data = dexa_ppm, paired = TRUE)
-t_testKON_wc_ppm <- t.test(wc ~ time, data = dexa_ppm, paired = TRUE)
-t_testKON_lean_ppm <- t.test(lean_mass_kg ~ time, data = dexa_ppm, paired = TRUE)
-t_testKON_fat_ppm <- t.test(fat_mass_kg ~ time, data = dexa_ppm, paired = TRUE)
-t_testKON_total_ppm <- t.test(total_mass_kg ~ time, data = dexa_ppm, paired = TRUE)
-t_testKON_fatp_ppm <- t.test(fatp ~ time, data = dexa_ppm, paired = TRUE)
+t_testKON_bmi_ppm <- t.test(bmi ~ time, data = dexaKON_ppm, paired = TRUE)
+t_testKON_wc_ppm <- t.test(wc ~ time, data = dexaKON_ppm, paired = TRUE)
+t_testKON_lean_ppm <- t.test(lean_mass_kg ~ time, data = dexaKON_ppm, paired = TRUE)
+t_testKON_fat_ppm <- t.test(fat_mass_kg ~ time, data = dexaKON_ppm, paired = TRUE)
+t_testKON_total_ppm <- t.test(total_mass_kg ~ time, data = dexaKON_ppm, paired = TRUE)
+t_testKON_fatp_ppm <- t.test(fatp ~ time, data = dexaKON_ppm, paired = TRUE)
 
 t_testFLS_bmi_ppm
 t_testFLS_wc_ppm
@@ -323,5 +323,58 @@ t_testKON_lean_ppm
 t_testKON_fat_ppm
 t_testKON_total_ppm
 t_testKON_fatp_ppm
+
+```
+
+```{r oppsummering, include=FALSE}
+
+t_testFLS_bmi_itt
+t_testFLS_wc_itt
+t_testFLS_lean_itt
+t_testFLS_fat_itt
+t_testFLS_total_itt
+t_testFLS_fatp_itt
+
+t_testKON_bmi_itt
+t_testKON_wc_itt
+t_testKON_lean_itt
+t_testKON_fat_itt
+t_testKON_total_itt
+t_testKON_fatp_itt
+
+
+
+t_testFLS_bmi_pp
+t_testFLS_wc_pp
+t_testFLS_lean_pp
+t_testFLS_fat_pp
+t_testFLS_total_pp
+t_testFLS_fatp_pp
+
+
+t_testKON_bmi_pp
+t_testKON_wc_pp
+t_testKON_lean_pp
+t_testKON_fat_pp
+t_testKON_total_pp
+t_testKON_fatp_pp
+
+
+
+t_testFLS_bmi_ppm
+t_testFLS_wc_ppm
+t_testFLS_lean_ppm
+t_testFLS_fat_ppm
+t_testFLS_total_ppm
+t_testFLS_fatp_ppm
+
+
+t_testKON_bmi_ppm
+t_testKON_wc_ppm
+t_testKON_lean_ppm
+t_testKON_fat_ppm
+t_testKON_total_ppm
+t_testKON_fatp_ppm
+
 
 ```

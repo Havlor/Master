@@ -70,46 +70,40 @@ difKON_pmax_itt <- with(styrke_itt, pmax[time == "pre"] - pmax[time == "post"])
 shapiro.test(difKON_pmax_itt)
 
 #parret T-test
-t_testFLS_stol_itt <- t.test(chair_stand_test ~ time, data = styrke_itt, paired = TRUE)
-t_testFLS_rmn_itt <- t.test(one_rm_newton ~ time, data = styrke_itt, paired = TRUE)
-t_testFLS_rmw_itt <- t.test(one_rm_watt ~ time, data = styrke_itt, paired = TRUE)
-t_testFLS_fmax_itt <- t.test(fmax ~ time, data = styrke_itt, paired = TRUE)
-t_testFLS_pmax_itt <- t.test(pmax ~ time, data = styrke_itt, paired = TRUE)
+t_testFLS_stol_itt <- t.test(chair_stand_test ~ time, data = StyrkeFLS_itt, paired = TRUE)
+t_testFLS_rmn_itt <- t.test(one_rm_newton ~ time, data = StyrkeFLS_itt, paired = TRUE)
+t_testFLS_rmw_itt <- t.test(one_rm_watt ~ time, data = StyrkeFLS_itt, paired = TRUE)
+t_testFLS_fmax_itt <- t.test(fmax ~ time, data = StyrkeFLS_itt, paired = TRUE)
+t_testFLS_pmax_itt <- t.test(pmax ~ time, data = StyrkeFLS_itt, paired = TRUE)
 
 
-t_testKON_stol_itt <- t.test(chair_stand_test ~ time, data = styrke_itt, paired = TRUE)
-t_testKON_rmn_itt <- t.test(one_rm_newton ~ time, data = styrke_itt, paired = TRUE)
-t_testKON_rmw_itt <- t.test(one_rm_watt ~ time, data = styrke_itt, paired = TRUE)
-t_testKON_fmax_itt <- t.test(fmax ~ time, data = styrke_itt, paired = TRUE)
-t_testKON_pmax_itt <- t.test(pmax ~ time, data = styrke_itt, paired = TRUE)
+t_testKON_stol_itt <- t.test(chair_stand_test ~ time, data = StyrkeKON_itt, paired = TRUE)
+t_testKON_rmn_itt <- t.test(one_rm_newton ~ time, data = StyrkeKON_itt, paired = TRUE)
+t_testKON_rmw_itt <- t.test(one_rm_watt ~ time, data = StyrkeKON_itt, paired = TRUE)
+t_testKON_fmax_itt <- t.test(fmax ~ time, data = StyrkeKON_itt, paired = TRUE)
+t_testKON_pmax_itt <- t.test(pmax ~ time, data = StyrkeKON_itt, paired = TRUE)
 
 
-t_testFLS_bmi_itt
-t_testFLS_wc_itt
-t_testFLS_lean_itt
-t_testFLS_fat_itt
-t_testFLS_total_itt
-t_testFLS_fatp_itt
+t_testFLS_stol_itt
+t_testFLS_rmn_itt
+t_testFLS_rmw_itt
+t_testFLS_fmax_itt
+t_testFLS_pmax_itt
 
-
-t_testKON_bmi_itt
-t_testKON_wc_itt
-t_testKON_lean_itt
-t_testKON_fat_itt
-t_testKON_total_itt
-t_testKON_fatp_itt
+t_testKON_stol_itt
+t_testKON_rmn_itt
+t_testKON_rmw_itt
+t_testKON_fmax_itt
+t_testKON_pmax_itt
 ```
 
 ```{r parra t-test pp , include=FALSE}
 
-dexa_pp <- data %>%
-select(id, time, group,bmi, wc, lean_mass, fat_mass, total_mass) %>% # velgerrelevante variabler
-   mutate(lean_mass_kg = lean_mass/1000) %>%
-  mutate(fat_mass_kg = fat_mass/1000) %>%
-  mutate(total_mass_kg = total_mass/1000) %>%
-  mutate(fatp = fat_mass/total_mass*100) %>%
-  select(-lean_mass, -total_mass, -fat_mass) %>%
-#Velger variabler
+styrke_pp <- data %>%
+select(id, time, group, chair_stand_test, one_rm_newton, one_rm_watt, fmax_left, fmax_right, pmax_left, pmax_right) %>% # velgerrelevante variabler
+   mutate(fmax = (fmax_right + fmax_left)/2) %>%
+  mutate(pmax = (pmax_right + pmax_left)/2) %>%
+  select(-fmax_left, -fmax_right, -pmax_left, -pmax_right ) %>%
    filter(id != "tr031 10541") %>%
   filter(id != "tr031 11421") %>%
   filter(id != "tr031 13404") %>%
@@ -126,97 +120,86 @@ select(id, time, group,bmi, wc, lean_mass, fat_mass, total_mass) %>% # velgerrel
   filter(id != "tr031 012") %>%
   filter(id != "tr031 013") %>%
   filter(id != "tr031 015") %>%
+#Velger variabler
 group_by(time,group) %>% # grupperer etter tid og FLS/kontroll 
   print()
-   
-dexaFLS_pp <- dexa_pp %>%
+
+StyrkeFLS_pp <- styrke_pp %>%
   filter(group != "kon")
   
-dexaKON_pp <- dexa_pp %>%
+StyrkeKON_pp <- styrke_pp %>%
   filter(group != "fls")
   
     
 #Normalitetssjekk
-difFLS_bmi_pp <- with(dexaFLS_pp, bmi[time == "pre"] - bmi[time == "post"])
-shapiro.test(difFLS_bmi_pp)
+difFLS_stol_pp <- with(styrke_pp, chair_stand_test[time == "pre"] - chair_stand_test[time == "post"])
+shapiro.test(difFLS_stol_pp)
 
-difFLS_wc_pp <- with(dexaFLS_pp, wc[time == "pre"] - wc[time == "post"])
-shapiro.test(difFLS_wc_pp)
+difFLS_rmn_pp <- with(styrke_pp, one_rm_newton[time == "pre"] - one_rm_newton[time == "post"])
+shapiro.test(difFLS_rmn_pp)
 
-difFLS_lean_pp <- with(dexaFLS_pp, lean_mass_kg[time == "pre"] - lean_mass_kg[time == "post"])
-shapiro.test(difFLS_lean_pp)
+difFLS_rmw_pp <- with(styrke_pp, one_rm_watt[time == "pre"] - one_rm_watt[time == "post"])
+shapiro.test(difFLS_rmw_pp)
 
-difFLS_fat_pp <- with(dexaFLS_pp, fat_mass_kg[time == "pre"] - fat_mass_kg[time == "post"])
-shapiro.test(difFLS_fat_pp)
+difFLS_fmax_pp <- with(styrke_pp, fmax[time == "pre"] - fmax[time == "post"])
+shapiro.test(difFLS_fmax_pp)
 
-difFLS_total_pp <- with(dexaFLS_pp, total_mass_kg[time == "pre"] - total_mass_kg[time == "post"])
-shapiro.test(difFLS_total_pp)
-
-difFLS_fatp_pp <- with(dexaFLS_pp, fatp[time == "pre"] - fatp[time == "post"])
-shapiro.test(difFLS_fatp_pp)
+difFLS_pmax_pp <- with(styrke_pp, pmax[time == "pre"] - pmax[time == "post"])
+shapiro.test(difFLS_pmax_pp)
 
 
 
+difKON_stol_pp <- with(styrke_pp, chair_stand_test[time == "pre"] - chair_stand_test[time == "post"])
+shapiro.test(difKON_stol_pp)
 
-difKON_bmi_pp <- with(dexaKON_pp, bmi[time == "pre"] - bmi[time == "post"])
-shapiro.test(difKON_bmi_pp)
+difKON_rmn_pp <- with(styrke_pp, one_rm_newton[time == "pre"] - one_rm_newton[time == "post"])
+shapiro.test(difKON_rmn_pp)
 
-difKON_wc_pp <- with(dexaKON_pp, wc[time == "pre"] - wc[time == "post"])
-shapiro.test(difKON_wc_pp)
+difKON_rmw_pp <- with(styrke_pp, one_rm_watt[time == "pre"] - one_rm_watt[time == "post"])
+shapiro.test(difKON_rmw_pp)
 
-difKON_lean_pp <- with(dexaKON_pp, lean_mass_kg[time == "pre"] - lean_mass_kg[time == "post"])
-shapiro.test(difKON_lean_pp)
+difKON_fmax_pp <- with(styrke_pp, fmax[time == "pre"] - fmax[time == "post"])
+shapiro.test(difKON_fmax_pp)
 
-difKON_fat_pp <- with(dexaKON_pp, fat_mass_kg[time == "pre"] - fat_mass_kg[time == "post"])
-shapiro.test(difKON_fat_pp)
-
-difKON_total_pp <- with(dexaKON_pp, total_mass_kg[time == "pre"] - total_mass_kg[time == "post"])
-shapiro.test(difKON_total_pp)
-
-difKON_fatp_pp <- with(dexaKON_pp, fatp[time == "pre"] - fatp[time == "post"])
-shapiro.test(difKON_fatp_pp)
+difKON_pmax_pp <- with(styrke_pp, pmax[time == "pre"] - pmax[time == "post"])
+shapiro.test(difKON_pmax_pp)
 
 #parret T-test
-t_testFLS_bmi_pp <- t.test(bmi ~ time, data = dexa_pp, paired = TRUE)
-t_testFLS_wc_pp <- t.test(wc ~ time, data = dexa_pp, paired = TRUE)
-t_testFLS_lean_pp <- t.test(lean_mass_kg ~ time, data = dexa_pp, paired = TRUE)
-t_testFLS_fat_pp <- t.test(fat_mass_kg ~ time, data = dexa_pp, paired = TRUE)
-t_testFLS_total_pp <- t.test(total_mass_kg ~ time, data = dexa_pp, paired = TRUE)
-t_testFLS_fatp_pp <- t.test(fatp ~ time, data = dexa_pp, paired = TRUE)
+t_testFLS_stol_pp <- t.test(chair_stand_test ~ time, data = StyrkeFLS_pp, paired = TRUE)
+t_testFLS_rmn_pp <- t.test(one_rm_newton ~ time, data = StyrkeFLS_pp, paired = TRUE)
+t_testFLS_rmw_pp <- t.test(one_rm_watt ~ time, data = StyrkeFLS_pp, paired = TRUE)
+t_testFLS_fmax_pp <- t.test(fmax ~ time, data = StyrkeFLS_pp, paired = TRUE)
+t_testFLS_pmax_pp <- t.test(pmax ~ time, data = StyrkeFLS_pp, paired = TRUE)
+
+
+t_testKON_stol_pp <- t.test(chair_stand_test ~ time, data = StyrkeKON_pp, paired = TRUE)
+t_testKON_rmn_pp <- t.test(one_rm_newton ~ time, data = StyrkeKON_pp, paired = TRUE)
+t_testKON_rmw_pp <- t.test(one_rm_watt ~ time, data = StyrkeKON_pp, paired = TRUE)
+t_testKON_fmax_pp <- t.test(fmax ~ time, data = StyrkeKON_pp, paired = TRUE)
+t_testKON_pmax_pp <- t.test(pmax ~ time, data = StyrkeKON_pp, paired = TRUE)
+
+
+t_testFLS_stol_pp
+t_testFLS_rmn_pp
+t_testFLS_rmw_pp
+t_testFLS_fmax_pp
+t_testFLS_pmax_pp
 
 
 
-t_testKON_bmi_pp <- t.test(bmi ~ time, data = dexa_pp, paired = TRUE)
-t_testKON_wc_pp <- t.test(wc ~ time, data = dexa_pp, paired = TRUE)
-t_testKON_lean_pp <- t.test(lean_mass_kg ~ time, data = dexa_pp, paired = TRUE)
-t_testKON_fat_pp <- t.test(fat_mass_kg ~ time, data = dexa_pp, paired = TRUE)
-t_testKON_total_pp <- t.test(total_mass_kg ~ time, data = dexa_pp, paired = TRUE)
-t_testKON_fatp_pp <- t.test(fatp ~ time, data = dexa_pp, paired = TRUE)
-
-t_testFLS_bmi_pp
-t_testFLS_wc_pp
-t_testFLS_lean_pp
-t_testFLS_fat_pp
-t_testFLS_total_pp
-t_testFLS_fatp_pp
-
-
-t_testKON_bmi_pp
-t_testKON_wc_pp
-t_testKON_lean_pp
-t_testKON_fat_pp
-t_testKON_total_pp
-t_testKON_fatp_pp
+t_testKON_stol_pp
+t_testKON_rmn_pp
+t_testKON_rmw_pp
+t_testKON_fmax_pp
+t_testKON_pmax_pp
 ```
 
 ```{r parra t-test ppm, include=FALSE}
-dexa_ppm <- data %>%
-select(id, time, group,bmi, wc, lean_mass, fat_mass, total_mass) %>% # velgerrelevante variabler
-   mutate(lean_mass_kg = lean_mass/1000) %>%
-  mutate(fat_mass_kg = fat_mass/1000) %>%
-  mutate(total_mass_kg = total_mass/1000) %>%
-  mutate(fatp = fat_mass/total_mass*100) %>%
-  select(-lean_mass, -total_mass, -fat_mass) %>%
+styrke_ppm <- data %>%
+select(id, time, group, chair_stand_test, one_rm_newton, one_rm_watt, fmax_left, fmax_right, pmax_left, pmax_right) %>% # velgerrelevante variabler
+   mutate(fmax = (fmax_right + fmax_left)/2) %>%
+  mutate(pmax = (pmax_right + pmax_left)/2) %>%
+  select(-fmax_left, -fmax_right, -pmax_left, -pmax_right ) %>%
 #Velger variabler
    filter(id != "tr031 10541") %>%
   filter(id != "tr031 11421") %>%
@@ -231,84 +214,119 @@ select(id, time, group,bmi, wc, lean_mass, fat_mass, total_mass) %>% # velgerrel
   filter(id != "tr031 013") %>%
 group_by(time,group) %>% # gruppmerer etter tid og FLS/kontroll 
   print()
-   
-dexaFLS_ppm <- dexa_ppm %>%
+
+StyrkeFLS_ppm <- styrke_ppm %>%
   filter(group != "kon")
   
-dexaKON_ppm <- dexa_ppm %>%
+StyrkeKON_ppm <- styrke_ppm %>%
   filter(group != "fls")
   
     
 #Normalitetssjekk
-difFLS_bmi_ppm <- with(dexaFLS_ppm, bmi[time == "pre"] - bmi[time == "post"])
-shapiro.test(difFLS_bmi_ppm)
+difFLS_stol_ppm <- with(styrke_ppm, chair_stand_test[time == "pre"] - chair_stand_test[time == "post"])
+shapiro.test(difFLS_stol_ppm)
 
-difFLS_wc_ppm <- with(dexaFLS_ppm, wc[time == "pre"] - wc[time == "post"])
-shapiro.test(difFLS_wc_ppm)
+difFLS_rmn_ppm <- with(styrke_ppm, one_rm_newton[time == "pre"] - one_rm_newton[time == "post"])
+shapiro.test(difFLS_rmn_ppm)
 
-difFLS_lean_ppm <- with(dexaFLS_ppm, lean_mass_kg[time == "pre"] - lean_mass_kg[time == "post"])
-shapiro.test(difFLS_lean_ppm)
+difFLS_rmw_ppm <- with(styrke_ppm, one_rm_watt[time == "pre"] - one_rm_watt[time == "post"])
+shapiro.test(difFLS_rmw_ppm)
 
-difFLS_fat_ppm <- with(dexaFLS_ppm, fat_mass_kg[time == "pre"] - fat_mass_kg[time == "post"])
-shapiro.test(difFLS_fat_ppm)
+difFLS_fmax_ppm <- with(styrke_ppm, fmax[time == "pre"] - fmax[time == "post"])
+shapiro.test(difFLS_fmax_ppm)
 
-difFLS_total_ppm <- with(dexaFLS_ppm, total_mass_kg[time == "pre"] - total_mass_kg[time == "post"])
-shapiro.test(difFLS_total_ppm)
-
-difFLS_fatp_ppm <- with(dexaFLS_ppm, fatp[time == "pre"] - fatp[time == "post"])
-shapiro.test(difFLS_fatp_ppm)
+difFLS_pmax_ppm <- with(styrke_ppm, pmax[time == "pre"] - pmax[time == "post"])
+shapiro.test(difFLS_pmax_ppm)
 
 
 
+difKON_stol_ppm <- with(styrke_ppm, chair_stand_test[time == "pre"] - chair_stand_test[time == "post"])
+shapiro.test(difKON_stol_ppm)
 
-difKON_bmi_ppm <- with(dexaKON_ppm, bmi[time == "pre"] - bmi[time == "post"])
-shapiro.test(difKON_bmi_ppm)
+difKON_rmn_ppm <- with(styrke_ppm, one_rm_newton[time == "pre"] - one_rm_newton[time == "post"])
+shapiro.test(difKON_rmn_ppm)
 
-difKON_wc_ppm <- with(dexaKON_ppm, wc[time == "pre"] - wc[time == "post"])
-shapiro.test(difKON_wc_ppm)
+difKON_rmw_ppm <- with(styrke_ppm, one_rm_watt[time == "pre"] - one_rm_watt[time == "post"])
+shapiro.test(difKON_rmw_ppm)
 
-difKON_lean_ppm <- with(dexaKON_ppm, lean_mass_kg[time == "pre"] - lean_mass_kg[time == "post"])
-shapiro.test(difKON_lean_ppm)
+difKON_fmax_ppm <- with(styrke_ppm, fmax[time == "pre"] - fmax[time == "post"])
+shapiro.test(difKON_fmax_ppm)
 
-difKON_fat_ppm <- with(dexaKON_ppm, fat_mass_kg[time == "pre"] - fat_mass_kg[time == "post"])
-shapiro.test(difKON_fat_ppm)
-
-difKON_total_ppm <- with(dexaKON_ppm, total_mass_kg[time == "pre"] - total_mass_kg[time == "post"])
-shapiro.test(difKON_total_ppm)
-
-difKON_fatp_ppm <- with(dexaKON_ppm, fatp[time == "pre"] - fatp[time == "post"])
-shapiro.test(difKON_fatp_ppm)
+difKON_pmax_ppm <- with(styrke_ppm, pmax[time == "pre"] - pmax[time == "post"])
+shapiro.test(difKON_pmax_ppm)
 
 #parret T-test
-t_testFLS_bmi_ppm <- t.test(bmi ~ time, data = dexa_ppm, paired = TRUE)
-t_testFLS_wc_ppm <- t.test(wc ~ time, data = dexa_ppm, paired = TRUE)
-t_testFLS_lean_ppm <- t.test(lean_mass_kg ~ time, data = dexa_ppm, paired = TRUE)
-t_testFLS_fat_ppm <- t.test(fat_mass_kg ~ time, data = dexa_ppm, paired = TRUE)
-t_testFLS_total_ppm <- t.test(total_mass_kg ~ time, data = dexa_ppm, paired = TRUE)
-t_testFLS_fatp_ppm <- t.test(fatp ~ time, data = dexa_ppm, paired = TRUE)
+t_testFLS_stol_ppm <- t.test(chair_stand_test ~ time, data = StyrkeFLS_ppm, paired = TRUE)
+t_testFLS_rmn_ppm <- t.test(one_rm_newton ~ time, data = StyrkeFLS_ppm, paired = TRUE)
+t_testFLS_rmw_ppm <- t.test(one_rm_watt ~ time, data = StyrkeFLS_ppm, paired = TRUE)
+t_testFLS_fmax_ppm <- t.test(fmax ~ time, data = StyrkeFLS_ppm, paired = TRUE)
+t_testFLS_pmax_ppm <- t.test(pmax ~ time, data = StyrkeFLS_ppm, paired = TRUE)
+
+
+t_testKON_stol_ppm <- t.test(chair_stand_test ~ time, data = StyrkeKON_ppm, paired = TRUE)
+t_testKON_rmn_ppm <- t.test(one_rm_newton ~ time, data = StyrkeKON_ppm, paired = TRUE)
+t_testKON_rmw_ppm <- t.test(one_rm_watt ~ time, data = StyrkeKON_ppm, paired = TRUE)
+t_testKON_fmax_ppm <- t.test(fmax ~ time, data = StyrkeKON_ppm, paired = TRUE)
+t_testKON_pmax_ppm <- t.test(pmax ~ time, data = StyrkeKON_ppm, paired = TRUE)
+
+
+t_testFLS_stol_ppm
+t_testFLS_rmn_ppm
+t_testFLS_rmw_ppm
+t_testFLS_fmax_ppm
+t_testFLS_pmax_ppm
 
 
 
-t_testKON_bmi_ppm <- t.test(bmi ~ time, data = dexa_ppm, paired = TRUE)
-t_testKON_wc_ppm <- t.test(wc ~ time, data = dexa_ppm, paired = TRUE)
-t_testKON_lean_ppm <- t.test(lean_mass_kg ~ time, data = dexa_ppm, paired = TRUE)
-t_testKON_fat_ppm <- t.test(fat_mass_kg ~ time, data = dexa_ppm, paired = TRUE)
-t_testKON_total_ppm <- t.test(total_mass_kg ~ time, data = dexa_ppm, paired = TRUE)
-t_testKON_fatp_ppm <- t.test(fatp ~ time, data = dexa_ppm, paired = TRUE)
+t_testKON_stol_ppm
+t_testKON_rmn_ppm
+t_testKON_rmw_ppm
+t_testKON_fmax_ppm
+t_testKON_pmax_ppm
 
-t_testFLS_bmi_ppm
-t_testFLS_wc_ppm
-t_testFLS_lean_ppm
-t_testFLS_fat_ppm
-t_testFLS_total_ppm
-t_testFLS_fatp_ppm
+```
+
+```{r oppsummering, include=FALSE}
+
+t_testFLS_stol_itt
+t_testFLS_rmn_itt
+t_testFLS_rmw_itt
+t_testFLS_fmax_itt
+t_testFLS_pmax_itt
+
+t_testKON_stol_itt
+t_testKON_rmn_itt
+t_testKON_rmw_itt
+t_testKON_fmax_itt
+t_testKON_pmax_itt
 
 
-t_testKON_bmi_ppm
-t_testKON_wc_ppm
-t_testKON_lean_ppm
-t_testKON_fat_ppm
-t_testKON_total_ppm
-t_testKON_fatp_ppm
+t_testFLS_stol_pp
+t_testFLS_rmn_pp
+t_testFLS_rmw_pp
+t_testFLS_fmax_pp
+t_testFLS_pmax_pp
+
+t_testKON_stol_pp
+t_testKON_rmn_pp
+t_testKON_rmw_pp
+t_testKON_fmax_pp
+t_testKON_pmax_pp
+
+
+
+t_testFLS_stol_ppm
+t_testFLS_rmn_ppm
+t_testFLS_rmw_ppm
+t_testFLS_fmax_ppm
+t_testFLS_pmax_ppm
+
+
+
+t_testKON_stol_ppm
+t_testKON_rmn_ppm
+t_testKON_rmw_ppm
+t_testKON_fmax_ppm
+t_testKON_pmax_ppm
 
 ```
