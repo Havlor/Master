@@ -19,6 +19,7 @@ library(ggpubr)
 library(dplyr)
 library(rstatix)
 library(broom)
+library(readxl)
 
 datades <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 data_kom <- datades %>%
@@ -141,5 +142,28 @@ t_dblodtrykk_m
 t_mmasse_m
 t_fmasse_m
 t_1rm_m
+
+```
+
+```{r testing av regresjon, include=FALSE}
+
+datades <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
+data_kom <- datades %>%
+select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5, lean_mass, fat_mass, one_rm_newton) %>%
+  filter(time == "pre") %>% #filterer ut post for å bare få pre-tester#Velger variabler
+  print()
+
+lm.age <- lm(age ~ group, data = datades)
+summary(lm.age)
+lm.height <- lm(height ~ group, data = datades)
+summary(lm.height)
+lm.age <- lm(age ~ group, data = pre.diff)
+lm.age <- lm(age ~ group, data = pre.diff)
+lm.age <- lm(age ~ group, data = pre.diff)
+lm.age <- lm(age ~ group, data = pre.diff)
+lm.age <- lm(age ~ group, data = pre.diff)
+lm.age <- lm(age ~ group, data = pre.diff)
+lm.age <- lm(age ~ group, data = pre.diff)
+lm.age <- lm(age ~ group, data = pre.diff)
 
 ```
