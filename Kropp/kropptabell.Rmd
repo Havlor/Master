@@ -49,10 +49,10 @@ mutate(n = n()) %>%
     merge_at(part = "header", i = 1, j = 4:5) %>% #justerer skrifttype
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>% #legger til fornote
     autofit() %>% # gjør avstander like
- 
+    #flextable::save_as_docx(path = "kropp/kropp_itt.docx")
   print()
   # filtrerer verdier fra pretest
-   flextable::save_as_docx(path = "kropp.docx")
+
 ```
 
 
@@ -112,10 +112,10 @@ mutate(n = n()) %>%
     merge_at(part = "header", i = 1, j = 4:5) %>% #justerer skrifttype
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>% #legger til fornote
     autofit() %>% # gjør avstander like
- 
+# flextable::save_as_docx(path = "kropp/kropp_pp.docx")
   print()
   # filtrerer verdier fra pretest
-   flextable::save_as_docx(path = "kropp.docx")
+   
 ```
 
 ```{r setup, include=FALSE}
@@ -169,9 +169,9 @@ mutate(n = n()) %>%
     merge_at(part = "header", i = 1, j = 4:5) %>% #justerer skrifttype
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>% #legger til fornote
     autofit() %>% # gjør avstander like
- 
+ #flextable::save_as_docx(path = "kropp/kropp_ppm.docx")
   print()
   # filtrerer verdier fra pretest
-   flextable::save_as_docx(path = "kropp.docx")
+ 
 ```
 
