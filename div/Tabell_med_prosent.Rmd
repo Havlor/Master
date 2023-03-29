@@ -18,15 +18,9 @@ library(kableExtra)
 data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
 tabell_med_alt <- data %>%
-select(id, time, group, weight, bmi, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,`o2_puls (ml)`,hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac, `arbec_%_maksHF`,`arbec_%_o2max`,arbec_mean_o2,arbec_vo2_ml_min, arbec_RER, arbec_HF, one_rm_newton,one_rm_watt,pmax_left,pmax_right,fmax_left,fmax_right, chair_stand_test)%>%
+select(id, time, group, weight, bmi, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek,time_to_exhaustion, borg_end,lac, `arbec_%_maksHF`,`arbec_%_o2max`,arbec_mean_o2,arbec_vo2_ml_min, arbec_RER, arbec_HF, one_rm_newton,one_rm_watt,pmax_left,pmax_right,fmax_left,fmax_right, chair_stand_test)%>%
 #Velger variabler
-filter(id != "tr031 10541") %>%
-  filter(id != "tr031 11421") %>%
-  filter(id != "tr031 13404") %>%
-  filter(id != "tr031 004") %>%
-  filter(id != "tr031 008") %>%
-  filter(id != "tr031 001") %>%
-  filter(id != "tr031 016") %>% #filtrer ut droppouts
+ #filtrer ut droppouts
 group_by(time,group) %>%# grupperer etter tid og FLS/kontroll
 mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
   pivot_longer(names_to = "variable", 
@@ -41,8 +35,7 @@ mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
                cols = pre:post) %>%
    group_by(group, time, variable) %>%# legger til variabel i gruppe
 summarise(m = mean(value),
-          s = sd(value), .groups = "drop_last") %>%
-  print()#summerer og får gjennomsnitt og standartdavik på de ulike variablene 
+          s = sd(value), .groups = "drop_last") %>%#summerer og får gjennomsnitt og standartdavik på de ulike variablene 
   mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 3),  " (", signif(s, 3), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
   group_time = paste(group, time, sep = "_"))%>%#setter "group" og "tid" sammen
   ungroup() %>% #fjerner gruppering
@@ -78,15 +71,20 @@ library(kableExtra)
 data1 <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
 endringfiltrering <- data1 %>%
-select(id, time, group, weight, bmi, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,`o2_puls (ml)`,hf_max, rer_max_30sek, bfmax_30sek, `Ve_L/min_max_30sek`,time_to_exhaustion, borg_end,lac, `arbec_%_maksHF`,`arbec_%_o2max`,arbec_mean_o2,arbec_vo2_ml_min, arbec_RER, arbec_HF, one_rm_newton,one_rm_watt,pmax_left,pmax_right,fmax_left,fmax_right, chair_stand_test) %>%
-#Velger variabler
-filter(id != "tr031 10541") %>%
+select(id, time, group, weight, bmi, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek,time_to_exhaustion, borg_end,lac, `arbec_%_maksHF`,`arbec_%_o2max`,arbec_mean_o2,arbec_vo2_ml_min, arbec_RER, arbec_HF, one_rm_newton,one_rm_watt,pmax_left,pmax_right,fmax_left,fmax_right, chair_stand_test) %>%
+ filter(id != "tr031 10541") %>%
   filter(id != "tr031 11421") %>%
   filter(id != "tr031 13404") %>%
   filter(id != "tr031 004") %>%
   filter(id != "tr031 008") %>%
   filter(id != "tr031 001") %>%
-  filter(id != "tr031 016") %>% #filtrer ut droppouts
+  filter(id != "tr031 016") %>%
+  filter(id != "tr031 007") %>%
+  filter(id != "tr031 010") %>%
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 013") %>%
+#Velger variabler
+#filtrer ut droppouts
 group_by(time,group) %>% # grupperer etter tid og FLS/kontroll 
   mutate(n = n()) %>%
   pivot_longer(names_to = "variable", 
@@ -98,7 +96,7 @@ group_by(time,group) %>% # grupperer etter tid og FLS/kontroll
               values_from = "value") %>%
   filter(!is.na(pre)) %>%
   filter(!is.na(post)) %>% 
-  mutate(diff = post - pre) %>%
+  mutate(diff = post/pre*100-100) %>%
    group_by(group, variable) %>% #legger til variabel i gruppe
 summarise(m = mean(diff),
           s = sd(diff), .groups = "drop_last") %>% #summerer og får gjennomsnitt ogstandartdavik på de ulike variablene 
