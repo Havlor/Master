@@ -30,23 +30,19 @@ Vo2figur_itt$group <-factor(Vo2figur_itt$group,levels = c("fls", "kon"), labels 
 
 Vo2kg_figur_itt <-ggplot(Vo2figur_itt, aes(time, vo2max_ml_min_kg_6x5, group = id)) + geom_line(linetype = "dashed", size = 0.5) + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
-       y = "VO<sub>2max</sub> (ml/kg/min<sup> -1</sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
+       y = "VO<sub>2maks</sub> (ml/kg/min<sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
     shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
  
-theme_clean(base_size = 18) + theme(axis.title.y = element_markdown(size = 12)) 
-Vo2kg_figur_itt
-
- theme_bw(base_size = 18)
- theme_clean(base_size = 18)
+theme_clean(base_size = 18) + theme(axis.title.y = element_markdown(size = 15)) 
 
 
 
 
 Vo2_figur_itt <- ggplot(Vo2figur_itt, aes(time, vo2max_ml_min_6x5, group = id)) + geom_line(linetype = "dashed", size = 0.5) + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
-       y = "VO<sub>2max</sub> (ml/min<sup> -1</sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
+       y = "VO<sub>2maks</sub> (ml/min<sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
     shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
- theme_clean(base_size = 18) + theme(axis.title.y = element_markdown(size = 12))
+ theme_clean(base_size = 18) + theme(axis.title.y = element_markdown(size = 15))
 
 ```
 
@@ -80,15 +76,15 @@ Vo2figur_pp$group <-factor(Vo2figur_pp$group,levels = c("fls", "kon"), labels = 
 
 Vo2kg_figur_pp <-ggplot(Vo2figur_pp, aes(time, vo2max_ml_min_kg_6x5, group = id)) + geom_line(linetype = "dashed", size = 0.5) + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
-       y = "VO<sub>2max</sub> (ml/kg/min<sup> -1</sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
+       y = "VO<sub>2maks</sub> (ml/kg/min<sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
     shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
- theme_clean(base_size = 18) + theme(axis.title.y = element_markdown(size = 12))
+ theme_clean(base_size = 18) + theme(axis.title.y = element_markdown(size = 15))
 
 Vo2_figur_pp <- ggplot(Vo2figur_pp, aes(time, vo2max_ml_min_6x5, group = id)) + geom_line(linetype = "dashed", size = 0.5) + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
-       y = "VO<sub>2max</sub> (ml/min<sup> -1</sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
+       y = "VO<sub>2maks</sub> (ml/min<sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
     shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
-  theme_clean(base_size = 18) + theme(axis.title.y = element_markdown(size = 12))
+  theme_clean(base_size = 18) + theme(axis.title.y = element_markdown(size = 15))
 ```
 
 ```{r Vo2figur ppm, include=FALSE, fig.cap= "Endring av maksimalt oksygenopptak fra Pre- posttest"}
@@ -115,15 +111,15 @@ Vo2figur_ppm$group <-factor(Vo2figur_ppm$group,levels = c("fls", "kon"), labels 
 
 Vo2kg_figur_ppm <- ggplot(Vo2figur_ppm, aes(time, vo2max_ml_min_kg_6x5, group = id)) + geom_line(linetype = "dashed", size = 0.5) + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
-       y = "VO<sub>2max</sub> (ml/kg/min<sup> -1</sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
+       y = "VO<sub>2maks</sub> (ml/kg/min<sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
     shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
- theme_clean(base_size = 18) + theme(axis.title.y = element_markdown(size = 12))
+ theme_clean(base_size = 18) + theme(axis.title.y = element_markdown(size = 15))
 
 Vo2_figur_ppm <- ggplot(Vo2figur_ppm, aes(time, vo2max_ml_min_6x5, group = id)) + geom_line(linetype = "dashed", size = 0.5) + geom_point(size = 2, fill = "lightblue", shape = 21) +
   labs(x = "Tidspunkt", 
-       y = "VO<sub>2max</sub> (ml/min<sup> -1</sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
+       y = "VO<sub>2maks</sub> (ml/min<sup>)", color = "Group") + stat_summary(aes(group = 1), geom = "point", fun.y = mean,
     shape = 21, size = 2, color = "black") + facet_grid(. ~ time) + facet_wrap(vars(group)) + stat_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
- theme_clean(base_size = 18) + theme(axis.title.y = element_markdown(size = 12))
+ theme_clean(base_size = 18) + theme(axis.title.y = element_markdown(size = 15))
 
 ```
 
