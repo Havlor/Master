@@ -57,7 +57,9 @@ summarise(m = mean(value),
   merge_at(part = "header", i = 1, j = 2:3) %>%
     merge_at(part = "header", i = 1, j = 4:5) %>% #justerer skrifttype
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>% #legger til fornote
-    autofit() # gjør av stander like
+    autofit()%>% # gjør av stander like
+print()
+
    flextable::save_as_docx(path = "arb_itt.docx") #brukes til å lagre til word
 
 ```
