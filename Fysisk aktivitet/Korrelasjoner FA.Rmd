@@ -1,0 +1,86 @@
+---
+title: "R Notebook"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+```{r setup, include=FALSE}
+library(ggpubr)
+library(tidyverse)
+library(knitr)
+library(flextable)
+library(ggplot2)
+library(readxl)
+library(kableExtra)
+
+data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA")
+
+ggscatter(data, x = "vo2max_ml_min_kg_6x5", y = "phys_act", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Vo2maks", ylab = "Kaloriforbruk i FA")
+
+shapiro.test(data$vo2max_ml_min_kg_6x5)
+shapiro.test(data$phys_act)
+
+res <- cor.test(data$vo2max_ml_min_kg_6x5, data$phys_act, 
+                    method = "pearson")
+
+res2 <- cor.test(data$vo2max_ml_min_kg_6x5, data$phys_act,  method = "spearman")
+res2
+
+res3 <- cor.test(data$vo2max_ml_min_kg_6x5, data$phys_act,  method="kendall")
+res3
+
+
+```
+
+```{r setup, include=FALSE}
+library(ggpubr)
+library(readxl)
+
+data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA")
+
+kor_end <- data %>%
+  select(id, time, group, vo2max_ml_min_kg_6x5, phys_act,phys_work) %>%
+  filter(id != "tr031 11716") %>%
+  group_by(time,group) %>%# grupperer etter tid og FLS/kontroll
+  pivot_longer(names_to = "variable", 
+               values_to = "value",
+               cols = vo2max_ml_min_kg_6x5:phys_work) %>%# omorgansiserer tallene for å få verdier nedover
+ pivot_wider(names_from = "time",
+              values_from = "value")%>%
+   pivot_longer(names_to = "time", 
+               values_to = "value",
+               cols = pre:post) %>%
+   group_by(id, time, variable) %>% 
+  # legger til variabel i gruppe
+
+  pivot_wider(names_from = time, 
+              values_from = value) %>%
+  summarise(dif = post-pre)%>%
+pivot_wider(values_from = "dif", names_from = "variable")%>%
+  print()
+
+ggscatter(kor_end, x = "vo2max_ml_min_kg_6x5", y = "phys_act", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Vo2maks", ylab = "Kaloriforbruk i FA")
+
+shapiro.test(kor_end$vo2max_ml_min_kg_6x5)
+shapiro.test(kor_end$phys_act)
+
+eres <- cor.test(kor_end$vo2max_ml_min_kg_6x5, kor_end$phys_act, 
+                    method = "pearson")
+eres
+
+eres2 <- cor.test(kor_end$vo2max_ml_min_kg_6x5, kor_end$phys_act,  method = "spearman")
+eres2
+
+eres3 <- cor.test(kor_end$vo2max_ml_min_kg_6x5, kor_end$phys_act,  method="kendall")
+eres3
+
+
+```
+
+
