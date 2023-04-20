@@ -18,7 +18,7 @@ library(kableExtra)
 data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
 enring_kontroll <- data %>%
-select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, weight, chair_stand_test, o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek,time_to_exhaustion, borg_end,lac, time_to_exhaustion,`arbec_%_maksHF`,`arbec_%_o2max`,arbec_mean_o2,arbec_vo2_ml_min, arbec_RER, arbec_HF, arbec_ve_l_min, arbec_vco2_ml_min, lean_mass, fat_mass, one_rm_newton, one_rm_watt,pmax_left, pmax_right, fmax_left, fmax_right) %>%
+select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, weight, chair_stand_test, o2_puls_ml, hf_max, rer_max_30sek, bfmax_30sek, Ve_L_min_max_30sek,time_to_exhaustion, borg_end,lac, time_to_exhaustion,`arbec_%_maksHF`,`arbec_%_o2max`,arbec_mean_o2,arbec_vo2_ml_min, arbec_RER, arbec_HF, arbec_ve_l_min, arbec_vco2_ml_min, lean_mass, fat_mass, one_rm_newton, one_rm_watt,pmax_left, pmax_right, fmax_left, fmax_right, phys_act, phys_work) %>%
 filter(group != "fls") %>%
   filter(id != "tr031 10541") %>%
   filter(id != "tr031 11421") %>%
@@ -29,7 +29,7 @@ endring_kon <- enring_kontroll %>%
   group_by(time,group) %>%
    pivot_longer(names_to = "variable", 
                values_to = "value", 
-               cols = vo2max_ml_min_kg_6x5:fmax_right) %>%
+               cols = vo2max_ml_min_kg_6x5:phys_work) %>%
   filter(value != "na") %>%
    pivot_wider(names_from = "time",
               values_from = "value")%>%
