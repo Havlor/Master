@@ -12,6 +12,8 @@ library(flextable)
 library(ggplot2)
 library(readxl)
 library(kableExtra)
+library(ggtext)
+library(ggthemes)
 
 data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA")
 
@@ -64,8 +66,12 @@ pivot_wider(values_from = "dif", names_from = "variable")%>%
 
 ggscatter(kor_end, x = "vo2max_ml_min_kg_6x5", y = "phys_act", 
           add = "reg.line", conf.int = TRUE, 
-          cor.coef = TRUE, cor.method = "pearson",
-          xlab = "Vo2maks", ylab = "Kaloriforbruk i FA")
+          cor.coef = TRUE, cor.method = "spearman",
+          xlab = "Endring i VO<sub>2maks</sub> (ml/kg/min<sup>)", ylab = "Endring i Kaclforbruk i FA") + theme(axis.title.x = element_markdown(size = 15))
+
+ggscatter(kor_end, x = "vo2max_ml_min_kg_6x5", y = "phys_act", 
+          add = "reg.line", cor.method = "spearman",
+          xlab = "Endring i VO<sub>2maks</sub> (ml/kg/min)", ylab = "Endring i Kacl/uke i FA") + theme_clean(base_size = 17) + theme(axis.title.x = element_markdown(size = 15))
 
 shapiro.test(kor_end$vo2max_ml_min_kg_6x5)
 shapiro.test(kor_end$phys_act)
@@ -80,6 +86,40 @@ eres2
 eres3 <- cor.test(kor_end$vo2max_ml_min_kg_6x5, kor_end$phys_act,  method="kendall")
 eres3
 
+korFLS_end <- data %>%
+  select(id, time, group, vo2max_ml_min_kg_6x5, phys_act,phys_work) %>%
+  filter(group != "kon") %>%
+  group_by(time,group) %>%# grupperer etter tid og FLS/kontroll
+  pivot_longer(names_to = "variable", 
+               values_to = "value",
+               cols = vo2max_ml_min_kg_6x5:phys_work) %>%# omorgansiserer tallene for å få verdier nedover
+ pivot_wider(names_from = "time",
+              values_from = "value")%>%
+   pivot_longer(names_to = "time", 
+               values_to = "value",
+               cols = pre:post) %>%
+   group_by(id, time, variable) %>% 
+  # legger til variabel i gruppe
+
+  pivot_wider(names_from = time, 
+              values_from = value) %>%
+  summarise(dif = post-pre)%>%
+pivot_wider(values_from = "dif", names_from = "variable")%>%
+  print()
+
+ggscatter(korFLS_end, x = "vo2max_ml_min_kg_6x5", y = "phys_act", 
+          add = "reg.line", cor.method = "spearman",
+          xlab = "Endring i VO<sub>2maks</sub> (ml/kg/min)", ylab = "Endring i Kacl/uke i FA") + theme_clean(base_size = 17) + theme(axis.title.x = element_markdown(size = 15))
+
+shapiro.test(korFLS_end$vo2max_ml_min_kg_6x5)
+shapiro.test(korFLS_end$phys_act)
+
+FLSres <- cor.test(korFLS_end$vo2max_ml_min_kg_6x5, korFLS_end$phys_act, 
+                    method = "pearson")
+FLSres
+
+FLSres2 <- cor.test(korFLS_end$vo2max_ml_min_kg_6x5, korFLS_end$phys_act,  method = "spearman")
+FLSres2
 
 ```
 
