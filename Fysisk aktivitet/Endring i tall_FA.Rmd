@@ -167,7 +167,7 @@ mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
   # legger til variabel i gruppe
 summarise(m = mean(value),
           s = sd(value), .groups = "drop_last") %>%
-   mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 5),  " (", signif(s, 2), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
+   mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 5),  " (", signif(s, 5), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
   group_time = paste(group, time, sep = "_")) %>%
 
 #setter "group" og "tid" sammen
@@ -213,7 +213,7 @@ mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
   # legger til variabel i gruppe
 summarise(m = mean(value),
           s = sd(value), .groups = "drop_last") %>%
-   mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 5),  " (", signif(s, 2), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
+   mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 5),  " (", signif(s, 5), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
   group_time = paste(group, time, sep = "_")) %>%
 
 #setter "group" og "tid" sammen
@@ -257,7 +257,7 @@ mutate(n = n()) %>% # legger til n for å få antall i hver gruppe
   # legger til variabel i gruppe
 summarise(m = mean(value),
           s = sd(value), .groups = "drop_last") %>%
-   mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 5),  " (", signif(s, 2), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
+   mutate(ms = if_else(variable == "n", as.character(m), paste0(signif(m, 5),  " (", signif(s, 5), ")")), # setter gjennomsnitt og standardavvik (i parentes) sammen og justerer antall desimaler
   group_time = paste(group, time, sep = "_")) %>%
 
 #setter "group" og "tid" sammen
