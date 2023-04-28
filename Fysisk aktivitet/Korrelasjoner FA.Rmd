@@ -65,8 +65,8 @@ pivot_wider(values_from = "dif", names_from = "variable")%>%
   print()
 
 
-ggscatter(kor_end, x = "vo2max_ml_min_kg_6x5", y = "phys_act", 
-          add = "reg.line", cor.method = "spearman",
+ggscatter(kor_end, x = "vo2max_ml_min_kg_6x5", y = "phys_act",
+          add = "reg.line",conf.int = TRUE, cor.method = "spearman",
           xlab = "Endring i VO<sub>2maks</sub> (ml/kg/min)", ylab = "Endring i Kcal/uke i FA") + theme_clean(base_size = 17) + theme(axis.title.x = element_markdown(size = 15))
 
 shapiro.test(kor_end$vo2max_ml_min_kg_6x5)
@@ -104,7 +104,7 @@ pivot_wider(values_from = "dif", names_from = "variable")%>%
   print()
 
 ggscatter(korFLS_end, x = "vo2max_ml_min_kg_6x5", y = "phys_act", 
-          add = "reg.line", cor.method = "spearman",
+          add = "reg.line",conf.int = TRUE, cor.method = "spearman",
           xlab = "Endring i VO<sub>2maks</sub> (ml/kg/min)", ylab = "Endring i Kcal/uke i FA") + theme_clean(base_size = 17) + theme(axis.title.x = element_markdown(size = 15))
 
 shapiro.test(korFLS_end$vo2max_ml_min_kg_6x5)
