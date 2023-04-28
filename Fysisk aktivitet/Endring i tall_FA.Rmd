@@ -125,8 +125,6 @@ group_by(time,group) %>% # grupperer etter tid og FLS/kontroll
                cols = phys_act:n) %>%
   pivot_wider(names_from = "time",
               values_from = "value") %>%
-  filter(!is.na(pre)) %>%
-  filter(!is.na(post)) %>% 
   mutate(diff = post-pre) %>%
    group_by(group, variable) %>% #legger til variabel i gruppe
 summarise(m = mean(diff),
