@@ -6,6 +6,11 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
+Denne filen innholder tre kodebolker. Alle tre bunner ut en tabell for å se 
+på Frisklivsgruppen opp mot Kontrollgruppen i variabler tilknyttet kropp. 
+Noe "skjønnhetsredigering" er også gjort i word etterpå.
+kodebolkene kommer i rekkefølgen
+ITT (intention to treat), pp (per protokoll 2 treningner), ppm (modifisert pp, 1 trening) 
 
 ```{r setup, include=FALSE}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable)

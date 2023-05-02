@@ -7,6 +7,12 @@ editor_options:
   chunk_output_type: console
 ---
 
+Denne filen innholder to kodebolker. Begge beskriver endring i fysisk aktivitetsnivå 
+i både frikslisgruppen og kontrollgruppen. Den første bolken viser hvor mye endringen er,
+mens den andre viser tall både ved pre-test og ved post-test. Analsyene kommer rekkefølgen
+ITT (intention to treat), pp2 (per protokoll 2 treningner), pp1 (per protokoll 1 trening) 
+innad i bolkene.
+
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(knitr)

@@ -6,7 +6,10 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
-
+Denne filen innholder tre kodebolker. Alle tre bunner ut i parede t-tester for å se 
+på ending innad i Frikslivsgruppen og kontrollgruppen i variabler tilknyttet Vo2maks-testen. 
+Det er også test for normalitet. kodebolkene er i rekkefølgen
+ITT (intention to treat), pp (per protokoll 2 treningner), ppm (modifisert pp, 1 trening) 
 
 ```{r parra t-test itt, include=FALSE}
 
@@ -400,83 +403,4 @@ t_testKON_ve_ppm
 t_testKON_vo2_ppm
 t_testKON_vo2kg_ppm
 t_testKON_vo2lm_ppm
-```
-
-```{r oppsumering av t-tester, include=FALSE}
-
-## pp
-t_testFLS_bf_pp
-t_testFLS_borg_pp
-t_testFLS_hf_pp
-t_testFLS_lac_pp
-t_testFLS_o2puls_pp
-t_testFLS_rer_pp
-t_testFLS_tid_pp
-t_testFLS_ve_pp
-t_testFLS_vo2_pp
-t_testFLS_vo2kg_pp
-t_testFLS_vo2lm_pp
-
-t_testKON_bf_pp
-t_testKON_borg_pp
-t_testKON_hf_pp
-t_testKON_lac_pp
-t_testKON_o2puls_pp
-t_testKON_rer_pp
-t_testKON_tid_pp
-t_testKON_ve_pp
-t_testKON_vo2_pp
-t_testKON_vo2kg_pp
-t_testKON_vo2lm_pp
-
-#ppm
-t_testFLS_bf_ppm
-t_testFLS_borg_ppm
-t_testFLS_hf_ppm
-t_testFLS_lac_ppm
-t_testFLS_o2puls_ppm
-t_testFLS_rer_ppm
-t_testFLS_tid_ppm
-t_testFLS_ve_ppm
-t_testFLS_vo2_ppm
-t_testFLS_vo2kg_ppm
-t_testFLS_vo2lm_ppm
-
-t_testKON_bf_ppm
-t_testKON_borg_ppm
-t_testKON_hf_ppm
-t_testKON_lac_ppm
-t_testKON_o2puls_ppm
-t_testKON_rer_ppm
-t_testKON_tid_ppm
-t_testKON_ve_ppm
-t_testKON_vo2_ppm
-t_testKON_vo2kg_ppm
-t_testKON_vo2lm_ppm
-
-#itt
-t_testFLS_bf_itt
-t_testFLS_borg_itt
-t_testFLS_hf_itt
-t_testFLS_lac_itt
-t_testFLS_o2puls_itt
-t_testFLS_rer_itt
-t_testFLS_tid_itt
-t_testFLS_ve_itt
-t_testFLS_vo2_itt
-t_testFLS_vo2kg_itt
-t_testFLS_vo2lm_itt
-
-t_testKON_bf_itt
-t_testKON_borg_itt
-t_testKON_hf_itt
-t_testKON_lac_itt
-t_testKON_o2puls_itt
-t_testKON_rer_itt
-t_testKON_tid_itt
-t_testKON_ve_itt
-t_testKON_vo2_itt
-t_testKON_vo2kg_itt
-t_testKON_vo2lm_itt
-
 ```

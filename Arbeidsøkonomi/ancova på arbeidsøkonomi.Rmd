@@ -6,6 +6,10 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
+Denne filen innholder tre kodebolker. Alle tre bunner ut i en ANCOVA-test for å se 
+på ending mellom Frikslivsgruppen og kontroll i varabler tilknyttet arbeidsøkonomi. Det er også
+tester for normalitet, varians og homogenitet. kodebolkene er i rekkefølgen
+ITT (intention to treat), pp (per protokoll 2 treningner) og ppm (modifisert pp, 1 trening)
 
 ```{r arb ancova itt, include=FALSE}
 library(tidyverse)
@@ -18,6 +22,7 @@ library(emmeans)
 library(ggpubr)
 library(broom)
 library(rstatix)
+
 
 data2 <- read_excel("data/Regning av kaloriforbruk.xlsx")
 

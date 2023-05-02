@@ -5,6 +5,11 @@ date: "2023-03-20"
 output: html_document
 ---
 
+Denne filen innholder tre kodebolker. Alle tre bunner ut i parede t-tester for å se 
+på ending innad i Frikslivsgruppen og kontrollgruppen i variabler tilknyttet styrke. 
+Det er også test for normalitet. kodebolkene er i rekkefølgen
+ITT (intention to treat), pp (per protokoll 2 treningner), ppm (modifisert pp, 1 trening) 
+
 ```{r parra t-test PP, include=FALSE}
 
 library(tidyverse)
@@ -17,6 +22,8 @@ library(ggpubr)
 library(dplyr)
 library(rstatix)
 library(broom)
+
+
 
 data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
 
@@ -268,51 +275,6 @@ t_testKON_rmn_ppm <- t.test(one_rm_newton ~ time, data = StyrkeKON_ppm, paired =
 t_testKON_rmw_ppm <- t.test(one_rm_watt ~ time, data = StyrkeKON_ppm, paired = TRUE)
 t_testKON_fmax_ppm <- t.test(fmax ~ time, data = StyrkeKON_ppm, paired = TRUE)
 t_testKON_pmax_ppm <- t.test(pmax ~ time, data = StyrkeKON_ppm, paired = TRUE)
-
-
-t_testFLS_stol_ppm
-t_testFLS_rmn_ppm
-t_testFLS_rmw_ppm
-t_testFLS_fmax_ppm
-t_testFLS_pmax_ppm
-
-
-
-t_testKON_stol_ppm
-t_testKON_rmn_ppm
-t_testKON_rmw_ppm
-t_testKON_fmax_ppm
-t_testKON_pmax_ppm
-
-```
-
-```{r oppsummering, include=FALSE}
-
-t_testFLS_stol_itt
-t_testFLS_rmn_itt
-t_testFLS_rmw_itt
-t_testFLS_fmax_itt
-t_testFLS_pmax_itt
-
-t_testKON_stol_itt
-t_testKON_rmn_itt
-t_testKON_rmw_itt
-t_testKON_fmax_itt
-t_testKON_pmax_itt
-
-
-t_testFLS_stol_pp
-t_testFLS_rmn_pp
-t_testFLS_rmw_pp
-t_testFLS_fmax_pp
-t_testFLS_pmax_pp
-
-t_testKON_stol_pp
-t_testKON_rmn_pp
-t_testKON_rmw_pp
-t_testKON_fmax_pp
-t_testKON_pmax_pp
-
 
 
 t_testFLS_stol_ppm

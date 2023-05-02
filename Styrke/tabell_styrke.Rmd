@@ -6,6 +6,12 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
+
+Denne filen innholder tre kodebolker. Alle tre bunner ut en tabell for å se 
+på Frisklivsgruppen opp mot Kontrollgruppen i variabler tilknyttet styrke. 
+Noe "skjønnhetsredigering" er også gjort i word etterpå.
+kodebolkene kommer i rekkefølgen
+ITT (intention to treat), pp (per protokoll 2 treningner), ppm (modifisert pp, 1 trening) 
 ```{r setup, include=FALSE}
 
 data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA")

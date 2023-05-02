@@ -8,7 +8,11 @@ output:
 editor_options:
   chunk_output_type: console
 ---
-
+Denne filen innholder tre kodebolker. Alle tre bunner ut i to figurer som viser
+endring mellom frisklivsgruppen og kontrollgrupen fra pre-test til post-test, 
+en for vo2maks ml/kg/min og en for ml/min og. 
+kodebolkene kommer i rekkefølgen
+ITT (intention to treat), pp (per protokoll 2 treningner), ppm (modifisert pp, 1 trening)
 ```{r Vo2figur itt, include=FALSE, fig.cap= "Endring av maksimalt oksygenopptak fra Pre- posttest"}
 library(tidyverse)
 library(readxl)

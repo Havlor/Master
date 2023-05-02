@@ -6,6 +6,12 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
+
+Denne filen innholder tre kodebolker. Alle tre bunner ut en tabell for å se 
+på Frisklivsgruppen opp mot Kontrollgruppen i variabler tilknyttet arbeidsøkonomi. 
+Noe "skjønnhetsredigering" er også gjort i word etterpå.
+kodebolkene kommer i rekkefølgen
+ITT (intention to treat), pp (per protokoll 2 treningner), ppm (modifisert pp, 1 trening) 
 ```{r kaloritabell_itt,results="asis"}
 library(tidyverse)
 library(knitr)
@@ -60,7 +66,7 @@ summarise(m = mean(value),
     autofit()%>% # gjør av stander like
 print()
 
-   flextable::save_as_docx(path = "arb_itt.docx") #brukes til å lagre til word
+
 
 ```
 
@@ -125,7 +131,7 @@ summarise(m = mean(value),
     merge_at(part = "header", i = 1, j = 4:5) %>% #justerer skrifttype
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>% #legger til fornote
     autofit() # gjør av stander like
-  flextable::save_as_docx(path = "arb_pp.docx")
+
 ```  
   
   
@@ -185,7 +191,7 @@ summarise(m = mean(value),
     merge_at(part = "header", i = 1, j = 4:5) %>% #justerer skrifttype
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>% #legger til fornote
     autofit() # gjør av stander like
-  flextable::save_as_docx(path = "arb_ppm.docx")
+  
 ```
 
 flextable::save_as_docx(path = "Test.docx") #brukes til å lagre til word

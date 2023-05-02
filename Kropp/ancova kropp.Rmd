@@ -6,6 +6,10 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
+Denne filen innholder tre kodebolker. Alle tre bunner ut i en ANCOVA-test for å se 
+på ending mellom Frikslivsgruppen og kontroll i variabler tilknyttet kropp. Det er også
+tester for normalitet, varians og homogenitet. kodebolkene er i rekkefølgen
+pp (per protokoll 2 treningner), ppm (modifisert pp, 1 trening) og ITT (intention to treat)
 
 ```{r Per protokoll ancova, include=FALSE, results='hide'}
 library(tidyverse)

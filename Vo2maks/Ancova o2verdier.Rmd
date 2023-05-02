@@ -5,6 +5,12 @@ date: '2023-02-20'
 output: html_document
 editor_options: 
   chunk_output_type: console
+  
+  
+Denne filen innholder tre kodebolker. Alle tre bunner ut i en ANCOVA-test for å se 
+på ending mellom Frikslivsgruppen og kontroll i variabler tilknyttet Vo2maks. Det er også
+tester for normalitet, varians og homogenitet. kodebolkene er i rekkefølgen
+pp (per protokoll 2 treningner), ppm (modifisert pp, 1 trening) og ITT (intention to treat)
 ---
 ```{r Per protokoll ancova, include=FALSE, results='hide'}
 library(tidyverse)
@@ -216,6 +222,8 @@ pwc_borgpp <- Vo2endring_pp%>%
 
 pwc_lacpp <- Vo2endring_pp%>% 
   emmeans_test(post_lac ~ group, covariate = pre_lac, p.adjust.method = "bonferroni")
+
+
 
 pwc_bfpp$p
 pwc_borgpp$p
@@ -658,146 +666,7 @@ pwc_hfpulsitt$p
 ```
 
 
-```{r bare vo2maks modifisert per protokoll, include=FALSE, results='hide'}
-Vo2endring_ppm <- select(data, id, time, group, vo2max_ml_min_kg_6x5) %>%
-filter(id != "tr031 10541") %>%
-  filter(id != "tr031 11421") %>%
-  filter(id != "tr031 13404") %>%
-  filter(id != "tr031 004") %>%
-  filter(id != "tr031 008") %>%
-  filter(id != "tr031 001") %>%
-  filter(id != "tr031 016") %>%
-  filter(id != "tr031 007") %>%
-  filter(id != "tr031 010") %>%
-  filter(id != "tr031 012") %>%
-  filter(id != "tr031 013") %>%
-  filter(id != "tr031 014") %>% #gjorde ikke test og ble ikke inkludert her
-  pivot_wider(names_from = time,
-               values_from = vo2max_ml_min_kg_6x5) %>%
-  print()
-
-
-
-ggscatter(Vo2endring_ppm, x = "pre", y = "post",
-  color = "group", add = "reg.line"
-  )+
-  stat_regline_equation(
-    aes(label =  paste(..eq.label.., ..rr.label.., sep = "~~~~"), color = group))
-
-Vo2endring_ppm %>% anova_test(post ~ group*pre) #Homogeneity of regression slopes
-
-# Fit the model, the covariate goes first
-model_ppm <- lm(post ~ pre + group, data = Vo2endring_ppm)
-# Inspect the model diagnostic metrics
-model.metrics_ppm <- augment(model_ppm) %>%
-  select(-.hat, -.sigma, -.fitted) # Remove details
-head(model.metrics, 26)
-
-shapiro_test(model.metrics_ppm$.resid)
-
-model.metrics_ppm %>% levene_test(.resid ~ group)
-
-model.metrics_ppm %>% 
-  filter(abs(.std.resid) > 3) %>%
-  as.data.frame()
-
-res.aov_ppm <- Vo2endring_ppm %>% anova_test(post ~ pre + group)
-get_anova_table(res.aov_ppm)
-
-
-pwc_ppm <- Vo2endring_ppm %>% 
-  emmeans_test(
-    post ~ group, covariate = pre,
-    p.adjust.method = "bonferroni")
-pwc_ppm
-get_emmeans(pwc_ppm)
-
-pwc_ppm <- pwc_ppm %>% add_xy_position(x = "group", fun = "mean_se")
-ggline(get_emmeans(pwc_ppm), x = "group", y = "emmean") +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) + 
-  stat_pvalue_manual(pwc_ppm, hide.ns = TRUE, tip.length = FALSE) +
-  labs(
-    subtitle = get_test_label(res.aov_ppm, detailed = TRUE),
-    caption = get_pwc_label(pwc_ppm))
-
-
-
-
-
- vo2_total_ppm <- Vo2endring_ppm %>%
-   mutate(endring = post-pre, prosentvis_endring = (post - pre)/pre * 100) %>%
-  group_by(group)%>%
-  summarise(mean = mean(endring),
-            sd = sd(endring),
-            mean_pro = mean(prosentvis_endring),
-            sd_pro = sd(prosentvis_endring)) %>%
-  print()
-```
-
-```{r bare vo2maks ITT, include=FALSE, results='hide'}
-
-Vo2endring_itt <- select(data, id, time, group, vo2max_ml_min_kg_6x5) %>%
-  pivot_wider(names_from = time,
-               values_from = vo2max_ml_min_kg_6x5) %>%
-  print()
-#nr 014 gjorde ikke vo2maks på post, men fikk her satt inn tilsvarende pre-test
-
-ggscatter(Vo2endring_itt, x = "pre", y = "post",
-  color = "group", add = "reg.line"
-  )+
-  stat_regline_equation(
-    aes(label =  paste(..eq.label.., ..rr.label.., sep = "~~~~"), color = group))
-
-Vo2endring_itt %>% anova_test(post ~ group*pre) #Homogeneity of regression slopes
-
-# Fit the model, the covariate goes first
-model_itt <- lm(post ~ pre + group, data = Vo2endring_itt)
-# Inspect the model diagnostic metrics
-model.metrics_itt <- augment(model_itt) %>%
-  select(-.hat, -.sigma, -.fitted) # Remove details
-head(model.metrics, 38)
-
-shapiro_test(model.metrics_itt$.resid)
-
-model.metrics_itt %>% levene_test(.resid ~ group)
-
-model.metrics_itt %>% 
-  filter(abs(.std.resid) > 3) %>%
-  as.data.frame()
-
-res.aov_itt <- Vo2endring_itt %>% anova_test(post ~ pre + group)
-get_anova_table(res.aov_itt)
-
-
-pwc_itt <- Vo2endring_itt %>% 
-  emmeans_test(
-    post ~ group, covariate = pre,
-    p.adjust.method = "bonferroni")
-pwc_itt
-get_emmeans(pwc_itt)
-
-pwc_itt <- pwc_itt %>% add_xy_position(x = "group", fun = "mean_se")
-ggline(get_emmeans(pwc_itt), x = "group", y = "emmean") +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) + 
-  stat_pvalue_manual(pwc_itt, hide.ns = TRUE, tip.length = FALSE) +
-  labs(
-    subtitle = get_test_label(res.aov_itt, detailed = TRUE),
-    caption = get_pwc_label(pwc_itt))
-
-
-
-
- vo2_total_itt <- Vo2endring_itt %>%
-   mutate(endring = post-pre, prosentvis_endring = (post - pre)/pre * 100) %>%
-  group_by(group)%>%
-  summarise(mean = mean(endring),
-            sd = sd(endring),
-            mean_pro = mean(prosentvis_endring),
-            sd_pro = sd(prosentvis_endring)) %>%
-  print()
-```
-
-```{r soppsummerte ancova pverdier, include=FALSE, results='hide'}
+```{r oppsummerte ancova pverdier, include=FALSE, results='hide'}
 
 pwc_bfpp$p
 pwc_borgpp$p

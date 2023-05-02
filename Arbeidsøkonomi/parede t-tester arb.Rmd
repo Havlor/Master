@@ -6,6 +6,11 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
+Denne filen innholder tre kodebolker. Alle tre bunner ut i parede t-tester for å se 
+på ending innad i Frikslivsgruppen og kontrollgruppen i variabler tilknyttet arbiedsøkonomi. 
+Det er også test for normalitet. kodebolkene er i rekkefølgen
+ITT (intention to treat), pp (per protokoll 2 treningner), ppm (modifisert pp, 1 trening) 
+
 ```{r parra t-test itt, include=FALSE}
 library(tidyverse)
 library(knitr)

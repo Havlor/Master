@@ -4,7 +4,14 @@ output: html_notebook
 editor_options: 
   chunk_output_type: console
 ---
+Denne kodebolken regner ut og lager figur på korrelasjonen mellom endringen i
+vo2maks og endringen i aktivitetsnivå målt i kaloriforbruk. Det er bare ved 
+ITT- anslyse (intetion to treat). En anslyse hvor alle deltagerene er med og en 
+hvor det bare er frisklivsgruppen
+
 ```{r setup, include=FALSE}
+library(ggpubr)
+library(readxl)
 library(ggpubr)
 library(tidyverse)
 library(knitr)
@@ -14,32 +21,6 @@ library(readxl)
 library(kableExtra)
 library(ggtext)
 library(ggthemes)
-
-data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA")
-
-ggscatter(data, x = "vo2max_ml_min_kg_6x5", y = "phys_act", 
-          add = "reg.line", conf.int = TRUE, 
-          cor.coef = TRUE, cor.method = "pearson",
-          xlab = "Vo2maks", ylab = "Kaloriforbruk i FA")
-
-shapiro.test(data$vo2max_ml_min_kg_6x5)
-shapiro.test(data$phys_act)
-
-res <- cor.test(data$vo2max_ml_min_kg_6x5, data$phys_act, 
-                    method = "pearson")
-
-res2 <- cor.test(data$vo2max_ml_min_kg_6x5, data$phys_act,  method = "spearman")
-res2
-
-res3 <- cor.test(data$vo2max_ml_min_kg_6x5, data$phys_act,  method="kendall")
-res3
-
-
-```
-
-```{r setup, include=FALSE}
-library(ggpubr)
-library(readxl)
 
 data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA")
 
@@ -72,15 +53,11 @@ ggscatter(kor_end, x = "vo2max_ml_min_kg_6x5", y = "phys_act",
 shapiro.test(kor_end$vo2max_ml_min_kg_6x5)
 shapiro.test(kor_end$phys_act)
 
-eres <- cor.test(kor_end$vo2max_ml_min_kg_6x5, kor_end$phys_act, 
-                    method = "pearson")
-eres
 
 eres2 <- cor.test(kor_end$vo2max_ml_min_kg_6x5, kor_end$phys_act,  method = "spearman")
 eres2
 
-eres3 <- cor.test(kor_end$vo2max_ml_min_kg_6x5, kor_end$phys_act,  method="kendall")
-eres3
+
 
 korFLS_end <- data %>%
   select(id, time, group, vo2max_ml_min_kg_6x5, phys_act,phys_work) %>%
@@ -110,9 +87,7 @@ ggscatter(korFLS_end, x = "vo2max_ml_min_kg_6x5", y = "phys_act",
 shapiro.test(korFLS_end$vo2max_ml_min_kg_6x5)
 shapiro.test(korFLS_end$phys_act)
 
-FLSres <- cor.test(korFLS_end$vo2max_ml_min_kg_6x5, korFLS_end$phys_act, 
-                    method = "pearson")
-FLSres
+
 
 FLSres2 <- cor.test(korFLS_end$vo2max_ml_min_kg_6x5, korFLS_end$phys_act,  method = "spearman")
 FLSres2

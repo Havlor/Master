@@ -7,6 +7,11 @@ editor_options:
   chunk_output_type: console
 ---
 
+Denne filen innholder tre kodebolker. Alle tre bunner ut i parede t-tester for å se 
+på ending innad i Frikslivsgruppen og kontrollgruppen i variabler tilknyttet kropp. 
+Det er også test for normalitet. kodebolkene er i rekkefølgen
+pp (per protokoll 2 treningner), ppm (modifisert pp, 1 trening) og ITT (intention to treat)
+
 ```{r parra t-test PP, include=FALSE}
 
 library(tidyverse)
@@ -326,55 +331,3 @@ t_testKON_fatp_ppm
 
 ```
 
-```{r oppsummering, include=FALSE}
-
-t_testFLS_bmi_itt
-t_testFLS_wc_itt
-t_testFLS_lean_itt
-t_testFLS_fat_itt
-t_testFLS_total_itt
-t_testFLS_fatp_itt
-
-t_testKON_bmi_itt
-t_testKON_wc_itt
-t_testKON_lean_itt
-t_testKON_fat_itt
-t_testKON_total_itt
-t_testKON_fatp_itt
-
-
-
-t_testFLS_bmi_pp
-t_testFLS_wc_pp
-t_testFLS_lean_pp
-t_testFLS_fat_pp
-t_testFLS_total_pp
-t_testFLS_fatp_pp
-
-
-t_testKON_bmi_pp
-t_testKON_wc_pp
-t_testKON_lean_pp
-t_testKON_fat_pp
-t_testKON_total_pp
-t_testKON_fatp_pp
-
-
-
-t_testFLS_bmi_ppm
-t_testFLS_wc_ppm
-t_testFLS_lean_ppm
-t_testFLS_fat_ppm
-t_testFLS_total_ppm
-t_testFLS_fatp_ppm
-
-
-t_testKON_bmi_ppm
-t_testKON_wc_ppm
-t_testKON_lean_ppm
-t_testKON_fat_ppm
-t_testKON_total_ppm
-t_testKON_fatp_ppm
-
-
-```

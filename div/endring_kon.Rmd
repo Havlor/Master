@@ -7,6 +7,9 @@ editor_options:
   chunk_output_type: console
 ---
 
+Denne koden ble brukt for å estimere endndring for de som droppet ut i ITT-anslysen.
+Det er derfor regnet ut prosentvis endring i kontrollgruppen for alle variabelne.
+
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(knitr)
@@ -41,7 +44,5 @@ summarise(m = mean(diff)) %>%
   print()
 ```
 
-flextable::save_as_docx(path = "Test.docx") #brukes til å lagre til word
 
- enring_kon$`o2_puls (ml)`[is.na(enring_kon$`o2_puls (ml)`)] <- mean(enring_kon$`o2_puls (ml)`, na.rm = TRUE)
-  enring_kon$hf_max[is.na(enring_kon$hf_max)] <- mean(enring_kon$hf_max, na.rm = TRUE)
+
