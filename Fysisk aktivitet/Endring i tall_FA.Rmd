@@ -75,7 +75,7 @@ select(-"m", -"s") %>%
 
   
   endringFA_pp1 <- data %>%
-select(id, time, group, phys_act,phys_work) %>%
+select(id, time, group, phys_act,phys_work, vo2max_ml_min_kg_6x5) %>%
  filter(id != "tr031 10541") %>%
   filter(id != "tr031 11421") %>%
   filter(id != "tr031 13404") %>%
@@ -122,7 +122,7 @@ select(-"m", -"s") %>%
   
   
   
-  endringFA_itt <- data %>%
+endringFA_itt <- data %>%
 select(id, time, group, phys_act,phys_work) %>% #Velger variabler
     filter(id != "tr031 11716") %>%
 group_by(time,group) %>% # grupperer etter tid og FLS/kontroll 
