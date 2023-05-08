@@ -148,6 +148,7 @@ select(id, time, group, vo2max_ml_min_kg_6x5,vo2max_ml_min_6x5, lean_mass,o2_pul
   filter(id != "tr031 010") %>%
   filter(id != "tr031 012") %>%
   filter(id != "tr031 013") %>%
+  filter(id != "tr031 006") %>%
   group_by(time,group) %>%# grupperer etter tid og FLS/kontroll
 mutate(n = n()) %>% 
   pivot_longer(names_to = "variable", 
@@ -178,7 +179,7 @@ mutate(n = n()) %>%
     merge_at(part = "header", i = 1, j = 4:5) %>% #justerer skrifttype
     add_footer_row(values = "Data er gitt som gjennomsnitt og standardavvik.", colwidths = 5) %>% #legger til fornote
     autofit() %>% # gjør avstander like
- # flextable::save_as_docx(path = "ppm_vo2.docx")
+ flextable::save_as_docx(path = "ppm_vo2_v2.docx")
   print()
 
 

@@ -187,6 +187,7 @@ FA_endring1_pp1 <- data %>%
   filter(id != "tr031 012") %>%
   filter(id != "tr031 013") %>%
   filter(id != "tr031 11716") %>%
+  filter(id != "tr031 006") %>%
 select(id, time, group, phys_act, phys_work) %>%
 
   group_by(time,group) %>%# grupperer etter tid og FLS/kontroll

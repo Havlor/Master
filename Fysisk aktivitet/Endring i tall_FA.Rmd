@@ -88,6 +88,7 @@ select(id, time, group, phys_act,phys_work) %>%
   filter(id != "tr031 012") %>%
   filter(id != "tr031 013") %>%
     filter(id != "tr031 11716") %>%
+     filter(id != "tr031 006") %>%
 #Velger variabler
 #filtrer ut droppouts
 group_by(time,group) %>% # grupperer etter tid og FLS/kontroll 
@@ -246,6 +247,7 @@ FApre_post_pp1 <- data %>%
   filter(id != "tr031 012") %>%
   filter(id != "tr031 013") %>%
   filter(id != "tr031 11716") %>%
+  filter(id != "tr031 006") %>%
   group_by(time,group) %>%# grupperer etter tid og FLS/kontroll
    
 mutate(n = n()) %>% # legger til n for å få antall i hver gruppe

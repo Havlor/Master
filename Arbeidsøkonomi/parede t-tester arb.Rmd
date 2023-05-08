@@ -224,7 +224,18 @@ t_testKON_kj_pp
 ```{r parra t-test ppm, include=FALSE}
 arb_endring_ppm <- data2 %>%
 select(id, group, time, prosent_hfmaks, prosent_vo2maks, arbec_mean_vo2_ml_min, arbec_mean_RER, kacl_min, kj_min) %>%
-   filter(id != "tr031 008") %>%
+   filter(id != "tr031 10541") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  filter(id != "tr031 007") %>%
+  filter(id != "tr031 010") %>%
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 013") %>%
+  filter(id != "tr031 006") %>%
   mutate(kacl_min = as.numeric(kacl_min)) %>%
 mutate(kj_min = as.numeric(kj_min))%>%
 group_by(time,group) %>% # gruppmerer etter tid og KON/kontroll 
