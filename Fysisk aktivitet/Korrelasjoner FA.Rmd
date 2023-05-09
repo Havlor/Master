@@ -23,6 +23,7 @@ library(ggtext)
 library(ggthemes)
 
 data <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA")
+treningdata <- read_excel("data/trening.uke_endring.vo2maks.xlsx")
 
 kor_end <- data %>%
   select(id, time, group, vo2max_ml_min_kg_6x5, phys_act,phys_work) %>%

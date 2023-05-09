@@ -1,0 +1,38 @@
+---
+title: "trening per uke"
+author: "Håvard Crantz Lorentzen"
+date: "2023-05-09"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+library(ggpubr)
+library(tidyverse)
+library(knitr)
+library(flextable)
+library(ggplot2)
+library(readxl)
+library(kableExtra)
+library(ggtext)
+library(ggthemes)
+
+
+treningdata <- read_excel("data/trening.uke_endring.vo2maks.xlsx")
+
+ggscatter(treningdata, x = "endring_vo2maks", y = "min_uke",
+          add = "reg.line",conf.int = TRUE, cor.method = "spearman",
+          xlab = "Endring i VO<sub>2maks</sub> (ml/kg/min)", ylab = "Trening/uke(min)") + theme_clean(base_size = 17) + theme(axis.title.x = element_markdown(size = 15))
+
+shapiro.test(treningdata$endring_vo2maks)
+shapiro.test(treningdata$min_uke)
+
+
+kor_trening <- cor.test(treningdata$endring_vo2maks, treningdata$min_uke,  method = "spearman")
+kor_trening
+
+
+
+```
+
