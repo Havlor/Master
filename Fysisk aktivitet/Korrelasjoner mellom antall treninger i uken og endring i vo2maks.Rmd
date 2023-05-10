@@ -6,7 +6,8 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
-
+Denne kodebolken regner ut og lager figur på korrelasjonen mellom endringen i
+vo2maks og antall treningøkter i uken.
 ```{r setup, include=FALSE}
 library(ggpubr)
 library(tidyverse)
@@ -23,7 +24,7 @@ treningdata <- read_excel("data/trening.uke_endring.vo2maks.xlsx")
 
 ggscatter(treningdata, x = "endring_vo2maks", y = "min_uke",
           add = "reg.line",conf.int = TRUE, cor.method = "spearman",
-          xlab = "Endring i VO<sub>2maks</sub> (ml/kg/min)", ylab = "Trening/uke(min)") + theme_clean(base_size = 17) + theme(axis.title.x = element_markdown(size = 15))
+          xlab = "Endring i VO<sub>2maks</sub> (ml/kg/min)", ylab = "Trening/uke (min)") + theme_clean(base_size = 17) + theme(axis.title.x = element_markdown(size = 15))
 
 shapiro.test(treningdata$endring_vo2maks)
 shapiro.test(treningdata$min_uke)

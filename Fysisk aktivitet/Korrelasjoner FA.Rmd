@@ -37,7 +37,7 @@ kor_end <- data %>%
    pivot_longer(names_to = "time", 
                values_to = "value",
                cols = pre:post) %>%
-   group_by(id, time, variable) %>% 
+   group_by(id, group, time, variable) %>% 
   # legger til variabel i gruppe
 
   pivot_wider(names_from = time, 
@@ -50,6 +50,9 @@ pivot_wider(values_from = "dif", names_from = "variable")%>%
 ggscatter(kor_end, x = "vo2max_ml_min_kg_6x5", y = "phys_act",
           add = "reg.line",conf.int = TRUE, cor.method = "spearman",
           xlab = "Endring i VO<sub>2maks</sub> (ml/kg/min)", ylab = "Endring i Kcal/uke i FA") + theme_clean(base_size = 17) + theme(axis.title.x = element_markdown(size = 15))
+
+
+
 
 shapiro.test(kor_end$vo2max_ml_min_kg_6x5)
 shapiro.test(kor_end$phys_act)
