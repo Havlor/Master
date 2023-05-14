@@ -6,6 +6,7 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
+kodebolkene regner ut p-verider for undersøke forskejll ved pre mellom gruppene og mellom kjønn i de ulike gruppene. den første bolken har både inkluderer alle, den andre kvinner i de to gruppene mot hverandre, og den tredje menn i de to gruppene mot hverandre
 
 ```{r setup, include=FALSE}
 
@@ -27,7 +28,6 @@ select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2ma
   filter(time == "pre") %>% #filterer ut post for å bare få pre-tester#Velger variabler
   print()
 
-#tosideig eller ensidig?
 
 t_alder_kom <- t.test(age ~ group, data = data_kom, paired = FALSE)
 t_vekt_kom <- t.test(weight ~ group, data = data_kom, paired = FALSE)
@@ -69,7 +69,7 @@ select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2ma
   filter(sex == "1") %>%#filterer ut post for å bare få pre-tester#Velger variabler
   print()
 
-#tosideig eller ensidig?
+
 
 t_alder_k <- t.test(age ~ group, data = data_k, paired = FALSE)
 t_vekt_k <- t.test(weight ~ group, data = data_k, paired = FALSE)
@@ -112,7 +112,7 @@ select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2ma
   filter(sex == "2") %>% #filterer ut post for å bare få pre-tester#Velger variabler
   print()
 
-#tosideig eller ensidig?
+
 
 t_alder_m <- t.test(age ~ group, data = data_m, paired = FALSE)
 t_vekt_m <- t.test(weight ~ group, data = data_m, paired = FALSE)
@@ -145,25 +145,3 @@ t_1rm_m
 
 ```
 
-```{r testing av regresjon, include=FALSE}
-
-datades <- read_excel("data/Revidert_resultatskjema.xlsx", na = "NA") #Henter data
-data_kom <- datades %>%
-select(id,time,group,sex,age, sys, bmi, dia, wc, handgrip, height, weight, vo2max_ml_min_kg_6x5, vo2max_ml_min_6x5, lean_mass, fat_mass, one_rm_newton) %>%
-  filter(time == "pre") %>% #filterer ut post for å bare få pre-tester#Velger variabler
-  print()
-
-lm.age <- lm(age ~ group, data = datades)
-summary(lm.age)
-lm.height <- lm(height ~ group, data = datades)
-summary(lm.height)
-lm.age <- lm(age ~ group, data = pre.diff)
-lm.age <- lm(age ~ group, data = pre.diff)
-lm.age <- lm(age ~ group, data = pre.diff)
-lm.age <- lm(age ~ group, data = pre.diff)
-lm.age <- lm(age ~ group, data = pre.diff)
-lm.age <- lm(age ~ group, data = pre.diff)
-lm.age <- lm(age ~ group, data = pre.diff)
-lm.age <- lm(age ~ group, data = pre.diff)
-
-```
